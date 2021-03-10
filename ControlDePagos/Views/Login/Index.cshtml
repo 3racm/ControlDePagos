@@ -1,0 +1,275 @@
+﻿
+@{
+    Layout = "";
+    ViewBag.Title = "Index";
+}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/81709f7377.js" crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/81709f7377.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script src="https://sis-t.redsys.es:25443/sis/NC/sandbox/redsysV2.js"></script>
+
+
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="keywords"
+          content="unique login form,leamug login form,boostrap login form,responsive login form,free css html login form,download login form">
+    <meta name="author" content="leamug">
+    <title>Iniciar Sesion</title>
+    <!-- Bootstrap core Library -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
+    <!-- Font Awesome-->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        @*<h3 class="text-center text-white mb-5" style="font-family:'Bauhaus 93'"><b>Control de gastos <i class="fas fa-hand-holding-usd"></i></b></h3>*@
+        <div class="d-flex justify-content-center h-100">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="text-center text-white" style="font-family:'Bodoni MT'"><b>Control de gastos <i class="fas fa-hand-holding-usd"></i></b></h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input id="Usuario" type="text" class="form-control" placeholder="Usuario">
+
+                        </div>
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input id="Contraseña" type="password" class="form-control" placeholder="Contraseña">
+                        </div>
+
+                        <br>
+
+
+                        <div class="form-group">
+                            <input id="Login" class="btn float-right login_btn" type="button" value="Iniciar Sesion" onclick="IniciarSesion()">
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center text-center">
+                        <a id="BtnRecuperacion" href="#" class="text-white text-center"> ¿Olvidaste tu contraseña?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Login").click(function () {
+
+        });
+    });
+
+        function IniciarSesion() {
+        //Saul Gonzalez 09/03/2021: Asiganamos los parametros
+        var Usuario = $("#Usuario").val();
+        var Contraseña = $("#Contraseña").val();
+
+        var Params = {
+            "Usuario": Usuario, "Contraseña": Contraseña
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Login/ValidarUsuario',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+				if (result.status) {
+                window.location.href='@Url.Action("Index", "Proyectos")';
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error al iniciar sesión",
+						text: result.mensaje,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        // Saul Gonzalez: 19/10/2020: Se recarga la pagina despues de cerra el swalFire
+                        if (result.isConfirmed) {
+							//$('#btnLogin').show();
+       //                     $('#gif2').hide();
+                        }
+                    })
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+	}
+
+</script>
+
+
+<style>
+    body {
+        background-image: url('/img/FondoLogin.gif');
+        background-position: center;
+        background-size: cover;
+        -webkit-font-smoothing: antialiased;
+        /*  font: normal 14px Roboto,arial,sans-serif;*/
+        /*     font-family: 'Dancing Script', cursive !important;*/
+    }
+
+    .container {
+        padding: 110px;
+    }
+
+    ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: #ffffff !important;
+        opacity: 1; /* Firefox */
+        font-size: 18px !important;
+    }
+
+    .form-login {
+        background-color: rgba(0,0,0,0.55);
+        padding-top: 10px;
+        padding-bottom: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        border-radius: 15px;
+        border-color: #d2d2d2;
+        border-width: 5px;
+        color: white;
+        box-shadow: 0 1px 0 #cfcfcf;
+    }
+
+    .form-control {
+        background: transparent !important;
+        color: white !important;
+        font-size: 16px !important;
+    }
+
+    h1 {
+        color: white !important;
+    }
+
+    h4 {
+        border: 0 solid #fff;
+        border-bottom-width: 1px;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+
+    .form-control {
+        border-radius: 10px;
+    }
+
+    .text-white {
+        color: white !important;
+    }
+
+    .wrapper {
+        text-align: center;
+    }
+
+    .footer p {
+        font-size: 18px;
+    }
+
+    .container {
+        height: 100%;
+        align-content: center;
+    }
+
+    .card {
+        height: 370px;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 400px;
+        background-color: rgba(0,0,0,0.5) !important;
+    }
+
+    .social_icon span {
+        font-size: 60px;
+        margin-left: 10px;
+        color: #FFC312;
+    }
+
+        .social_icon span:hover {
+            color: white;
+            cursor: pointer;
+        }
+
+    .card-header h3 {
+        color: white;
+    }
+
+    .social_icon {
+        position: absolute;
+        right: 20px;
+        top: -45px;
+    }
+
+    .input-group-prepend span {
+        width: 50px;
+        background-color: transparent;
+        color: #ffc107;
+        border: 0 !important;
+    }
+
+    input:focus {
+        outline: 0 0 0 0 !important;
+        box-shadow: 0 0 0 0 !important;
+    }
+
+    .remember {
+        color: white;
+    }
+
+        .remember input {
+            width: 20px;
+            height: 20px;
+            margin-left: 15px;
+            margin-right: 5px;
+        }
+
+    .login_btn {
+        color: black;
+        background-color: #FFC312;
+
+    }
+
+        .login_btn:hover {
+            color: black;
+            background-color: white;
+        }
+
+    .links {
+        color: white;
+    }
+
+        .links a {
+            margin-left: 4px;
+        }
+</style>
+
+

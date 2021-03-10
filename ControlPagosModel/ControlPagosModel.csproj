@@ -72,6 +72,9 @@
     <Compile Include="Tb_Proyectos.cs">
       <DependentUpon>ControlGastosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Tb_Usuario.cs">
+      <DependentUpon>ControlGastosModel.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="ControlGastosModel.edmx">
