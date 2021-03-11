@@ -2,6 +2,7 @@
 using ControlPagosModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -14,6 +15,29 @@ namespace ControlDePagos.Controllers
         // GET: Proyectos
         public ActionResult Index()
         {
+            try
+            {
+                //Saul Gonzalez 22/10/2020: Validamos si la sesion sigue activa de no ser asi no se dejara realizar ninguna acccion
+                var Usuario = Session["Usuario"].ToString();                            
+                string[] Nombre = Usuario.Split(' ');
+                if (Nombre.Length > 1)
+                {
+                    ViewBag.Usuario = Nombre[0] + " " + Nombre[1];
+                }
+                else
+                {
+                    ViewBag.Usuario = Nombre[0];
+                }
+                if (String.IsNullOrEmpty(Session["Usuario"].ToString()))
+                {
+                    return RedirectToAction("Index", "Login");
+                }              
+            }
+            catch (Exception)
+            {
+
+                return RedirectToAction("Index", "Login");
+            }
             return View();
         }
 
@@ -42,7 +66,60 @@ namespace ControlDePagos.Controllers
             {
                 return Json(new { status = false, mensaje = error.Message });
             }
+            //Lista = Lista.OrderByDescending(x => x.FechaInicio).Reverse().ToList();
             return Json(Lista, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult RegistrarProyecto(string NoProyecto, string MontoInicial, string Moneda, string Descripcion)
+        {
+            Tb_Proyectos Proyecto = new Tb_Proyectos();
+            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            try
+            {
+                //Saul González 11/03/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(NoProyecto))
+                {
+                    return Json(new { status = false, mensaje = "Debe indicar el número de proyecto o cuenta." });
+                }
+                if (String.IsNullOrEmpty(MontoInicial))
+                {
+                    return Json(new { status = false, mensaje = "El monto inicial no puede estar vacío." });
+                }
+                if (Convert.ToDecimal(MontoInicial, Culture) < 1)
+                {
+                    return Json(new { status = false, mensaje = "El monto inicial debe ser mayor a 0." });
+                }
+                if (String.IsNullOrEmpty(Moneda))
+                {
+                    return Json(new { status = false, mensaje = "Debe establecer una moneda para el proyecto." });
+                }
+              
+                if (String.IsNullOrEmpty(Descripcion))
+                {
+                    return Json(new { status = false, mensaje = "El campo descripción es obligatorio." });
+                }
+                //Saul Gonzalez 11/03/2021: Consultamos si el #Proyecto que se esta intentando registrar ya existe.
+                Tb_Proyectos ValidarProyecto = db.Tb_Proyectos.Where(y => y.Num_Proyecto_Cuenta.Equals(NoProyecto)).FirstOrDefault();
+                if (ValidarProyecto != null)
+                {
+                    return Json(new { status = false, mensaje = "El número de proyecto o cuenta que ingreso ya existe." });
+                }
+                //Saul gonzalez 11/03/2021: Asignamos valores al objeto              
+                Proyecto.Num_Proyecto_Cuenta = NoProyecto;
+                Proyecto.FechaInicio = DateTime.Now;
+                Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial, Culture);
+                Proyecto.Moneda = Moneda;
+                Proyecto.MontoFinal = 0;
+                Proyecto.Retorno = 0;
+                Proyecto.Descripcion = Descripcion;
+                //Saul gonzalez 11/03/2021: Guardamos los datos
+                db.Tb_Proyectos.Add(Proyecto);
+                db.SaveChanges();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Datos guardados" });
         }
     }
 }

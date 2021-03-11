@@ -4,16 +4,20 @@
 }
 <head>
     <title>Proyectos</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/xlsx@latest/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
 </head>
 <form class="form-inline">
 
-    <div class="form-group mx-sm-3 mb-2">
-        <button type="submit" class="btn btn-info mb-2"><i class="fas fa-sync-alt"></i> Actualizar</button>
+    <div class="form-group mx-sm-3 mt-3">
+        <button type="submit" class="btn btn-info"><i class="fas fa-sync-alt"></i> Actualizar</button>
     </div>
-    <div class="form-group mx-sm-3 mb-2">
-        <button type="submit" class="btn btn-success mb-2"> <i class="fas fa-plus-square"></i> Nuevo proyecto</button>
+    <div class="form-group mt-3">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal"> <i class="fas fa-plus-square"></i> Nuevo proyecto</button>
     </div>
 
 </form>
@@ -24,7 +28,7 @@
                 <thead>
                     <tr>
                         <th scope="col"># PROYECTO</th>
-                        <th scope="col">Fecha Inicio</th>                 
+                        <th scope="col">Fecha Inicio</th>
                         <th scope="col">Descripción</th>
                         <th scope="col">Acciones</th>
                     </tr>
@@ -37,11 +41,67 @@
     </div>
 </div>
 
+
+@*MODAL REGISTRAR PROYECTO*@
+<div class="container">
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fas fa-drafting-compass"></i> <label id="TituloModal"> Registrar proyecto</label></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form id="formulario">
+                        <div class="form-group row">
+                            <label for="NoProyecto" class="col-sm-2 col-form-label">No. Proyecto</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="NoProyecto" placeholder="# Proyecto / Cuenta" required autocomplete="off">
+                            </div>
+                            <label for="MontoInicial" class="col-sm-2 col-form-label">Monto Inicial</label>
+                            <div class="col-sm-5">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input id="MontoInicial" type="text" onkeyup="this.value=Numeros(this.value)" class="form-control" autocomplete="off" placeholder="0.00">
+                                    <div class="input-group-append">
+                                        <select class="input-group-text" id="Moneda" style="background-color:white;">
+                                            <option value="MXN">MXN</option>
+                                            <option value="USD">USD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                      
+                        <div class="form-group row">
+                            <label for="Notas" class="col-sm-2 col-form-label">Descripción</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control col-sm-12" id="Descripcion" rows="3" placeholder="Agregue una descripción para el proyecto." autocomplete="off"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer" id="footerEditar">
+                    <button type="button" id="btnRegistrar" class="btn btn-success" onclick="RegistrarProyecto()"><i class="fas fa-save"></i> Registrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     var table = $('#myTable').DataTable({
         //Saul Gonzalez 22/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
         "dom": '<"toolbar">frtip',
-        "order": [[0, "asc"]],
+        //"order": [[0, "asc"]],
         //Saul Gonzalez 22/10/2020: Se define el lenguaje para la tabla
         language: {
             "decimal": "",
@@ -63,7 +123,7 @@
                 "previous": "Anterior"
             }
         },
-    });  
+    });
     $(document).ready(function () {
         //Saul Gonzalez 13/10/2020: Esta funcion realiza una consulta en la BD de la lista de proveedores
         $.ajax({
@@ -73,11 +133,11 @@
             success: function (data) {
                 //Saul Gonzalez 14/10/2020: Hacemos un foreach para llenar la informacion de la tabla
                 $.each(data, function (i, obj) {
-                    //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones 
+                    //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
                     var btnAcciones = `
                           <button type="button" class="btn btn-success btn-sm" onclick="EditarProyecto(${obj.Id})" title="Editar"><i class="fas fa-edit"></i></button>
                            <button type="button" class="btn btn-danger btn-sm" onclick="Eliminar(${obj.Id},'${obj.Id}')" title="Eliminar"><i class="far fa-trash-alt"></i></button>`;
-                 
+
                     //Saul Gonzalez 14/10/2020: Agregamos los datos del proveedor a la tabla
                     table.row.add([obj.Num_Proyecto_Cuenta, obj.FechaInicio, obj.Descripcion, btnAcciones])
                         .draw()
@@ -92,7 +152,70 @@
             }
         });
 
+    });
+
+    function Numeros(string) {//Solo numeros
+        var out = '';
+        var filtro = '1234567890.';//Caracteres validos
+
+        //Recorrer el texto y verificar si el caracter se encuentra en la lista de validos 
+        for (var i = 0; i < string.length; i++)
+            if (filtro.indexOf(string.charAt(i)) != -1)
+                //Se añaden a la salida los caracteres validos
+                out += string.charAt(i);
+
+        //Retornar valor filtrado
+        return out;
+    } 
+    function RegistrarProyecto() {
+        //Saul Gonzalez 22/10/2020: Declaramos los parametros que se van a guardar
+        var NoProyecto = $("#NoProyecto").val();
+        var MontoInicial = $("#MontoInicial").val();
+        var Moneda = $("#Moneda").val();
+        var Descripcion = $("#Descripcion").val();
+        var Params = {
+            "NoProyecto": NoProyecto, "MontoInicial": MontoInicial, "Moneda": Moneda, "Descripcion": Descripcion
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Proyectos/RegistrarProyecto',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#myModal').modal('hide');
+                    // Saul Gonzalez: 22/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Datos guardados',
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            alert("Aqui hay que redireccionar a la pagina de pagos");
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
         });
+    }
 
 
 </script>

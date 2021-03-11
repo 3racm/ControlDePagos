@@ -14,7 +14,7 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color:#41ad45fc !important">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand text-white" href="#">Control de gastos <i class="fas fa-hand-holding-usd"></i></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -29,10 +29,10 @@
                 </li>
                 <li class="nav-item ml-1">
                     <a class="nav-link text-white" href="#"><i class="fas fa-file-invoice-dollar"></i> <b>Requisiciones</b></a>
-                </li>        
-                <li class="nav-item dropdown ml-5">
+                </li>
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i><b> Zaul Gonzalez</b>
+                        <i class="fas fa-user"></i><b> @ViewBag.Usuario</b>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i> Mi perfil</a>
@@ -40,14 +40,14 @@
                         <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
                     </div>
                 </li>
-            </ul>          
+            </ul>
         </div>
     </nav>
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year - 3R EN ASESORÍA DE CONTROL Y MANTENIMIENTO S.A. DE C.V.</p>
         </footer>
     </div>
 
@@ -61,8 +61,26 @@
             padding-bottom: 0px;
         }
 
-       
+        input[type="search"] {
+            width: 170px !important;
+            /* margin: 10px !important;*/
+            border-radius: 32px !important;
+            outline: none !important;
+            border: 2px solid #ccd1d1 !important;
+            background: #e9ecef !important;
+            transition: all 0.5s !important;
+        }
 
+            input[type="search"]:focus {
+                background: #fff !important;
+                width: 260px !important;
+            }
+        .navbar {
+            background: -webkit-linear-gradient(-2deg, #bd2130, #3e3434);
+            background: -o-linear-gradient(-2deg, #bd2130, #3e3434);
+            background: -moz-linear-gradient(-2deg, #bd2130, #3e3434);
+            background: linear-gradient(-2deg, #21bd83, #3e3434);
+        }
     </style>
 </body>
 </html>
