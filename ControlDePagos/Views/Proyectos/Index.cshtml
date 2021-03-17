@@ -78,7 +78,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>                      
+                        </div>
                         <div class="form-group row">
                             <label for="Notas" class="col-sm-2 col-form-label">Descripción</label>
                             <div class="col-sm-10">
@@ -158,7 +158,7 @@
         var out = '';
         var filtro = '1234567890.';//Caracteres validos
 
-        //Recorrer el texto y verificar si el caracter se encuentra en la lista de validos 
+        //Recorrer el texto y verificar si el caracter se encuentra en la lista de validos
         for (var i = 0; i < string.length; i++)
             if (filtro.indexOf(string.charAt(i)) != -1)
                 //Se añaden a la salida los caracteres validos
@@ -166,7 +166,7 @@
 
         //Retornar valor filtrado
         return out;
-    } 
+    }
     function RegistrarProyecto() {
         //Saul Gonzalez 22/10/2020: Declaramos los parametros que se van a guardar
         var NoProyecto = $("#NoProyecto").val();
@@ -193,10 +193,12 @@
                         title: 'Datos guardados',
                         showConfirmButton: true,
                         allowOutsideClick: false
-                    }).then((result) => {
+                    }).then((resultConfirmed) => {
                         /* Read more about isConfirmed, isDenied below */
-                        if (result.isConfirmed) {
-                            alert("Aqui hay que redireccionar a la pagina de pagos");
+                        if (resultConfirmed.isConfirmed) {
+                            var URL = '@Url.Action("CargarPagina", "Pagos", new { IdProyecto = "parametro" })';
+                            var newURL = URL.replace("parametro", result.Id)
+                             window.location.href = newURL;
                         }
                     })
                 }
@@ -215,6 +217,13 @@
                 alert("Error has occurred...");
             }
         });
+    }
+
+
+    function EditarProyecto(IdProyecto) {
+         var URL = '@Url.Action("CargarPagina", "Pagos", new { IdProyecto = "parametro" })';
+        var newURL = URL.replace("parametro", IdProyecto)
+          window.location.href = newURL;
     }
 
 

@@ -119,7 +119,7 @@ namespace ControlDePagos.Controllers
             {
                 return Json(new { status = false, mensaje = error.Message });
             }
-            return Json(new { status = true, mensaje = "Datos guardados" });
+            return Json(new { status = true, mensaje = "Datos guardados", Id = Proyecto.Id });
         }
     }
 }

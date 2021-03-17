@@ -1,0 +1,422 @@
+﻿
+@{
+    ViewBag.Title = "Pagos";
+}
+<head>
+    <title>Registro de pagos</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+</head>
+<a id="Documento" hidden>Descargar excel attr</a>
+<input id="IdProyecto" type="number" hidden />
+<h1 style="text-align:center" class="mt-3 mb-4"><i class="fas fa-pencil-ruler"></i> <label id="NumCuenta"> </label> </h1>
+<div class="alert alert-warning" role="alert">
+    <i class="fas fa-info-circle"></i> Los datos del proyecto como la <b>fecha de inicio, monto inicial y descripción, </b> no se pueden modificar asegúrese que los datos sean correctos antes de empezar a registrar pagos.
+</div>
+<form id="formulario">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="FechaInicio"><i class="fas fa-calendar-alt"></i> Fecha de inicio</label>
+            <input type="text" class="form-control" id="FechaInicio" placeholder="Buscar por ID" autocomplete="off">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="MontoI"><i class="fas fa-coins"></i> Monto inicial <a id="MonedaProyecto" class="font-weight-bold" style="color:#4caf50"></a></label>
+            <input type="text" class="form-control" id="MontoI" placeholder="Buscar por modelo">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="MontoF"> <i class="fas fa-coins"></i> Monto final <a id="MonedaProyectoF" class="font-weight-bold" style="color:#4caf50"></a></label>
+            <input type="text" class="form-control" id="MontoF" placeholder="Buscar por descripción">
+        </div>
+        <div class="form-group col-md-3 div-imagen">
+            <label for="RetornoTotal"><i class="fas fa-undo-alt"></i> Retorno</label>
+            <input type="text" class="form-control" id="RetornoTotal" placeholder="Buscar por numero de proyecto">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="Descripcion"><i class="far fa-comment-alt"></i> Descripción</label>
+            <textarea class="form-control col-sm-12" id="Descripcion" rows="2" placeholder="Descripción del proyecto." autocomplete="off"></textarea>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <h1 style="text-align:center"><i class="fas fa-file-invoice-dollar"></i> Registro de pagos</h1>
+        <button type="button" class="btn btn-success btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-plus-square"></i> Registrar pago</button>
+
+    </div>
+    <table class="table" id="tablaEditada">
+        <thead>
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Monto pagado</th>
+                <th scope="col">Referencia</th>
+                <th scope="col">Modo de pago</th>
+                <th scope="col">Retorno</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="CuerpoPagos">
+        </tbody>
+    </table>
+</form>
+
+@*MODAL DE REGISTRO PAGOS*@
+<!-- Modal -->
+<div class="modal fade" id="ModalPagos" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-file-invoice-dollar"></i> Registrar pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="MontoP" class="col-sm-1 col-form-label">Monto</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" id="MontoP" placeholder="$0.00" autocomplete="off">
+                    </div>
+                    <label for="REF" class="col-sm-2 col-form-label">Referencia</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="REF" placeholder="# Referencia" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="tipoPago" class="col-sm-1 col-form-label">Pago</label>
+                    <div class="col-sm-4">
+                        <select class="form-control fas" style="font-size:14px;" id="tipoPago">
+                            <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
+                            <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
+                            <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
+                        </select>
+                    </div>
+                    <label for="Retorno" class="col-sm-2 col-form-label">Retorno</label>
+                    <div class="col-sm-5">
+                        <input type="number" class="form-control" id="Retorno" placeholder="0.00" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="RegistrarPago()"><i class="fas fa-save"></i> Registrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script lang="en" type="text/javascript">
+
+    //--------Eventos o funciones que se ejecutan al cargar la pagina------------//
+    $(document).ready(function () {
+        const valores = window.location.search;
+        //Creamos la instancia de la URL
+        const urlParams = new URLSearchParams(valores);
+
+        //Accedemos a los valores de la URL
+        var IdProyecto = urlParams.get('IdProyecto');
+        var Params = {
+            "IdProyecto": IdProyecto,
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Pagos/CargarDatosProyecto',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    //Llenamos los datos del proyecto                    
+                    $("#IdProyecto").val(result.DatosProyecto.Id);
+                    $("#NumCuenta").text(result.DatosProyecto.Num_Proyecto_Cuenta);
+                    $("#NumCuenta").prop('disabled', true);
+                    $("#FechaInicio").val(result.DatosProyecto.FechaInicio);
+                    $("#FechaInicio").prop('disabled', true);
+                    $("#MontoI").val("$"+result.DatosProyecto.MontoInicial);
+                    $("#MontoI").prop('disabled', true);
+                    $("#MonedaProyecto").text("("+result.DatosProyecto.Moneda +")");
+                    $("#MonedaProyectoF").text("(" + result.DatosProyecto.Moneda + ")");
+                    $("#MontoF").val("$" +result.DatosProyecto.MontoFinal);
+                    $("#MontoF").prop('disabled', true);
+                    $("#RetornoTotal").val("$" +result.DatosProyecto.Retorno);
+                    $("#RetornoTotal").prop('disabled', true);
+                    $("#Descripcion").val(result.DatosProyecto.Descripcion);
+                    $("#Descripcion").prop('disabled', true);
+
+                    //Despues se llenan los pagos que pertenecen al proyecto si es que tuviera
+                    if (result.ListaPagos.length > 0) {
+                        $.each(result.ListaPagos, function (i, obj) {
+                            //Creamos la fila con sus respectivos datos
+                            Fila = `
+                             <tr>
+                                <th>${obj.FechaPago}</th>
+                                <td>${obj.Monto.toFixed(2)}</td>
+                                <td>${obj.Referencia}</td>
+                                <td>${obj.TipoPago}</td>
+                                <td>${obj.Retorno.toFixed(2)}</td>
+                                <td>
+                                <button type="button" class="btn btn-info btn-sm" title="Editar" onclick="EditarPago(${obj.Id})"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" onclick="EliminarPago(${obj.Id})"><i class="far fa-trash-alt"></i></button>
+                                </td>
+                             </tr>`;
+
+
+                            //Una vez creada la fila la insertamos en la tabla
+                            $("#CuerpoPagos").append(Fila);
+                        });
+                    }
+                    else {
+                        Fila = `
+                             <tr>
+                             <th colspan="6" class="text-center" style="color:#545252">Aun no se han registrado pagos para este proyecto.</th>
+                             </tr>`;
+                        //Una vez creada la fila la insertamos en la tabla
+                        $("#CuerpoPagos").append(Fila);
+                    }
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+        $("#GenerarExcel").click(function () {
+            //Validar Rango de fechas
+            var FechaInicial = $("#FechaI").val();
+            var FechaFinal = $("#FechaF").val();
+            var Entradas = $('#Entradas').prop('checked');
+            var Consumibles = $('#Consumibles').prop('checked');
+            var Salidas = $('#Salidas').prop('checked');
+            //Datos opcionales
+            var IdProducto = $("#IdProducto").val();
+            var Modelo = $("#Modelo").val();
+            var Descripcion = $("#Descripción").val();
+            var NoProyecto = $("#Proyecto").val();
+            var Exportar = true;
+
+            var Params = {
+                "FechaInicial": FechaInicial, "FechaFinal": FechaFinal, "Entradas": Entradas, "Consumibles": Consumibles, "Salidas": Salidas, IdProducto: IdProducto,
+                "Modelo": Modelo, "NotDescripcionas": Descripcion, "Descripcion": Descripcion, "NoProyecto": NoProyecto, "Exportar": Exportar
+            };
+
+            Swal.fire({
+                title: 'Exportando su reporte a Excel',
+                html: ' <img src="https://1.bp.blogspot.com/-zvqYSiR52Ys/XXV4xThSRCI/AAAAAAAAATU/12K2r5Pz0UEMFeI3dj6vn-rxGq2kX0B8ACLcBGAs/s1600/giphy%2BEXCEL2GIF.gif" style="width:200px" alt="Generando">',
+                timer: 4500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                allowOutsideClick: false
+
+            });
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                async: false,
+                cache: false,
+                url: '/Reportes/GenerarReporte',
+                context: document.body,
+                data: Params,
+                success: function (result) {
+                    //Asignamos  a la propiedad href la direccion y nombre del archivo
+                    $('#Documento').attr('href', "/Plantillas/" + result.NombreDeArchivo);
+                    $('#Documento').attr('download', result.NombreDeArchivo);
+                    setTimeout(function () {
+                        swal.close();
+                        //Simulamos un click en la etiqueta para comnezar la descarga del archivo
+                        document.getElementById("Documento").click();
+
+                        //Despues de descargar el archivo lo eliminamos del servidor
+                        EliminarDocumento(result.NombreDeArchivo);
+                    }, 4500);
+
+
+                }
+            });
+        });
+
+        $("#GeneralExcelFiltro").click(function () {
+            //Validar Rango de fechas
+            var FechaInicial = $("#FechaI").val();
+            var FechaFinal = $("#FechaF").val();
+            var Entradas = $('#Entradas').prop('checked');
+            var Consumibles = $('#Consumibles').prop('checked');
+            var Salidas = $('#Salidas').prop('checked');
+            //Datos opcionales
+            var IdProducto = $("#IdProducto").val();
+            var Modelo = $("#Modelo").val();
+            var Descripcion = $("#Descripción").val();
+            var NoProyecto = $("#Proyecto").val();
+            var Exportar = true;
+
+            var Params = {
+                "FechaInicial": FechaInicial, "FechaFinal": FechaFinal, "Entradas": Entradas, "Consumibles": Consumibles, "Salidas": Salidas, IdProducto: IdProducto,
+                "Modelo": Modelo, "NotDescripcionas": Descripcion, "Descripcion": Descripcion, "NoProyecto": NoProyecto, "Exportar": Exportar
+            };
+
+            Swal.fire({
+                title: 'Exportando su reporte a Excel',
+                html: ' <img src="https://1.bp.blogspot.com/-zvqYSiR52Ys/XXV4xThSRCI/AAAAAAAAATU/12K2r5Pz0UEMFeI3dj6vn-rxGq2kX0B8ACLcBGAs/s1600/giphy%2BEXCEL2GIF.gif" style="width:200px" alt="Generando">',
+                timer: 4500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                allowOutsideClick: false
+
+            });
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                async: false,
+                cache: false,
+                url: '/Reportes/GenerarReporte',
+                context: document.body,
+                data: Params,
+                success: function (result) {
+                    //Asignamos  a la propiedad href la direccion y nombre del archivo
+                    $('#Documento').attr('href', "/Plantillas/" + result.NombreDeArchivo);
+                    $('#Documento').attr('download', result.NombreDeArchivo);
+                    setTimeout(function () {
+                        swal.close();
+                        //Simulamos un click en la etiqueta para comnezar la descarga del archivo
+                        document.getElementById("Documento").click();
+
+                        //Despues de descargar el archivo lo eliminamos del servidor
+                        EliminarDocumento(result.NombreDeArchivo);
+                    }, 4500);
+
+
+                }
+            });
+
+        });
+
+        //Funcion que elimina el documento del reporte creado temporalmente
+        function EliminarDocumento(NombreDeArchivo) {
+            $.ajax({
+                url: "/Catalogo/EliminarDocumento",
+                type: "POST",
+                data: { NombreDeArchivo: NombreDeArchivo },
+                success: function (result) {
+                    console.log("Se elimino un archivo temporal");
+                }
+            });
+        }
+    });
+    function RegistrarPago() {
+        //Saul Gonzalez 17/03/2021: Declaramos los parametros que se van a guardar
+        var IdProyecto = $("#IdProyecto").val();
+        var Monto = $("#MontoP").val();
+        var REF = $("#REF").val();
+        var TipoPago = $("#tipoPago").val();
+        var Retorno = $("#Retorno").val();
+        var Params = {
+            "IdProyecto": IdProyecto, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Pagos/RegistrarPago',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#ModalPagos').modal('hide');
+                    // Saul Gonzalez: 17/03/2021: Se muestra un sweetAlert confirmando que los datos se guardaron
+                    Swal.fire({
+                        icon: 'success',
+                        title: result.mensaje,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((resultConfirmed) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (resultConfirmed.isConfirmed) {
+                            location.reload();
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+  
+</script>
+
+<style>
+    .center {
+        position: relative;
+        left: 25%;
+        padding: 10px;
+    }
+
+    .centerchecks {
+        position: relative;
+        left: 20%;
+        padding: 10px;
+    }
+
+    .circular {
+        border-radius: 8px;
+    }
+
+    .desvanecer:hover {
+        opacity: 0.8;
+        color: #007bff;
+        -webkit-transition: opacity 700ms;
+        -moz-transition: opacity 700ms;
+        -o-transition: opacity 700ms;
+        -ms-transition: opacity 700ms;
+        transition: opacity 700ms;
+    }
+
+    .div-imagen {
+        display: inline-block;
+        position: relative;
+    }
+
+        .div-imagen > div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            padding: 10px;
+            margin: 0;
+        }
+
+    body {
+        overflow-x: hidden !important;
+    }
+
+    #CuerpoSalidas td {
+        text-align: center !important;
+        font-size: 15px;
+    }
+</style>
+
