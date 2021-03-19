@@ -50,6 +50,10 @@ namespace ControlDePagos.Controllers
         {
             cProyectos DatosProyecto = new cProyectos();
             List<cPagos> ListaPagos = new List<cPagos>();
+            //Variables que calculan el subtotal, totalRetorno y MontoFinal
+            decimal Subtotal = 0;
+            decimal ? TotalRetorno = 0;
+            decimal ? MontoFinal = 0;
             try
             {
                 //Saul González 12/03/2021: Validaciones de campos nulos
@@ -96,8 +100,12 @@ namespace ControlDePagos.Controllers
                         o.RegistradoPor = Pago.RegistradoPor;
                         ListaPagos.Add(o);
                     }
+                 
 
-                }              
+                }
+                Subtotal = ListaPagos.Sum(x => x.Monto);
+                TotalRetorno = ListaPagos.Sum(x => x.Retorno);
+                MontoFinal = Subtotal - TotalRetorno;
                 #endregion
 
             }
@@ -106,7 +114,7 @@ namespace ControlDePagos.Controllers
                 return Json(new { status = false, mensaje = error.Message });
             }
             //Lista = Lista.OrderByDescending(x => x.FechaInicio).Reverse().ToList();
-            return Json(new { status = true, DatosProyecto = DatosProyecto, ListaPagos = ListaPagos });
+            return Json(new { status = true, DatosProyecto = DatosProyecto, ListaPagos = ListaPagos, Subtotal = Subtotal, TotalRetorno = TotalRetorno, MontoFinal= MontoFinal });
         }   
         public JsonResult RegistrarPago(string IdProyecto, string Monto, string REF, string TipoPago, string Retorno = "")
         {
@@ -133,7 +141,6 @@ namespace ControlDePagos.Controllers
                 {
                     return Json(new { status = false, mensaje = "Debe seleccionar un tipo de pago." });
                 }
-
                 //Saul Gonzalez 17/02/2021: Guardamos los datos del pago                    
                 Pago.FechaPago = DateTime.Now;
                 Pago.Monto = Convert.ToDecimal(Monto, Culture);

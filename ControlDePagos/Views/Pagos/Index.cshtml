@@ -22,16 +22,21 @@
         </div>
         <div class="form-group col-md-3">
             <label for="MontoI"><i class="fas fa-coins"></i> Monto inicial <a id="MonedaProyecto" class="font-weight-bold" style="color:#4caf50"></a></label>
-            <input type="text" class="form-control" id="MontoI" placeholder="Buscar por modelo">
+            <input type="text" class="form-control font-weight-bold" id="MontoI" placeholder="Buscar por modelo">
         </div>
-        <div class="form-group col-md-3">
-            <label for="MontoF"> <i class="fas fa-coins"></i> Monto final <a id="MonedaProyectoF" class="font-weight-bold" style="color:#4caf50"></a></label>
-            <input type="text" class="form-control" id="MontoF" placeholder="Buscar por descripción">
+        <div class="form-group col-md-2">
+            <label for="Subtotal"> <i class="fas fa-coins"></i> Subtotal <a id="MonedaProyectoSub" class="font-weight-bold" style="color:#4caf50"></a></label>
+            <input type="text" class="form-control" id="Subtotal" placeholder="Subtotal">
         </div>
-        <div class="form-group col-md-3 div-imagen">
+        <div class="form-group col-md-2 div-imagen">
             <label for="RetornoTotal"><i class="fas fa-undo-alt"></i> Retorno</label>
             <input type="text" class="form-control" id="RetornoTotal" placeholder="Buscar por numero de proyecto">
         </div>
+        <div class="form-group col-md-2">
+            <label for="MontoF"> <i class="fas fa-coins"></i> Monto final <a id="MonedaProyectoF" class="font-weight-bold" style="color:#4caf50"></a></label>
+            <input type="text" class="form-control font-weight-bold" id="MontoF" placeholder="Buscar por descripción">
+        </div>
+
     </div>
 
     <div class="form-row">
@@ -138,17 +143,23 @@
                     $("#NumCuenta").prop('disabled', true);
                     $("#FechaInicio").val(result.DatosProyecto.FechaInicio);
                     $("#FechaInicio").prop('disabled', true);
-                    $("#MontoI").val("$"+result.DatosProyecto.MontoInicial);
+                    $("#MontoI").val("$" + result.DatosProyecto.MontoInicial.toFixed(2));
                     $("#MontoI").prop('disabled', true);
                     $("#MonedaProyecto").text("("+result.DatosProyecto.Moneda +")");
+                    $("#MonedaProyectoSub").text("(" + result.DatosProyecto.Moneda + ")");
+                    $("#Subtotal").prop('disabled', true);
                     $("#MonedaProyectoF").text("(" + result.DatosProyecto.Moneda + ")");
                     $("#MontoF").val("$" +result.DatosProyecto.MontoFinal);
                     $("#MontoF").prop('disabled', true);
                     $("#RetornoTotal").val("$" +result.DatosProyecto.Retorno);
                     $("#RetornoTotal").prop('disabled', true);
                     $("#Descripcion").val(result.DatosProyecto.Descripcion);
-                    $("#Descripcion").prop('disabled', true);
+                    $("#Descripcion").prop('disabled', true);   
 
+                    //19/03/2021:Seteamos los valores del Subtotal, Retorno y Monto Final
+                    $("#Subtotal").val("$" + result.Subtotal.toFixed(2));
+                    $("#RetornoTotal").val("$" + result.TotalRetorno.toFixed(2));
+                    $("#MontoF").val("$" + result.MontoFinal.toFixed(2));
                     //Despues se llenan los pagos que pertenecen al proyecto si es que tuviera
                     if (result.ListaPagos.length > 0) {
                         $.each(result.ListaPagos, function (i, obj) {
