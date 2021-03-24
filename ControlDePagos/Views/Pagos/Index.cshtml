@@ -10,9 +10,18 @@
 </head>
 <a id="Documento" hidden>Descargar excel attr</a>
 <input id="IdProyecto" type="number" hidden />
+@*<button type="button" class="btn btn-primary btn-sm mt-2" title="Retroceder una pagina"><a href="@Url.Action("Index", "Proyectos")" class="text-white" style="text-decoration:none"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a></button>*@
+@*Boton de cerrar el proyecto*@
+<div class="form-row float-right">
+    <div>
+        <button type="button" class="btn btn-danger btn-sm mt-2" title="Marcar el proyecto como cerrado" onclick="CerrarProyecto()"><i class="fas fa-lock"></i> Cerrar el proyecto</button>
+    </div>
+</div>
+<br>
 <h1 style="text-align:center" class="mt-3 mb-4"><i class="fas fa-pencil-ruler"></i> <label id="NumCuenta"> </label> </h1>
+
 <div class="alert alert-warning" role="alert">
-    <i class="fas fa-info-circle"></i> Los datos del proyecto como la <b>fecha de inicio, monto inicial y descripción, </b> no se pueden modificar asegúrese que los datos sean correctos antes de empezar a registrar pagos.
+    <i class="fas fa-info-circle"></i> Los datos del proyecto como la <b>fecha de inicio, monto final y descripción, </b> no se pueden modificar asegúrese que los datos sean correctos antes de empezar a registrar pagos.
 </div>
 <form id="formulario">
     <div class="form-row">
@@ -22,7 +31,15 @@
         </div>
         <div class="form-group col-md-3">
             <label for="MontoI"><i class="fas fa-coins"></i> Monto inicial <a id="MonedaProyecto" class="font-weight-bold" style="color:#4caf50"></a></label>
-            <input type="text" class="form-control font-weight-bold" id="MontoI" placeholder="Buscar por modelo">
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                </div>
+                <input type="text" class="form-control font-weight-bold" id="MontoI" placeholder="$0.00">
+                <div class="input-group-append">
+                    <span class="input-group-text"><a id="TextoMontoI" onclick="ModificarMontoI()" href="#">Modificar</a></span>
+                </div>
+            </div>
         </div>
         <div class="form-group col-md-2">
             <label for="Subtotal"> <i class="fas fa-coins"></i> Subtotal <a id="MonedaProyectoSub" class="font-weight-bold" style="color:#4caf50"></a></label>
@@ -48,6 +65,7 @@
     </div>
     <div class="form-group">
         <h1 style="text-align:center"><i class="fas fa-file-invoice-dollar"></i> Registro de pagos</h1>
+        <button type="button" class="btn btn-dark btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-filter"></i> Filtros</button>
         <button type="button" class="btn btn-success btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-plus-square"></i> Registrar pago</button>
 
     </div>
@@ -59,6 +77,7 @@
                 <th scope="col">Referencia</th>
                 <th scope="col">Modo de pago</th>
                 <th scope="col">Retorno</th>
+                <th scope="col" class="THNota">Notas</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
@@ -73,48 +92,83 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-file-invoice-dollar"></i> Registrar pago</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-file-invoice-dollar"></i> <label id="TituloModal">Registrar pago</label></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group row">
-                    <label for="MontoP" class="col-sm-1 col-form-label">Monto</label>
-                    <div class="col-sm-4">
-                        <input type="number" class="form-control" id="MontoP" placeholder="$0.00" autocomplete="off">
+                <form id="FormularioPagos">
+                    <input type="number" id="IDPAGO" hidden />
+                    <div class="form-group row">
+                        <label for="MontoP" class="col-sm-1 col-form-label">Monto</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="MontoP" placeholder="$0.00" autocomplete="off" onkeyup="this.value=Numeros(this.value)">
+                        </div>
+                        <label for="REF" class="col-sm-2 col-form-label">Referencia</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="REF" placeholder="# Referencia" autocomplete="off">
+                        </div>
                     </div>
-                    <label for="REF" class="col-sm-2 col-form-label">Referencia</label>
-                    <div class="col-sm-5">
-                        <input type="text" class="form-control" id="REF" placeholder="# Referencia" autocomplete="off">
-                    </div>
-                </div>
 
-                <div class="form-group row">
-                    <label for="tipoPago" class="col-sm-1 col-form-label">Pago</label>
-                    <div class="col-sm-4">
-                        <select class="form-control fas" style="font-size:14px;" id="tipoPago">
-                            <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
-                            <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
-                            <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
-                        </select>
+                    <div class="form-group row">
+                        <label for="tipoPago" class="col-sm-1 col-form-label">Pago</label>
+                        <div class="col-sm-4">
+                            <select class="form-control fas" style="font-size:14px;" id="tipoPago">
+                                <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
+                                <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
+                                <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
+                            </select>
+                        </div>
+                        <label for="Retorno" id="LabelRetorno" class="col-sm-2 col-form-label">Retorno</label>
+                        <div class="col-sm-5" id="CajaRetorno">
+                            <input type="text" class="form-control" id="Retorno" placeholder="0.00" autocomplete="off" onkeyup="this.value=Numeros(this.value)">
+                        </div>
                     </div>
-                    <label for="Retorno" class="col-sm-2 col-form-label">Retorno</label>
-                    <div class="col-sm-5">
-                        <input type="number" class="form-control" id="Retorno" placeholder="0.00" autocomplete="off">
+                    <div class="form-group row">
+                        <label for="Retorno" class="col-sm-1 col-form-label">Notas</label>
+                        <div class="col-sm-11">
+                            <textarea class="form-control col-sm-12" id="NotasPago" rows="2" placeholder="Notas de pago" autocomplete="off"></textarea>
+                        </div>
                     </div>
-                </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="CheckCombinar1">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Combinar pago
+                        </label>
+                    </div>
+                    <hr id="Separador1" class="CajaPago2" style="background-color:#607d8b" /> @*---DIVISOR 2DO PAGO--*@
+                    <div class="row">
+                        <label class="col-sm-2 col-form-label CajaPago2"> <b>#2</b></label>
+                    </div>
+                    <div class="form-group row CajaPago2" >
+                        <label for="Monto2" class="col-sm-1 col-form-label">Monto</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" id="Monto2" placeholder="0.00" autocomplete="off" onkeyup="this.value=Numeros(this.value)">
+                        </div>
+
+                        <label for="tipoPago2" class="col-sm-1 col-form-label">Pago</label>
+                        <div class="col-sm-5">
+                            <select class="form-control fas" style="font-size:14px;" id="tipoPago2">
+                                <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
+                                <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
+                                <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="RegistrarPago()"><i class="fas fa-save"></i> Registrar</button>
+                <button type="button" id="btnRegistrarPago" class="btn btn-success" onclick="RegistrarPago()"><i class="fas fa-save"></i> Registrar</button>
+                <button type="button" id="btnActualizarPago" class="btn btn-success" onclick="ActualizarPago()"><i class="fas fa-save"></i> Actualizar</button>
             </div>
         </div>
     </div>
 </div>
 
 
-<script lang="en" type="text/javascript">
+<script lang="es" type="text/javascript">
 
     //--------Eventos o funciones que se ejecutan al cargar la pagina------------//
     $(document).ready(function () {
@@ -137,24 +191,31 @@
             data: Params,
             success: function (result) {
                 if (result.status) {
-                    //Llenamos los datos del proyecto                    
+                    //Ocultamos el boton de actualizar pago y el campo de retorno
+                    $("#btnActualizarPago").hide();
+                    $("#LabelRetorno").hide();
+                    $("#CajaRetorno").hide();
+                    //Ocultamos los campos de combinacion de pago #1
+                    $(".CajaPago2").hide();
+
+                    //Llenamos los datos del proyecto
                     $("#IdProyecto").val(result.DatosProyecto.Id);
                     $("#NumCuenta").text(result.DatosProyecto.Num_Proyecto_Cuenta);
                     $("#NumCuenta").prop('disabled', true);
                     $("#FechaInicio").val(result.DatosProyecto.FechaInicio);
                     $("#FechaInicio").prop('disabled', true);
-                    $("#MontoI").val("$" + result.DatosProyecto.MontoInicial.toFixed(2));
+                    $("#MontoI").val(result.DatosProyecto.MontoInicial.toFixed(2));
                     $("#MontoI").prop('disabled', true);
-                    $("#MonedaProyecto").text("("+result.DatosProyecto.Moneda +")");
+                    $("#MonedaProyecto").text("(" + result.DatosProyecto.Moneda + ")");
                     $("#MonedaProyectoSub").text("(" + result.DatosProyecto.Moneda + ")");
                     $("#Subtotal").prop('disabled', true);
                     $("#MonedaProyectoF").text("(" + result.DatosProyecto.Moneda + ")");
-                    $("#MontoF").val("$" +result.DatosProyecto.MontoFinal);
+                    $("#MontoF").val("$" + result.DatosProyecto.MontoFinal);
                     $("#MontoF").prop('disabled', true);
-                    $("#RetornoTotal").val("$" +result.DatosProyecto.Retorno);
+                    $("#RetornoTotal").val("$" + result.DatosProyecto.Retorno);
                     $("#RetornoTotal").prop('disabled', true);
                     $("#Descripcion").val(result.DatosProyecto.Descripcion);
-                    $("#Descripcion").prop('disabled', true);   
+                    $("#Descripcion").prop('disabled', true);
 
                     //19/03/2021:Seteamos los valores del Subtotal, Retorno y Monto Final
                     $("#Subtotal").val("$" + result.Subtotal.toFixed(2));
@@ -163,17 +224,26 @@
                     //Despues se llenan los pagos que pertenecen al proyecto si es que tuviera
                     if (result.ListaPagos.length > 0) {
                         $.each(result.ListaPagos, function (i, obj) {
+                            //Validamos si el registro trae combinaciones de pago
+                            var TipoPago = obj.TipoPago;
+                            if (obj.Monto2 != null || obj.Monto2 > 0) {
+                                TipoPago = obj.TipoPago + " Y " + obj.TipoPago2;
+                            }
+
+
                             //Creamos la fila con sus respectivos datos
                             Fila = `
                              <tr>
                                 <th>${obj.FechaPago}</th>
                                 <td>${obj.Monto.toFixed(2)}</td>
                                 <td>${obj.Referencia}</td>
-                                <td>${obj.TipoPago}</td>
+                                <td>${TipoPago}</td>
                                 <td>${obj.Retorno.toFixed(2)}</td>
+                                <td class="TDNota">${obj.Notas}</td>
                                 <td>
                                 <button type="button" class="btn btn-info btn-sm" title="Editar" onclick="EditarPago(${obj.Id})"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" onclick="EliminarPago(${obj.Id})"><i class="far fa-trash-alt"></i></button>
+                                <button type="button" class="btn btn-warning btn-sm" title="Ver notas" onclick="VerNotas()"><i class="fas fa-comment-dots"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" onclick="EliminarPago(${obj.Id},'${obj.Referencia}')"><i class="far fa-trash-alt"></i></button>
                                 </td>
                              </tr>`;
 
@@ -190,6 +260,9 @@
                         //Una vez creada la fila la insertamos en la tabla
                         $("#CuerpoPagos").append(Fila);
                     }
+                    //Ocultamos la columna de notas
+                    $(".THNota").hide()
+                    $(".TDNota").hide()
                 }
                 else {
                     Swal.fire(
@@ -315,6 +388,7 @@
 
         });
 
+
         //Funcion que elimina el documento del reporte creado temporalmente
         function EliminarDocumento(NombreDeArchivo) {
             $.ajax({
@@ -326,7 +400,45 @@
                 }
             });
         }
+
+        //Saul Gonzalez 26/10/2020: Resetear modal cuando se cierra
+        $("#ModalPagos").on("hidden.bs.modal", function () {
+            $('#FormularioPagos')[0].reset();
+            $("#btnActualizarPago").hide();
+            $("#btnRegistrarPago").show();
+            $("#LabelRetorno").hide();
+            $("#CajaRetorno").hide();
+            $("#TituloModal").text("Registrar pago");
+            $(".CajaPago2").hide();
+            //Al cerrar la modal reinicimos el select de tipos de pago
+            CargarTiposPago();
+        });
+
+        //Evento que se ejecuta al dar clic al check de combinar pagos #1
+        $("#CheckCombinar1").click(function () {
+            if ($('#CheckCombinar1').prop('checked')) {
+                $(".CajaPago2").show();
+            }
+            else if ($('#CheckCombinar1').prop('checked') == false) {
+                $(".CajaPago2").hide();
+            }
+        });
+
     });
+    //Funcion para que un input solo acepte numeros o puntos decimales
+    function Numeros(string) {//Solo numeros
+        var out = '';
+        var filtro = '1234567890.';//Caracteres validos
+
+        //Recorrer el texto y verificar si el caracter se encuentra en la lista de validos
+        for (var i = 0; i < string.length; i++)
+            if (filtro.indexOf(string.charAt(i)) != -1)
+                //Se añaden a la salida los caracteres validos
+                out += string.charAt(i);
+
+        //Retornar valor filtrado
+        return out;
+    }
     function RegistrarPago() {
         //Saul Gonzalez 17/03/2021: Declaramos los parametros que se van a guardar
         var IdProyecto = $("#IdProyecto").val();
@@ -334,8 +446,12 @@
         var REF = $("#REF").val();
         var TipoPago = $("#tipoPago").val();
         var Retorno = $("#Retorno").val();
+        var NotasPago = $("#NotasPago").val();
+        //parametros de las combinaciones de pago
+        var Monto2 = $("#Monto2").val();
+        var tipoPago2 = $("#tipoPago2").val();
         var Params = {
-            "IdProyecto": IdProyecto, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno
+            "IdProyecto": IdProyecto, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno, "NotasPago": NotasPago, "Monto2": Monto2, "tipoPago2": tipoPago2,
         };
         $.ajax({
             type: "POST",
@@ -377,7 +493,303 @@
             }
         });
     }
-  
+
+    function EditarPago(IdPago) {
+        //Saul Gonzalez 22/03/2021: Declaramos los parametros que se van mandar
+        var Params = {
+            "IdPago": IdPago
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Pagos/CargarPago',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#ModalPagos').modal('show');
+                    $("#TituloModal").text("Editar pago");
+                    $("#LabelRetorno").show();
+                    $("#CajaRetorno").show();
+                    //Saul Gonzalez 22/03/2021: Seteamos los datos del pago en la modal
+                    $("#IDPAGO").val(result.Datos.Id);
+                    $("#MontoP").val(result.Datos.Monto.toFixed(2));
+                    $("#REF").val(result.Datos.Referencia)
+                    $("#tipoPago option[value=" + result.Datos.TipoPago).attr("selected", true);                  
+                    $("#Retorno").val(result.Datos.Retorno.toFixed(2));
+                    $("#NotasPago").val(result.Datos.Notas);
+                    //Verificamos si el registro tiene pagos combinados
+                    if (result.Datos.Monto2 != null || result.Datos.Monto2 > 0) {
+                        $("#Monto2").val(result.Datos.Monto2);
+                        $("#tipoPago2 option[value=" + result.Datos.TipoPago2).attr("selected", true);    
+                        $("#CheckCombinar1").prop('checked', true);
+                        $(".CajaPago2").show();
+                    }
+                    $("#btnActualizarPago").show();
+                    $("#btnRegistrarPago").hide();
+
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+
+    function ActualizarPago() {
+        //Saul Gonzalez 17/03/2021: Declaramos los parametros que se van a guardar
+        var IdPago = $("#IDPAGO").val();
+        var Monto = $("#MontoP").val();
+        var REF = $("#REF").val();
+        var TipoPago = $("#tipoPago").val();
+        var Retorno = $("#Retorno").val();
+        var NotasPago = $("#NotasPago").val();
+        var Params = {
+            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno, "NotasPago": NotasPago
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Pagos/ActualizarPago',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#ModalPagos').modal('hide');
+                    // Saul Gonzalez: 17/03/2021: Se muestra un sweetAlert confirmando que los datos se guardaron
+                    Swal.fire({
+                        icon: 'success',
+                        title: result.mensaje,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((resultConfirmed) => {
+                        /* Evento que se ejecuta despues de dar clic en "OK" */
+                        if (resultConfirmed.isConfirmed) {
+                            location.reload();
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+    function CargarTiposPago() {
+        $("#tipoPago > option").remove();
+        $("#tipoPago").append(`<option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
+                                <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
+                                <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>`);
+        $("#tipoPago2 > option").remove();
+        $("#tipoPago2").append(`<option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
+                                <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
+                                <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>`);
+    }
+    function ModificarMontoI() {
+        if ($("#TextoMontoI").text() == "Modificar") {
+            $("#TextoMontoI").text('Actualizar');
+            $("#MontoI").prop('disabled', false);
+        }
+        else if ($("#TextoMontoI").text() == "Actualizar") {
+            //Primero obtenemos el Id del proyecto
+            const valores = window.location.search;
+            //Creamos la instancia de la URL
+            const urlParams = new URLSearchParams(valores);
+            //Accedemos a los valores de la URL y tomamos el ID
+            var IdProyectoP = urlParams.get('IdProyecto');
+            var MontoInicial = $("#MontoI").val();
+            //-----Se Realiza un metodo AJAX que actualiza el Monto inicial----//
+            var Params = {
+                "IdProyectoP": IdProyectoP, "MontoInicial": MontoInicial
+            };
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                async: false,
+                cache: false,
+                url: '/Proyectos/ActualizarMontoInicial',
+                context: document.body,
+                data: Params,
+                success: function (result) {
+                    if (result.status) {
+                        //Mostramos un mensaje de actualizando
+                        Swal.fire({
+                            title: 'Actualizando',
+                            html: ' <img src="/img/Actualizando.gif" style="width:200px" alt="Actualizando">',
+                            timer: 700,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+
+                        });
+                        $("#TextoMontoI").text('Modificar');
+                        $("#MontoI").prop('disabled', true);
+                    }
+                    else {
+                        Swal.fire(
+                            'Error',
+                            result.mensaje,
+                            'error'
+                        )
+                    }
+
+                },
+                error: function (xhr) {
+                    // Debugger;
+                    console.log(xhr.responseText);
+                    alert("Error has occurred...");
+                }
+            });
+        }
+
+    }
+
+    function CerrarProyecto() {
+        var NumCuenta = $("#NumCuenta").text();
+        Swal.fire({
+            title: "Aviso",
+            html: "El proyecto <b>" + NumCuenta + "</b> se marcará como cerrado, ¿Estás seguro de realizar esta acción ? ",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                alert("Se cerro :v");
+                ////Saul Gonzalez 26/10/2020: Asignamos los valores para el parametro
+                //var Params = {
+                //    "Id_Entrada": Id_Entrada
+                //};
+                //$.ajax({
+                //    type: "POST",
+                //    traditional: true,
+                //    async: false,
+                //    cache: false,
+                //    url: '/Almacen/EliminarEntrada',
+                //    context: document.body,
+                //    data: Params,
+                //    success: function (result) {
+                //        if (result.status) {
+                //            // Saul Gonzalez: 26/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                //            Swal.fire({
+                //                icon: 'success',
+                //                title: result.mensaje,
+                //                showConfirmButton: true,
+                //                allowOutsideClick: false
+                //            }).then((result) => {
+                //                // Saul Gonzalez: 26/10/2020: Se recarga la pagina despues de cerra el swalFire
+                //                if (result.isConfirmed) {
+                //                    location.reload();
+                //                }
+                //            })
+                //        }
+                //        else {
+                //            Swal.fire('Error', result.mensaje, 'error')
+                //        }
+                //    },
+                //    error: function (xhr) {
+                //        // Debugger;
+                //        console.log(xhr.responseText);
+                //        alert("Error has occurred...");
+                //    }
+                //});
+            }
+        })
+    }
+
+    function VerNotas() {
+        if ($(".TDNota").is(":visible") == false && $(".THNota").is(":visible") == false) {
+            //Si estaban ocultas los mostramos
+            $(".TDNota").show();
+            $(".THNota").show();
+
+        }
+        else if ($(".TDNota").is(":visible") == true && $(".THNota").is(":visible") == true) {
+            //Si estaban visibles los ocultamos
+            $(".TDNota").hide();
+            $(".THNota").hide();
+        }
+    }
+
+    function EliminarPago(IdPago, REF) {
+        Swal.fire({
+            title: "Aviso",
+            html: "¿Esta seguro de eliminar el pago con la referencia <b>" + REF + "</b>? <br> <b> ¡Esta accion no se puede revertir! </b>",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //Saul Gonzalez 26/10/2020: Asignamos los valores para el parametro
+                var Params = {
+                    "IdPago": IdPago
+                };
+                $.ajax({
+                    type: "POST",
+                    traditional: true,
+                    async: false,
+                    cache: false,
+                    url: '/Pagos/EliminarPago',
+                    context: document.body,
+                    data: Params,
+                    success: function (result) {
+                        if (result.status) {
+                            // Saul Gonzalez: 26/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                            Swal.fire({
+                                html: ' <img src="https://i.pinimg.com/originals/ff/fa/9b/fffa9b880767231e0d965f4fc8651dc2.gif" style="width:200px" alt="Eliminado"> <br> <b>Pago eliminado correctamente</b>',
+                                timerProgressBar: true,
+                                showConfirmButton: true,
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                // Saul Gonzalez: 26/10/2020: Se recarga la pagina despues de cerra el swalFire
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            })
+                        }
+                        else {
+                            Swal.fire('Error', result.mensaje, 'error')
+                        }
+                    },
+                    error: function (xhr) {
+                        // Debugger;
+                        console.log(xhr.responseText);
+                        alert("Error has occurred...");
+                    }
+                });
+            }
+        })
+
+    }
 </script>
 
 <style>

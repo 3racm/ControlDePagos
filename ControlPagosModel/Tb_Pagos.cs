@@ -17,10 +17,14 @@ namespace ControlPagosModel
         public int Id { get; set; }
         public System.DateTime FechaPago { get; set; }
         public decimal Monto { get; set; }
-        public string Moneda { get; set; }
         public string Referencia { get; set; }
         public string TipoPago { get; set; }
         public Nullable<decimal> Retorno { get; set; }
+        public Nullable<decimal> Monto2 { get; set; }
+        public string TipoPago2 { get; set; }
+        public Nullable<decimal> Monto3 { get; set; }
+        public string TipoPago3 { get; set; }
+        public string Notas { get; set; }
         public string RegistradoPor { get; set; }
     
         public virtual Tb_Proyectos Tb_Proyectos { get; set; }

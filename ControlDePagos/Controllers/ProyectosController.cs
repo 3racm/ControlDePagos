@@ -2,6 +2,7 @@
 using ControlPagosModel;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -120,6 +121,43 @@ namespace ControlDePagos.Controllers
                 return Json(new { status = false, mensaje = error.Message });
             }
             return Json(new { status = true, mensaje = "Datos guardados", Id = Proyecto.Id });
+        }
+
+        public JsonResult ActualizarMontoInicial(string IdProyectoP,string MontoInicial)
+        {
+            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            try
+            {
+
+                //Saul González 23/03/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(IdProyectoP))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id del proyecto, no fue posible actualizar el monto." });
+                }
+                if (String.IsNullOrEmpty(MontoInicial))
+                {
+                    return Json(new { status = false, mensaje = "El monto inicial no puede estar vacío." });
+                }
+                int Id_Proyecto = Int32.Parse(IdProyectoP);
+                //Saul Gonzalez 23/03/2021: Consultamos los datos del proyecto
+                Tb_Proyectos Proyecto = db.Tb_Proyectos.Where(y => y.Id == Id_Proyecto).FirstOrDefault();
+                if (Proyecto == null)
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al buscar el proyecto con el ID: " + IdProyectoP });
+                }
+                //Saul gonzalez 23/03/2021: Actualizamos el monto inicial del proyecto
+                Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial,Culture);
+
+                //Saul gonzalez 23/03/2021: Guardamos los datos
+                db.Tb_Proyectos.Attach(Proyecto);
+                db.Entry(Proyecto).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Datos guardados"});
         }
     }
 }

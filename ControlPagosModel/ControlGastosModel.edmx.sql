@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/22/2021 10:48:47
+-- Date Created: 03/24/2021 10:12:23
 -- Generated from EDMX file: C:\Users\3R Server\source\repos\ControlDePagos\ControlPagosModel\ControlGastosModel.edmx
 -- --------------------------------------------------
 
@@ -17,16 +17,22 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[FK_Tb_ProyectosTb_Pagos]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tb_Pagos] DROP CONSTRAINT [FK_Tb_ProyectosTb_Pagos];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[Tb_Proyectos]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tb_Proyectos];
+GO
 IF OBJECT_ID(N'[dbo].[Tb_Pagos]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tb_Pagos];
 GO
-IF OBJECT_ID(N'[dbo].[Tb_Proyectos]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Tb_Proyectos];
+IF OBJECT_ID(N'[dbo].[Tb_Usuario]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tb_Usuario];
 GO
 
 -- --------------------------------------------------
@@ -51,12 +57,27 @@ CREATE TABLE [dbo].[Tb_Pagos] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [FechaPago] datetime  NOT NULL,
     [Monto] decimal(18,2)  NOT NULL,
-    [Moneda] nvarchar(50)  NULL,
     [Referencia] nvarchar(max)  NULL,
     [TipoPago] nvarchar(50)  NOT NULL,
     [Retorno] decimal(18,2)  NULL,
+    [Monto2] decimal(18,2)  NULL,
+    [TipoPago2] nvarchar(50)  NULL,
+    [Monto3] decimal(18,2)  NULL,
+    [TipoPago3] nvarchar(50)  NULL,
+    [Notas] nvarchar(max)  NULL,
     [RegistradoPor] nvarchar(max)  NULL,
     [Tb_Proyectos_Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'Tb_Usuario'
+CREATE TABLE [dbo].[Tb_Usuario] (
+    [Id_usuario] int IDENTITY(1,1) NOT NULL,
+    [Nombre] nvarchar(max)  NOT NULL,
+    [CorreoElectronico] nvarchar(max)  NOT NULL,
+    [Contraseña] nvarchar(50)  NOT NULL,
+    [Permiso] nvarchar(50)  NOT NULL,
+    [FechaRegistro] datetime  NOT NULL
 );
 GO
 
@@ -74,6 +95,12 @@ GO
 ALTER TABLE [dbo].[Tb_Pagos]
 ADD CONSTRAINT [PK_Tb_Pagos]
     PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id_usuario] in table 'Tb_Usuario'
+ALTER TABLE [dbo].[Tb_Usuario]
+ADD CONSTRAINT [PK_Tb_Usuario]
+    PRIMARY KEY CLUSTERED ([Id_usuario] ASC);
 GO
 
 -- --------------------------------------------------

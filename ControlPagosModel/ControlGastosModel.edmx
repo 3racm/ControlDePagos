@@ -4,67 +4,71 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ControlDeGastosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Tb_Pagos">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="FechaPago" Type="datetime" Nullable="false" />
-          <Property Name="Monto" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="Moneda" Type="nvarchar" MaxLength="50" />
-          <Property Name="Referencia" Type="nvarchar(max)" />
-          <Property Name="TipoPago" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Retorno" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="RegistradoPor" Type="nvarchar(max)" />
-          <Property Name="Tb_Proyectos_Id" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Tb_Proyectos">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Num_Proyecto_Cuenta" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="FechaInicio" Type="datetime" Nullable="false" />
-          <Property Name="MontoInicial" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="Moneda" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MontoFinal" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="Retorno" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="Descripcion" Type="nvarchar(max)" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Tb_Usuario">
-          <Key>
-            <PropertyRef Name="Id_usuario" />
-          </Key>
-          <Property Name="Id_usuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Nombre" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="CorreoElectronico" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Contraseña" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Permiso" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
-        </EntityType>
-        <Association Name="FK_Tb_ProyectosTb_Pagos">
-          <End Role="Tb_Proyectos" Type="Self.Tb_Proyectos" Multiplicity="1" />
-          <End Role="Tb_Pagos" Type="Self.Tb_Pagos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tb_Proyectos">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Tb_Pagos">
-              <PropertyRef Name="Tb_Proyectos_Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="ControlDeGastosModelStoreContainer">
-          <EntitySet Name="Tb_Pagos" EntityType="Self.Tb_Pagos" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Tb_Proyectos" EntityType="Self.Tb_Proyectos" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Tb_Usuario" EntityType="Self.Tb_Usuario" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Tb_ProyectosTb_Pagos" Association="Self.FK_Tb_ProyectosTb_Pagos">
-            <End Role="Tb_Proyectos" EntitySet="Tb_Proyectos" />
-            <End Role="Tb_Pagos" EntitySet="Tb_Pagos" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema></edmx:StorageModels>
+    <Schema Namespace="ControlDeGastosModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="ControlDeGastosModelStoreContainer">
+    <EntitySet Name="Tb_Proyectos" EntityType="ControlDeGastosModel.Store.Tb_Proyectos" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tb_Pagos" EntityType="ControlDeGastosModel.Store.Tb_Pagos" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tb_Usuario" EntityType="ControlDeGastosModel.Store.Tb_Usuario" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="Tb_ProyectosTb_Pagos" Association="ControlDeGastosModel.Store.Tb_ProyectosTb_Pagos">
+      <End Role="Tb_Proyectos" EntitySet="Tb_Proyectos" />
+      <End Role="Tb_Pagos" EntitySet="Tb_Pagos" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Tb_Proyectos">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Num_Proyecto_Cuenta" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="FechaInicio" Type="datetime" Nullable="false" />
+    <Property Name="MontoInicial" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Moneda" Type="nvarchar" Nullable="false" MaxLength="50" />
+    <Property Name="MontoFinal" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="Retorno" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="Descripcion" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Tb_Pagos">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FechaPago" Type="datetime" Nullable="false" />
+    <Property Name="Monto" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Referencia" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="TipoPago" Type="nvarchar" Nullable="false" MaxLength="50" />
+    <Property Name="Retorno" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="Monto2" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="TipoPago2" Type="nvarchar" Nullable="true" MaxLength="50" />
+    <Property Name="Monto3" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="TipoPago3" Type="nvarchar" Nullable="true" MaxLength="50" />
+    <Property Name="Notas" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="RegistradoPor" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Tb_Proyectos_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Tb_Usuario">
+    <Key>
+      <PropertyRef Name="Id_usuario" />
+    </Key>
+    <Property Name="Id_usuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="CorreoElectronico" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Contraseña" Type="nvarchar" Nullable="false" MaxLength="50" />
+    <Property Name="Permiso" Type="nvarchar" Nullable="false" MaxLength="50" />
+    <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
+  </EntityType>
+  <Association Name="Tb_ProyectosTb_Pagos">
+    <End Role="Tb_Proyectos" Type="ControlDeGastosModel.Store.Tb_Proyectos" Multiplicity="1" />
+    <End Role="Tb_Pagos" Type="ControlDeGastosModel.Store.Tb_Pagos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tb_Proyectos">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Tb_Pagos">
+        <PropertyRef Name="Tb_Proyectos_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ControlDeGastosModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -98,13 +102,17 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FechaPago" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Monto" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="Moneda" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TipoPago" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Retorno" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Monto2" Type="Decimal" Nullable="true" Precision="18" Scale="2" />
+          <Property Name="TipoPago2" Type="String" Nullable="true" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Monto3" Type="Decimal" Nullable="true" Precision="18" Scale="2" />
+          <Property Name="TipoPago3" Type="String" Nullable="true" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Notas" Type="String" Nullable="true" />
           <Property Name="RegistradoPor" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tb_Proyectos" Relationship="ControlDeGastosModel.Tb_ProyectosTb_Pagos" FromRole="Tb_Pagos" ToRole="Tb_Proyectos" />
-        </EntityType>
+          </EntityType>
         <Association Name="Tb_ProyectosTb_Pagos">
           <End Type="ControlDeGastosModel.Tb_Proyectos" Role="Tb_Proyectos" Multiplicity="1" />
           <End Type="ControlDeGastosModel.Tb_Pagos" Role="Tb_Pagos" Multiplicity="*" />
@@ -146,11 +154,27 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="FechaPago" ColumnName="FechaPago" />
           <ScalarProperty Name="Monto" ColumnName="Monto" />
-          <ScalarProperty Name="Moneda" ColumnName="Moneda" />
           <ScalarProperty Name="Referencia" ColumnName="Referencia" />
           <ScalarProperty Name="TipoPago" ColumnName="TipoPago" />
           <ScalarProperty Name="Retorno" ColumnName="Retorno" />
+          <ScalarProperty Name="Monto2" ColumnName="Monto2" />
+          <ScalarProperty Name="TipoPago2" ColumnName="TipoPago2" />
+          <ScalarProperty Name="Monto3" ColumnName="Monto3" />
+          <ScalarProperty Name="TipoPago3" ColumnName="TipoPago3" />
+          <ScalarProperty Name="Notas" ColumnName="Notas" />
           <ScalarProperty Name="RegistradoPor" ColumnName="RegistradoPor" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tb_Usuario">
+      <EntityTypeMapping TypeName="IsTypeOf(ControlDeGastosModel.Tb_Usuario)">
+        <MappingFragment StoreEntitySet="Tb_Usuario">
+          <ScalarProperty Name="Id_usuario" ColumnName="Id_usuario" />
+          <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+          <ScalarProperty Name="CorreoElectronico" ColumnName="CorreoElectronico" />
+          <ScalarProperty Name="Contraseña" ColumnName="Contraseña" />
+          <ScalarProperty Name="Permiso" ColumnName="Permiso" />
+          <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -162,18 +186,6 @@
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
-          <EntitySetMapping Name="Tb_Usuario">
-            <EntityTypeMapping TypeName="ControlDeGastosModel.Tb_Usuario">
-              <MappingFragment StoreEntitySet="Tb_Usuario">
-                <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
-                <ScalarProperty Name="Permiso" ColumnName="Permiso" />
-                <ScalarProperty Name="Contraseña" ColumnName="Contraseña" />
-                <ScalarProperty Name="CorreoElectronico" ColumnName="CorreoElectronico" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="Id_usuario" ColumnName="Id_usuario" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
