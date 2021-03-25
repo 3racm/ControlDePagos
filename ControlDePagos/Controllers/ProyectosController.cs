@@ -60,6 +60,7 @@ namespace ControlDePagos.Controllers
                     o.MontoFinal = Proyecto.MontoFinal;
                     o.Retorno = Proyecto.Retorno;
                     o.Descripcion = Proyecto.Descripcion;
+                    o.Estado = Proyecto.Estado;
                     Lista.Add(o);
                 }
             }
@@ -112,6 +113,7 @@ namespace ControlDePagos.Controllers
                 Proyecto.MontoFinal = 0;
                 Proyecto.Retorno = 0;
                 Proyecto.Descripcion = Descripcion;
+                Proyecto.Estado = "Activo";
                 //Saul gonzalez 11/03/2021: Guardamos los datos
                 db.Tb_Proyectos.Add(Proyecto);
                 db.SaveChanges();

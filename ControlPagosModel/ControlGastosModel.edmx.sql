@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/24/2021 10:12:23
+-- Date Created: 03/25/2021 12:50:06
 -- Generated from EDMX file: C:\Users\3R Server\source\repos\ControlDePagos\ControlPagosModel\ControlGastosModel.edmx
 -- --------------------------------------------------
 
@@ -25,11 +25,11 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[Tb_Proyectos]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Tb_Proyectos];
-GO
 IF OBJECT_ID(N'[dbo].[Tb_Pagos]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tb_Pagos];
+GO
+IF OBJECT_ID(N'[dbo].[Tb_Proyectos]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tb_Proyectos];
 GO
 IF OBJECT_ID(N'[dbo].[Tb_Usuario]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tb_Usuario];
@@ -48,7 +48,8 @@ CREATE TABLE [dbo].[Tb_Proyectos] (
     [Moneda] nvarchar(50)  NOT NULL,
     [MontoFinal] decimal(18,2)  NULL,
     [Retorno] decimal(18,2)  NULL,
-    [Descripcion] nvarchar(max)  NOT NULL
+    [Descripcion] nvarchar(max)  NOT NULL,
+    [Estado] nvarchar(30)  NULL
 );
 GO
 

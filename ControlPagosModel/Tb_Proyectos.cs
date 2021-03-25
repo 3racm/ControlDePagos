@@ -28,6 +28,7 @@ namespace ControlPagosModel
         public Nullable<decimal> MontoFinal { get; set; }
         public Nullable<decimal> Retorno { get; set; }
         public string Descripcion { get; set; }
+        public string Estado { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tb_Pagos> Tb_Pagos { get; set; }

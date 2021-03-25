@@ -12,13 +12,15 @@
 <input id="IdProyecto" type="number" hidden />
 @*<button type="button" class="btn btn-primary btn-sm mt-2" title="Retroceder una pagina"><a href="@Url.Action("Index", "Proyectos")" class="text-white" style="text-decoration:none"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a></button>*@
 @*Boton de cerrar el proyecto*@
+<label id="EstadoProyecto" style="font-size:20px"> </label>
 <div class="form-row float-right">
     <div>
-        <button type="button" class="btn btn-danger btn-sm mt-2" title="Marcar el proyecto como cerrado" onclick="CerrarProyecto()"><i class="fas fa-lock"></i> Cerrar el proyecto</button>
+        <button type="button" id="btnCerrar" class="btn btn-danger btn-sm mt-2" title="Marcar el proyecto como cerrado" onclick="CerrarProyecto()"><i class="fas fa-lock"></i> Cerrar el proyecto</button>
+        <button type="button" id="btnReabrir" class="btn btn-warning btn-sm mt-2" title="Reabrir el proyecto para su edición" onclick="ReabrirProyecto()"><i class="fas fa-unlock-alt"></i> Reabrir el proyecto</button>
     </div>
 </div>
 <br>
-<h1 style="text-align:center" class="mt-3 mb-4"><i class="fas fa-pencil-ruler"></i> <label id="NumCuenta"> </label> </h1>
+<h1 style="text-align:center" class="mt-3 mb-4"><i class="fas fa-pencil-ruler"></i> <label id="NumCuenta"> </label>  </h1>
 
 <div class="alert alert-warning text-justify" role="alert">
     <i class="fas fa-info-circle"></i> Los datos del proyecto como la <b>fecha de inicio y la descripción, </b> no se pueden modificar asegúrese que los datos sean correctos antes de empezar a registrar pagos.
@@ -178,7 +180,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="FormularioPagos">                    
+                <form id="FormularioPagos">
                     <div class="form-group row">
                         <label for="FiltroREF" class="col-sm-2 col-form-label">Referencia</label>
                         <div class="col-sm-4">
@@ -207,7 +209,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="FiltrarPagos()"><i class="fas fa-check-circle"></i> Aplicar</button>            
+                <button type="button" class="btn btn-success" onclick="FiltrarPagos()"><i class="fas fa-check-circle"></i> Aplicar</button>
             </div>
         </div>
     </div>
@@ -268,7 +270,26 @@
                     $("#Subtotal").val("$" + result.Subtotal.toFixed(2));
                     $("#RetornoTotal").val("$" + result.TotalRetorno.toFixed(2));
                     $("#MontoF").val("$" + result.MontoFinal.toFixed(2));
+                    //Se oculta el boton de reabir el proyecto
+                    $("#btnReabrir").hide();
+                    $("#btnCerrar").show();              
+                    //Seteamos el estado del proyecto
+                    if (result.DatosProyecto.Estado == "Activo") {
 
+                        $("#EstadoProyecto").css("color", "#33c139");
+                        $("#EstadoProyecto").append('<i class="fas fa-toggle-on"></i> Activo');
+                    }     
+                    else if (result.DatosProyecto.Estado == "Cerrado") {
+                        $("#EstadoProyecto").css("color", "#dc3545");
+                        $("#EstadoProyecto").append('<i class="fas fa-toggle-off"></i> Cerrado');
+                        $("#btnReabrir").show();
+                        $("#btnCerrar").hide();
+                    }
+                    else if (result.DatosProyecto.Estado == "Reabierto") {
+                        $("#EstadoProyecto").css("color", "#f19206");
+                        $("#EstadoProyecto").append('<i class="fas fa-toggle-on"></i> Reabierto');
+                    }
+                    
                     //Si el monto final supera al monto inicial cambiamos el color y mostramos un aviso
                     if (result.MontoFinal >= result.DatosProyecto.MontoInicial) {
                         $("#MontoF").css("background-color", "#ff9800");

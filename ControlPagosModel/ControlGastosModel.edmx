@@ -26,6 +26,7 @@
     <Property Name="MontoFinal" Type="decimal" Nullable="true" Precision="18" Scale="2" />
     <Property Name="Retorno" Type="decimal" Nullable="true" Precision="18" Scale="2" />
     <Property Name="Descripcion" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Estado" Type="nvarchar" Nullable="true" MaxLength="30" />
   </EntityType>
   <EntityType Name="Tb_Pagos">
     <Key>
@@ -94,6 +95,7 @@
           <Property Name="Retorno" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tb_Pagos" Relationship="ControlDeGastosModel.Tb_ProyectosTb_Pagos" FromRole="Tb_Proyectos" ToRole="Tb_Pagos" />
+          <Property Name="Estado" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Tb_Pagos">
           <Key>
@@ -109,7 +111,7 @@
           <Property Name="TipoPago2" Type="String" Nullable="true" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Monto3" Type="Decimal" Nullable="true" Precision="18" Scale="2" />
           <Property Name="TipoPago3" Type="String" Nullable="true" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Notas" Type="String" Nullable="true" />
+          <Property Name="Notas" Type="String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="RegistradoPor" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tb_Proyectos" Relationship="ControlDeGastosModel.Tb_ProyectosTb_Pagos" FromRole="Tb_Pagos" ToRole="Tb_Proyectos" />
           </EntityType>
@@ -145,6 +147,7 @@
           <ScalarProperty Name="MontoFinal" ColumnName="MontoFinal" />
           <ScalarProperty Name="Retorno" ColumnName="Retorno" />
           <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+          <ScalarProperty Name="Estado" ColumnName="Estado" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

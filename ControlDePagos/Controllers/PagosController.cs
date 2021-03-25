@@ -80,6 +80,7 @@ namespace ControlDePagos.Controllers
                 DatosProyecto.Retorno = Proyecto.Retorno;
                 DatosProyecto.Descripcion = Proyecto.Descripcion;
                 DatosProyecto.Moneda = Proyecto.Moneda;
+                DatosProyecto.Estado = Proyecto.Estado;
                 #endregion
 
                 #region Pagos
