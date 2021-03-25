@@ -20,8 +20,8 @@
 <br>
 <h1 style="text-align:center" class="mt-3 mb-4"><i class="fas fa-pencil-ruler"></i> <label id="NumCuenta"> </label> </h1>
 
-<div class="alert alert-warning" role="alert">
-    <i class="fas fa-info-circle"></i> Los datos del proyecto como la <b>fecha de inicio, monto final y descripción, </b> no se pueden modificar asegúrese que los datos sean correctos antes de empezar a registrar pagos.
+<div class="alert alert-warning text-justify" role="alert">
+    <i class="fas fa-info-circle"></i> Los datos del proyecto como la <b>fecha de inicio y la descripción, </b> no se pueden modificar asegúrese que los datos sean correctos antes de empezar a registrar pagos.
 </div>
 <form id="formulario">
     <div class="form-row">
@@ -47,13 +47,12 @@
         </div>
         <div class="form-group col-md-2 div-imagen">
             <label for="RetornoTotal"><i class="fas fa-undo-alt"></i> Retorno</label>
-            <input type="text" class="form-control" id="RetornoTotal" placeholder="Buscar por numero de proyecto">
+            <input type="text" class="form-control" id="RetornoTotal" placeholder="$0.00">
         </div>
         <div class="form-group col-md-2">
             <label for="MontoF"> <i class="fas fa-coins"></i> Monto final <a id="MonedaProyectoF" class="font-weight-bold" style="color:#4caf50"></a></label>
-            <input type="text" class="form-control font-weight-bold" id="MontoF" placeholder="Buscar por descripción">
+            <input type="text" class="form-control font-weight-bold pompover" id="MontoF" placeholder="$0.00" data-container="body" data-toggle="popover" data-placement="bottom" title="Aviso" data-content="El monto final ha sobrepasado la cantidad inicial.">
         </div>
-
     </div>
 
     <div class="form-row">
@@ -65,7 +64,7 @@
     </div>
     <div class="form-group">
         <h1 style="text-align:center"><i class="fas fa-file-invoice-dollar"></i> Registro de pagos</h1>
-        <button type="button" class="btn btn-dark btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-filter"></i> Filtros</button>
+        <button type="button" class="btn btn-dark btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalFiltros"><i class="fas fa-filter"></i> Filtros</button>
         <button type="button" class="btn btn-success btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-plus-square"></i> Registrar pago</button>
 
     </div>
@@ -141,7 +140,7 @@
                     <div class="row">
                         <label class="col-sm-2 col-form-label CajaPago2"> <b>#2</b></label>
                     </div>
-                    <div class="form-group row CajaPago2" >
+                    <div class="form-group row CajaPago2">
                         <label for="Monto2" class="col-sm-1 col-form-label">Monto</label>
                         <div class="col-sm-5">
                             <input type="text" class="form-control" id="Monto2" placeholder="0.00" autocomplete="off" onkeyup="this.value=Numeros(this.value)">
@@ -167,11 +166,59 @@
     </div>
 </div>
 
+@*MODAL DE FILTRO *@
+<!-- Modal -->
+<div class="modal fade" id="ModalFiltros" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-filter"></i> Aplicar filtros</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="FormularioPagos">                    
+                    <div class="form-group row">
+                        <label for="FiltroREF" class="col-sm-2 col-form-label">Referencia</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="FiltroREF" placeholder="# Referencia" autocomplete="off">
+                        </div>
+                        <label for="tipoPago2" class="col-sm-2 col-form-label">Tipo de pago</label>
+                        <div class="col-sm-4">
+                            <select class="form-control fas" style="font-size:14px;" id="tipoPago2">
+                                <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
+                                <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
+                                <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="FechaInicio" class="col-sm-2 col-form-label">Fecha inicial</label>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" id="FechaInicio" autocomplete="off">
+                        </div>
+                        <label for="FechaInicio" class="col-sm-2 col-form-label">Fecha Final</label>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" id="FechaInicio" autocomplete="off">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="FiltrarPagos()"><i class="fas fa-check-circle"></i> Aplicar</button>            
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script lang="es" type="text/javascript">
 
     //--------Eventos o funciones que se ejecutan al cargar la pagina------------//
     $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
         const valores = window.location.search;
         //Creamos la instancia de la URL
         const urlParams = new URLSearchParams(valores);
@@ -221,13 +268,24 @@
                     $("#Subtotal").val("$" + result.Subtotal.toFixed(2));
                     $("#RetornoTotal").val("$" + result.TotalRetorno.toFixed(2));
                     $("#MontoF").val("$" + result.MontoFinal.toFixed(2));
+
+                    //Si el monto final supera al monto inicial cambiamos el color y mostramos un aviso
+                    if (result.MontoFinal >= result.DatosProyecto.MontoInicial) {
+                        $("#MontoF").css("background-color", "#ff9800");
+                        $('.pompover').click();
+                        setTimeout(function () {
+                            $('.pompover').click();
+                        }, 7000);
+                    }
                     //Despues se llenan los pagos que pertenecen al proyecto si es que tuviera
                     if (result.ListaPagos.length > 0) {
                         $.each(result.ListaPagos, function (i, obj) {
                             //Validamos si el registro trae combinaciones de pago
                             var TipoPago = obj.TipoPago;
+                            var Monto = obj.Monto;;
                             if (obj.Monto2 != null || obj.Monto2 > 0) {
                                 TipoPago = obj.TipoPago + " Y " + obj.TipoPago2;
+                                Monto = obj.Monto + obj.Monto2;
                             }
 
 
@@ -235,7 +293,7 @@
                             Fila = `
                              <tr>
                                 <th>${obj.FechaPago}</th>
-                                <td>${obj.Monto.toFixed(2)}</td>
+                                <td>${Monto.toFixed(2)}</td>
                                 <td>${obj.Referencia}</td>
                                 <td>${TipoPago}</td>
                                 <td>${obj.Retorno.toFixed(2)}</td>
@@ -517,13 +575,13 @@
                     $("#IDPAGO").val(result.Datos.Id);
                     $("#MontoP").val(result.Datos.Monto.toFixed(2));
                     $("#REF").val(result.Datos.Referencia)
-                    $("#tipoPago option[value=" + result.Datos.TipoPago).attr("selected", true);                  
+                    $("#tipoPago option[value=" + result.Datos.TipoPago).attr("selected", true);
                     $("#Retorno").val(result.Datos.Retorno.toFixed(2));
                     $("#NotasPago").val(result.Datos.Notas);
                     //Verificamos si el registro tiene pagos combinados
                     if (result.Datos.Monto2 != null || result.Datos.Monto2 > 0) {
-                        $("#Monto2").val(result.Datos.Monto2);
-                        $("#tipoPago2 option[value=" + result.Datos.TipoPago2).attr("selected", true);    
+                        $("#Monto2").val(result.Datos.Monto2.toFixed(2));
+                        $("#tipoPago2 option[value=" + result.Datos.TipoPago2).attr("selected", true);
                         $("#CheckCombinar1").prop('checked', true);
                         $(".CajaPago2").show();
                     }
@@ -556,8 +614,11 @@
         var TipoPago = $("#tipoPago").val();
         var Retorno = $("#Retorno").val();
         var NotasPago = $("#NotasPago").val();
+        //parametros de las combinaciones de pago
+        var Monto2 = $("#Monto2").val();
+        var tipoPago2 = $("#tipoPago2").val();
         var Params = {
-            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno, "NotasPago": NotasPago
+            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno, "NotasPago": NotasPago, "Monto2": Monto2, "tipoPago2": tipoPago2
         };
         $.ajax({
             type: "POST",
@@ -790,6 +851,10 @@
         })
 
     }
+    function FiltrarPagos() {
+        alert("Esta funcion aun esta en construcción :(");
+    }
+
 </script>
 
 <style>
@@ -840,6 +905,16 @@
     #CuerpoSalidas td {
         text-align: center !important;
         font-size: 15px;
+    }
+
+    .popover-header {
+        text-align: center !important;
+        font-weight: bold;
+    }
+
+    .popover-body {
+        text-align: center !important;
+        font-weight: bold;
     }
 </style>
 

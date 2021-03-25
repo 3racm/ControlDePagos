@@ -52,7 +52,8 @@ namespace ControlDePagos.Controllers
             cProyectos DatosProyecto = new cProyectos();
             List<cPagos> ListaPagos = new List<cPagos>();
             //Variables que calculan el subtotal, totalRetorno y MontoFinal
-            decimal Subtotal = 0;
+            decimal ? Subtotal = 0;
+            decimal ? SubtotalMonto2 = 0;
             decimal ? TotalRetorno = 0;
             decimal ? MontoFinal = 0;
             try
@@ -108,6 +109,12 @@ namespace ControlDePagos.Controllers
 
                 }
                 Subtotal = ListaPagos.Sum(x => x.Monto);
+                SubtotalMonto2 = ListaPagos.Sum(y => y.Monto2);
+                //sumamos los subtotales del monto1 con el monto2
+                if (SubtotalMonto2 > 0)
+                {
+                    Subtotal = Subtotal + SubtotalMonto2;
+                }                
                 TotalRetorno = ListaPagos.Sum(x => x.Retorno);
                 MontoFinal = Subtotal - TotalRetorno;
                 #endregion
@@ -144,6 +151,10 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(TipoPago))
                 {
                     return Json(new { status = false, mensaje = "Debe seleccionar un tipo de pago." });
+                }
+                if (Monto2 != string.Empty && TipoPago == tipoPago2)
+                {
+                    return Json(new { status = false, mensaje = "No es posible tener una combinación con el mismo tipo de pago." });
                 }
                 //Saul Gonzalez 17/02/2021: Guardamos los datos del pago                    
                 Pago.FechaPago = DateTime.Now;
@@ -223,7 +234,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Pago registrado correctamente.", Datos = Pago });
         }
 
-        public JsonResult ActualizarPago(string IdPago, string Monto, string REF, string TipoPago, string Retorno = "", string NotasPago ="")
+        public JsonResult ActualizarPago(string IdPago, string Monto, string REF, string TipoPago, string Retorno = "", string NotasPago ="", string Monto2 ="", string tipoPago2 = "")
         {         
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
             try
@@ -246,8 +257,30 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(TipoPago))
                 {
                     return Json(new { status = false, mensaje = "Debe seleccionar un tipo de pago." });
-                }                           
-
+                }
+                if (!String.IsNullOrEmpty(Retorno))
+                {
+                    if (!String.IsNullOrEmpty(Monto2))
+                    {
+                        var SumaMontos = Convert.ToDecimal(Monto, Culture) + Convert.ToDecimal(Monto2, Culture);
+                        if (Convert.ToDecimal(Retorno, Culture) > Convert.ToDecimal(SumaMontos, Culture))
+                        {
+                            return Json(new { status = false, mensaje = "La cantidad de retorno no puede ser mayor a la suma total de los montos combinados." });
+                        }
+                    }
+                    else
+                    {
+                        if (Convert.ToDecimal(Retorno, Culture) > Convert.ToDecimal(Monto, Culture))
+                        {
+                            return Json(new { status = false, mensaje = "La cantidad de retorno no puede ser mayor al monto." });
+                        }
+                    }
+                   
+                }
+                if (Monto2 != string.Empty && TipoPago == tipoPago2)
+                {
+                    return Json(new { status = false, mensaje = "No es posible tener una combinación con el mismo tipo de pago." });
+                }
                 //Nos traemos los datos del pago
                 Tb_Pagos Pago = db.Tb_Pagos.Where(y => y.Id == ID_PAGO).FirstOrDefault();
                 if (Pago == null)
@@ -257,7 +290,13 @@ namespace ControlDePagos.Controllers
                 Pago.Monto = Convert.ToDecimal(Monto, Culture);
                 Pago.Referencia = REF;
                 Pago.TipoPago = TipoPago;                
-                Pago.Notas = NotasPago;                
+                Pago.Notas = NotasPago;
+                //Saul Gonzalez 24/03/2021: Validamos si se agrego una segunda combinacion de pago
+                if (!String.IsNullOrEmpty(Monto2))
+                {
+                    Pago.Monto2 = Convert.ToDecimal(Monto2, Culture);
+                    Pago.TipoPago2 = tipoPago2;
+                }
                 //Validamos si se ingreso una cantidad en el campo de retorno, si esta vacia asignamos un 0
                 if (String.IsNullOrEmpty(Retorno))
                 {
