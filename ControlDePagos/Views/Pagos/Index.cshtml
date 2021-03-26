@@ -67,7 +67,7 @@
     <div class="form-group">
         <h1 style="text-align:center"><i class="fas fa-file-invoice-dollar"></i> Registro de pagos</h1>
         <button type="button" class="btn btn-dark btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalFiltros"><i class="fas fa-filter"></i> Filtros</button>
-        <button type="button" class="btn btn-success btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-plus-square"></i> Registrar pago</button>
+        <button type="button" id="btnReg" class="btn btn-success btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-plus-square"></i> Registrar pago</button>
 
     </div>
     <table class="table" id="tablaEditada">
@@ -284,6 +284,7 @@
                         $("#EstadoProyecto").append('<i class="fas fa-toggle-off"></i> Cerrado');
                         $("#btnReabrir").show();
                         $("#btnCerrar").hide();
+                        $("#btnReg").prop('disabled', true);                        
                     }
                     else if (result.DatosProyecto.Estado == "Reabierto") {
                         $("#EstadoProyecto").css("color", "#f19206");
@@ -309,7 +310,10 @@
                                 Monto = obj.Monto + obj.Monto2;
                             }
 
-
+                            //Si el campo de notas es null ponemos una cadena vacia para que no muestre null
+                            if (obj.Notas == null) {
+                                obj.Notas = "";
+                            }
                             //Creamos la fila con sus respectivos datos
                             Fila = `
                              <tr>
