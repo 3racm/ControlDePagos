@@ -346,5 +346,70 @@ namespace ControlDePagos.Controllers
             }
             return Json(new { status = true, mensaje = "Pago eliminado correctamente" });
         }
+        public JsonResult Filtrar(int IdProyecto, string FiltroREF = "", string tipoPagoFiltro = "", DateTime ? FechaInicioFiltro = null, DateTime ? FechaFinalFiltro = null)
+        {
+            //cPagos Pago = new cPagos();
+          
+            List<cPagos> ListaPagos = new List<cPagos>();
+            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            try
+            {
+                List<Tb_Pagos> Lista = new List<Tb_Pagos>();
+                if (String.IsNullOrEmpty(IdProyecto.ToString()))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el ID del proyecto." });
+                }
+                if (FechaInicioFiltro != null && FechaFinalFiltro == null)
+                {
+                    return Json(new { status = false, mensaje = "Al indicar una fecha de inicio debe establecer también una fecha final." });
+                }
+                if (FechaInicioFiltro == null && FechaFinalFiltro != null)
+                {
+                    return Json(new { status = false, mensaje = "Al indicar una fecha final debe establecer también una fecha inicial." });
+                }
+                //Primero filtramos por todos los pagos del proyecto
+                Lista = db.Tb_Pagos.Where(x => x.Tb_Proyectos.Id == IdProyecto).ToList();
+
+                //Saul Gonzalez 29/03/2021: Validamos en cascada que datos se mandaron para ir filtrando la lista
+                if (FechaInicioFiltro != null && FechaFinalFiltro != null)
+                {
+                    Lista = Lista.Where(y => y.FechaPago >= FechaInicioFiltro && y.FechaPago <= FechaFinalFiltro).ToList();
+                }                                          
+                if (tipoPagoFiltro != string.Empty)
+                {
+                    Lista = Lista.Where(y => y.TipoPago == tipoPagoFiltro || y.TipoPago2 == tipoPagoFiltro).ToList();
+                }
+                if (FiltroREF != string.Empty)
+                {
+                    Lista = Lista.Where(y => y.Referencia == FiltroREF).ToList();
+                }
+                if (Lista.Count < 1)
+                {
+                    return Json(new { status = false, mensaje = "No se encontraron registros de pagos con los datos que indico." });
+                }
+                foreach (Tb_Pagos Pago in Lista)
+                {
+                    cPagos o = new cPagos();
+                    o.Id = Pago.Id;
+                    o.FechaPago = Pago.FechaPago.ToShortDateString();
+                    o.Monto = Pago.Monto;
+                    o.Referencia = Pago.Referencia;
+                    o.TipoPago = Pago.TipoPago;
+                    o.Retorno = Pago.Retorno;
+                    o.RegistradoPor = Pago.RegistradoPor;
+                    o.Notas = Pago.Notas;                  
+                    //Datos de combinaciones de pago
+                    o.Monto2 = Pago.Monto2;
+                    o.TipoPago2 = Pago.TipoPago2;
+                    ListaPagos.Add(o);             
+                }
+
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Filtros aplicados", Lista = ListaPagos });
+        }
     }
 }

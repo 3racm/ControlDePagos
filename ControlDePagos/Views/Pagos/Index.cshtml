@@ -66,9 +66,9 @@
     </div>
     <div class="form-group">
         <h1 style="text-align:center"><i class="fas fa-file-invoice-dollar"></i> Registro de pagos</h1>
-        <button type="button" class="btn btn-dark btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalFiltros"><i class="fas fa-filter"></i> Filtros</button>
+        <button type="button" class="btn btn-dark btn-sm" title="Aplicar filtros" data-toggle="modal" data-target="#ModalFiltros"><i class="fas fa-filter"></i> Filtros</button>
         <button type="button" id="btnReg" class="btn btn-success btn-sm" title="Registrar pago" data-toggle="modal" data-target="#ModalPagos"><i class="fas fa-plus-square"></i> Registrar pago</button>
-
+        <span id="FiltrosActivos" class="badge badge-light"><i class="fas fa-filter"></i><b> Filtros activos</b> <a href="" title="Clic aquí para eliminar filtros" onclick="EliminarFiltros()"><i class="far fa-times-circle"></i></a></span>
     </div>
     <table class="table" id="tablaEditada">
         <thead>
@@ -115,7 +115,7 @@
                     <div class="form-group row">
                         <label for="tipoPago" class="col-sm-1 col-form-label">Pago</label>
                         <div class="col-sm-4">
-                            <select class="form-control fas" style="font-size:14px;" id="tipoPago">
+                            <select class="form-control fas" style="font-size:14px;" id="tipoPago">                              
                                 <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
                                 <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
                                 <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
@@ -180,15 +180,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="FormularioPagos">
+                <form id="FormularioFiltros">
                     <div class="form-group row">
                         <label for="FiltroREF" class="col-sm-2 col-form-label">Referencia</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" id="FiltroREF" placeholder="# Referencia" autocomplete="off">
                         </div>
-                        <label for="tipoPago2" class="col-sm-2 col-form-label">Tipo de pago</label>
+                        <label for="tipoPagoFiltro" class="col-sm-2 col-form-label">Tipo de pago</label>
                         <div class="col-sm-4">
-                            <select class="form-control fas" style="font-size:14px;" id="tipoPago2">
+                            <select class="form-control fas" style="font-size:14px;" id="tipoPagoFiltro">
+                                <option class="fas" style="font-size:14px;" value="">&#xf155; CUALQUIERA </option>
                                 <option class="fas" style="font-size:14px;" value="EFECTIVO">&#xf0d6; EFECTIVO </option>
                                 <option class="fas" style="font-size:14px;" value="TARJETA"> &#xf09d; TARJETA </option>
                                 <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>
@@ -196,19 +197,20 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="FechaInicio" class="col-sm-2 col-form-label">Fecha inicial</label>
+                        <label for="FechaInicioFiltro" class="col-sm-2 col-form-label">Fecha inicial</label>
                         <div class="col-sm-4">
-                            <input type="date" class="form-control" id="FechaInicio" autocomplete="off">
+                            <input type="date" class="form-control" id="FechaInicioFiltro" autocomplete="off">
                         </div>
-                        <label for="FechaInicio" class="col-sm-2 col-form-label">Fecha Final</label>
+                        <label for="FechaFinalFiltro" class="col-sm-2 col-form-label">Fecha Final</label>
                         <div class="col-sm-4">
-                            <input type="date" class="form-control" id="FechaInicio" autocomplete="off">
+                            <input type="date" class="form-control" id="FechaFinalFiltro" autocomplete="off">
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                @*<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>*@
+                <button type="button" class="btn btn-info" onclick="LimpiarFiltros()"> <i class="fas fa-brush"></i> Limpiar filtros</button>
                 <button type="button" class="btn btn-success" onclick="FiltrarPagos()"><i class="fas fa-check-circle"></i> Aplicar</button>
             </div>
         </div>
@@ -246,6 +248,8 @@
                     $("#CajaRetorno").hide();
                     //Ocultamos los campos de combinacion de pago #1
                     $(".CajaPago2").hide();
+                    //Ocultamos la etiqueta que indica si hay filtros aplicados
+                    $('#FiltrosActivos').hide();
 
                     //Llenamos los datos del proyecto
                     $("#IdProyecto").val(result.DatosProyecto.Id);
@@ -876,10 +880,117 @@
         })
 
     }
-    function FiltrarPagos() {
-        alert("Esta funcion aun esta en construcción :(");
-    }
 
+    function FiltrarPagos() {
+        var IdProyecto = $("#IdProyecto").val();
+        var FiltroREF = $("#FiltroREF").val();
+        var tipoPagoFiltro = $("#tipoPagoFiltro").val();
+        var FechaInicioFiltro = $("#FechaInicioFiltro").val();
+        var FechaFinalFiltro = $("#FechaFinalFiltro").val();
+        //-----Se Realiza un metodo AJAX que actualiza el Monto inicial----//
+        var Params = {
+            "IdProyecto": IdProyecto, "FiltroREF": FiltroREF, "tipoPagoFiltro": tipoPagoFiltro, "FechaInicioFiltro": FechaInicioFiltro, "FechaFinalFiltro": FechaFinalFiltro 
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Pagos/Filtrar',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    //Mostramos un mensaje de actualizando
+                    Swal.fire({
+                        title: 'Aplicando filtros',
+                        html: ' <img src="/img/Actualizando.gif" style="width:200px" alt="Actualizando">',
+                        timer: 700,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+
+                    });   
+                    //Limpiamos la tabla de pagos y volvemos a agregar registros
+                    $("#CuerpoPagos > tr").remove()
+
+                    $.each(result.Lista, function (i, obj) {
+                        //Validamos si el registro trae combinaciones de pago
+                        var TipoPago = obj.TipoPago;
+                        var Monto = obj.Monto;;
+                        if (obj.Monto2 != null || obj.Monto2 > 0) {
+                            TipoPago = obj.TipoPago + " Y " + obj.TipoPago2;
+                            Monto = obj.Monto + obj.Monto2;
+                        }
+
+                        //Si el campo de notas es null ponemos una cadena vacia para que no muestre null
+                        if (obj.Notas == null) {
+                            obj.Notas = "";
+                        }
+                        //Creamos la fila con sus respectivos datos
+                        Fila = `
+                             <tr>
+                                <th>${obj.FechaPago}</th>
+                                <td>${Monto.toFixed(2)}</td>
+                                <td>${obj.Referencia}</td>
+                                <td>${TipoPago}</td>
+                                <td>${obj.Retorno.toFixed(2)}</td>
+                                <td class="TDNota">${obj.Notas}</td>
+                                <td>
+                                <button type="button" class="btn btn-info btn-sm" title="Editar" onclick="EditarPago(${obj.Id})"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-warning btn-sm" title="Ver notas" onclick="VerNotas()"><i class="fas fa-comment-dots"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" onclick="EliminarPago(${obj.Id},'${obj.Referencia}')"><i class="far fa-trash-alt"></i></button>
+                                </td>
+                             </tr>`;
+
+
+                        //Una vez creada la fila la insertamos en la tabla
+                        $("#CuerpoPagos").append(Fila);
+                        //Oculamos la columna de notas
+                        $(".TDNota").hide();
+                    });
+                    //Ocultamos la modal
+                    $('#ModalFiltros').modal('hide');
+                    $(".TDNota").hide();
+                    $(".THNota").hide();
+                    //Si los campos de la modal de filtros estan vacios dejamos la etiqueta oculta de lo contrario mostramos la etiqueta de que hay filtros activos
+                    if ($("#FiltroREF").val() == "" && $("#tipoPagoFiltro").val() == "" && $("#FechaInicioFiltro").val() == "" && $("#FechaFinalFiltro").val() == "") {
+                        $('#FiltrosActivos').hide();
+                    } 
+                    else {
+                        $('#FiltrosActivos').show();
+                    }
+
+        
+               
+                    
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+    //Saul Gonzalez 03/02/2020: funcion para filtrar desmarcar los checks de filtrado
+    function LimpiarFiltros() {
+        $('#FormularioFiltros')[0].reset();        
+    }
+    function EliminarFiltros() {
+        $('#FormularioFiltros')[0].reset();
+        FiltrarPagos();
+        $('#FiltrosActivos').hide();
+
+    }
 </script>
 
 <style>
