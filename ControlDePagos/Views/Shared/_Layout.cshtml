@@ -38,7 +38,7 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i> Mi perfil</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
+                        <a id="CerrarSesion" class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
                     </div>
                 </li>
             </ul>
@@ -83,5 +83,53 @@
             background: linear-gradient(-2deg, #21bd83, #3e3434);
         }
     </style>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#CerrarSesion").click(function () {
+                CerrarSesion();
+            });
+        });
+
+    function CerrarSesion() {
+        //Saul Gonzalez 21/10/2020: Asiganamos los parametros
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Login/CerrarSesion',
+            context: document.body,
+            //data: Params,
+            success: function (result) {
+                if (result.status) {
+                window.location.href='@Url.Action("Index", "Login")';
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error",
+						text: result.mensaje,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        // Saul Gonzalez: 19/10/2020: Se recarga la pagina despues de cerra el swalFire
+                        if (result.isConfirmed) {
+                             window.location.href='@Url.Action("Index", "Login")';
+                        }
+                    })
+                }
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+
+
+    </script>
+
 </body>
-</html>
+</html >

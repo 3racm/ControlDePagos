@@ -55,5 +55,17 @@ namespace ControlDePagos.Controllers
             }
             return Json(new { status = true, mensaje = "Inicio de sesion exitoso" });
         }
+        public JsonResult CerrarSesion()
+        {
+            try
+            {
+                Session.Abandon();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Ha finalizado la sesión" });
+        }
     }
 }
