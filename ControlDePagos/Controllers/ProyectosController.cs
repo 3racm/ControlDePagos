@@ -161,5 +161,93 @@ namespace ControlDePagos.Controllers
             }
             return Json(new { status = true, mensaje = "Datos guardados"});
         }
+
+        public JsonResult EliminarPago(int Id)
+        {
+            try
+            {
+                //Saul González 11/03/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(Id.ToString()))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id del proyecto." });
+                }
+                //Saul Gonzalez 22/03/2021: Cargamos los datos del pago
+                Tb_Proyectos Proyecto = db.Tb_Proyectos.Where(y => y.Id == Id).FirstOrDefault();
+                if (Proyecto == null)
+                {
+                    return Json(new { status = false, mensaje = "ERROR L-178: Ocurrió un error al encontrar los datos del proyecto " + Id.ToString() });
+                }
+                if (Proyecto.Tb_Pagos.Count > 0)
+                {
+                    db.Tb_Pagos.RemoveRange(Proyecto.Tb_Pagos);
+                }
+                db.Tb_Proyectos.Remove(Proyecto);
+                db.SaveChanges();
+
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Proyecto eliminado correctamente" });
+        }
+
+        public JsonResult CerrarProyecto(int IdProyecto)
+        {
+            try
+            {
+                //Saul González 11/03/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(IdProyecto.ToString()))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id del proyecto." });
+                }
+                //Saul Gonzalez 22/03/2021: Cargamos los datos del pago
+                Tb_Proyectos Proyecto = db.Tb_Proyectos.Where(y => y.Id == IdProyecto).FirstOrDefault();
+                if (Proyecto == null)
+                {
+                    return Json(new { status = false, mensaje = "ERROR L-178: Ocurrió un error al encontrar los datos del proyecto " + IdProyecto.ToString() });
+                }
+                Proyecto.Estado = "Cerrado";
+
+                db.Tb_Proyectos.Attach(Proyecto);
+                db.Entry(Proyecto).State = EntityState.Modified;
+                db.SaveChanges();
+
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Proyecto eliminado correctamente" });
+        }
+
+        public JsonResult ReabrirProyecto(int IdProyecto)
+        {
+            try
+            {
+                //Saul González 11/03/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(IdProyecto.ToString()))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id del proyecto." });
+                }
+                //Saul Gonzalez 22/03/2021: Cargamos los datos del pago
+                Tb_Proyectos Proyecto = db.Tb_Proyectos.Where(y => y.Id == IdProyecto).FirstOrDefault();
+                if (Proyecto == null)
+                {
+                    return Json(new { status = false, mensaje = "ERROR L-178: Ocurrió un error al encontrar los datos del proyecto " + IdProyecto.ToString() });
+                }
+                Proyecto.Estado = "Reabierto";
+
+                db.Tb_Proyectos.Attach(Proyecto);
+                db.Entry(Proyecto).State = EntityState.Modified;
+                db.SaveChanges();
+
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Proyecto eliminado correctamente" });
+        }
     }
 }

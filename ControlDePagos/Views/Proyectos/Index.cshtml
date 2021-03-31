@@ -140,7 +140,7 @@
                     //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
                     var btnAcciones = `
                           <button type="button" class="btn btn-success btn-sm" onclick="EditarProyecto(${obj.Id})" title="Editar"><i class="fas fa-edit"></i></button>
-                           <button type="button" class="btn btn-danger btn-sm" onclick="Eliminar(${obj.Id},'${obj.Id}')" title="Eliminar"><i class="far fa-trash-alt"></i></button>`;
+                           <button type="button" class="btn btn-danger btn-sm" onclick="EliminarProyecto(${obj.Id}, '${obj.Num_Proyecto_Cuenta}')" title="Eliminar proyecto"><i class="far fa-trash-alt"></i></button>`;
 
                     var Estado = "";
                     //Seteamos el estado del proyecto
@@ -240,6 +240,60 @@
          var URL = '@Url.Action("CargarPagina", "Pagos", new { IdProyecto = "parametro" })';
         var newURL = URL.replace("parametro", IdProyecto)
           window.location.href = newURL;
+    }
+
+    function EliminarProyecto(Id, Num_Proyecto_Cuenta) {
+        Swal.fire({
+            title: "Aviso",
+            html: "¿Esta seguro de eliminar el proyecto <b>" + Num_Proyecto_Cuenta + "</b>? <br> <b> ¡Se eliminarán también los pagos relacionados con el proyecto! </b>",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //Saul Gonzalez 26/10/2020: Asignamos los valores para el parametro
+                var Params = {
+                    "Id": Id
+                };
+                $.ajax({
+                    type: "POST",
+                    traditional: true,
+                    async: false,
+                    cache: false,
+                    url: '/Proyectos/EliminarPago',
+                    context: document.body,
+                    data: Params,
+                    success: function (result) {
+                        if (result.status) {
+                            // Saul Gonzalez: 26/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                            Swal.fire({
+                                html: ' <img src="https://i.pinimg.com/originals/ff/fa/9b/fffa9b880767231e0d965f4fc8651dc2.gif" style="width:200px" alt="Eliminado"> <br> <b>Proyecto eliminado correctamente</b>',
+                                timerProgressBar: true,
+                                showConfirmButton: true,
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                // Saul Gonzalez: 26/10/2020: Se recarga la pagina despues de cerra el swalFire
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            })
+                        }
+                        else {
+                            Swal.fire('Error', result.mensaje, 'error')
+                        }
+                    },
+                    error: function (xhr) {
+                        // Debugger;
+                        console.log(xhr.responseText);
+                        alert("Error has occurred...");
+                    }
+                });
+            }
+        })
+
     }
 
 

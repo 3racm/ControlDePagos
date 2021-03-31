@@ -117,7 +117,7 @@ namespace ControlDePagos.Controllers
                     Subtotal = Subtotal + SubtotalMonto2;
                 }                
                 TotalRetorno = ListaPagos.Sum(x => x.Retorno);
-                MontoFinal = Subtotal - TotalRetorno;
+                MontoFinal = Proyecto.MontoInicial - Subtotal + TotalRetorno;
                 #endregion
 
             }
@@ -128,7 +128,7 @@ namespace ControlDePagos.Controllers
             //Lista = Lista.OrderByDescending(x => x.FechaInicio).Reverse().ToList();
             return Json(new { status = true, DatosProyecto = DatosProyecto, ListaPagos = ListaPagos, Subtotal = Subtotal, TotalRetorno = TotalRetorno, MontoFinal= MontoFinal });
         }   
-        public JsonResult RegistrarPago(string IdProyecto, string Monto, string REF, string TipoPago, string Retorno = "", string NotasPago = "", string Monto2 = "", string tipoPago2 ="")
+        public JsonResult RegistrarPago(string IdProyecto, string Monto, string REF, string TipoPago, string Retorno = "", string NotasPago = "", string Monto2 = "", string tipoPago2 ="", DateTime ? FechaESP = null)
         {
             Tb_Pagos Pago = new Tb_Pagos();
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
@@ -159,6 +159,10 @@ namespace ControlDePagos.Controllers
                 }
                 //Saul Gonzalez 17/02/2021: Guardamos los datos del pago                    
                 Pago.FechaPago = DateTime.Now;
+                if (FechaESP != null)
+                {
+                    Pago.FechaPago = Convert.ToDateTime(FechaESP);
+                }
                 Pago.Monto = Convert.ToDecimal(Monto, Culture);
                 //Saul Gonzalez 24/03/2021: Validamos si se agrego una segunda combinacion de pago
                 if (!String.IsNullOrEmpty(Monto2))

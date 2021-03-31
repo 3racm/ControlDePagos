@@ -150,6 +150,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="img\Actualizando.gif" />
     <Content Include="img\FondoLogin.gif" />
+    <Content Include="img\FondoLogin2.gif" />
     <Content Include="img\logo3R.ico" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
