@@ -17,7 +17,7 @@
         <button type="submit" class="btn btn-info"><i class="fas fa-sync-alt"></i> Actualizar</button>
     </div>
     <div class="form-group mt-3 mr-3">
-        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#"> <i class="fas fa-filter"></i> Filtrar</button>
+        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#ModalFiltros"> <i class="fas fa-filter"></i> Filtrar</button>
     </div>
     <div class="form-group mt-3">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal"> <i class="fas fa-plus-square"></i> Nuevo proyecto</button>
@@ -101,6 +101,48 @@
         </div>
     </div>
 </div>
+
+@*@<!-- MODAL PARA FILTRAR-->*@
+<div class="modal fade" id="ModalFiltros" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> <i class="fas fa-filter"></i> Filtrar por</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="DefinicionEtiquetas" class="alert alert-primary mb-4" style="text-align:start; font-size:12px" role="alert">
+
+                    <span class="badge badge-success btn mb-1" data-toggle="tooltip"><i class="fas fa-toggle-on"></i> Activo</span> Todo proyecto que aun sigue activo o en proceso.<br>
+                    <span class="badge badge-danger btn mb-1" data-toggle="tooltip"><i class="fas fa-toggle-off"></i> Cerrado</span> Proyectos que ya fueron concluidos o cerrados.<br>
+                    <span class="badge badge-warning btn" data-toggle="tooltip"><i class="fas fa-toggle-on"></i> Reabierto</span> Proyectos que fueron cerrados pero se volvieron a activar.
+
+                </div>
+                <div class="form-row" style="margin-left:82px;">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="Abierto" value="">
+                        <label class="form-check-label" for="Abierto">Abierto</label>
+                    </div>
+                    <div class="form-check form-check-inline ml-3">
+                        <input class="form-check-input" type="checkbox" id="Cerrado" value="">
+                        <label class="form-check-label" for="Cerrado">Cerrado</label>
+                    </div>
+                    <div class="form-check form-check-inline ml-3">
+                        <input class="form-check-input" type="checkbox" id="Reabierto" value="">
+                        <label class="form-check-label" for="Reabierto">Reabierto</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" onclick="LimpiarFiltros()"> <i class="fas fa-brush"></i> Limpiar filtros</button>
+                <button type="button" class="btn btn-success" onclick="Filtrar()"> <i class="fas fa-check-circle"></i> Aplicar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     var table = $('#myTable').DataTable({
         //Saul Gonzalez 22/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
@@ -130,43 +172,7 @@
     });
     $(document).ready(function () {
         //Saul Gonzalez 13/10/2020: Esta funcion realiza una consulta en la BD de la lista de proveedores
-        $.ajax({
-            url: "/Proyectos/ListarProyectos",
-            type: "GET",
-            //data: { leagueId: 5 },
-            success: function (data) {
-                //Saul Gonzalez 14/10/2020: Hacemos un foreach para llenar la informacion de la tabla
-                $.each(data, function (i, obj) {
-                    //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
-                    var btnAcciones = `
-                          <button type="button" class="btn btn-success btn-sm" onclick="EditarProyecto(${obj.Id})" title="Editar"><i class="fas fa-edit"></i></button>
-                           <button type="button" class="btn btn-danger btn-sm" onclick="EliminarProyecto(${obj.Id}, '${obj.Num_Proyecto_Cuenta}')" title="Eliminar proyecto"><i class="far fa-trash-alt"></i></button>`;
-
-                    var Estado = "";
-                    //Seteamos el estado del proyecto
-                    if (obj.Estado == "Activo") {
-                        Estado = `<label style="color:#33c139"> <i class="fas fa-toggle-on"></i> Activo</label>`;
-                    }
-                    else if (obj.Estado == "Cerrado") {
-                        Estado = `<label style="color:#dc3545"> <i class="fas fa-toggle-off"></i> Cerrado</label>`;
-                    }
-                    else if (obj.Estado == "Reabierto") {
-                        Estado = `<label style="color:#f19206"> <i class="fas fa-toggle-on"></i> Reabierto</label>`;
-                    }
-
-                    //Saul Gonzalez 14/10/2020: Agregamos los datos del proveedor a la tabla
-                    table.row.add([obj.Num_Proyecto_Cuenta, obj.FechaInicio, obj.Descripcion, Estado, btnAcciones])
-                        .draw()
-                        .node();
-
-                    //$("div.toolbar").html('<i class="fas fa-search"> </i> <input id="Buscador" type="search" placeholder="Buscar por nombre" onkeyup="Buscar()" title="Presione Esc para supender la búsqueda">');
-                });
-                //Saul Gonzalez 22/10/2020: Se agregan los botones de actualizar y agregar en el toolbar
-                //$("div.toolbar").html('<button id="Actualizar" onclick="Recargar()" type="button" style="float:left" class="btn btn-info mr-2" > <i class="fas fa-sync-alt"></i> Actualizar</button>' +
-                //    '<button id="Nuevo" type="button" style="float:left" class="btn btn-success" data-toggle="modal" data-target="#myModal"><i class="fas fa-user-plus"></i> Nuevo Usuario</button>');
-
-            }
-        });
+        ListarProyectos();
 
     });
 
@@ -294,6 +300,83 @@
             }
         })
 
+    }
+
+    function ListarProyectos(CheckAbierto = false, CheckCerrado = false, CheckReabierto = false) {
+        $.ajax({
+            url: "/Proyectos/ListarProyectos",
+            type: "GET",
+            //data: { leagueId: 5 },
+            success: function (data) {    
+                table.clear().draw();
+                //Saul Gonzalez 14/10/2020: Hacemos un foreach para llenar la informacion de la tabla
+                $.each(data, function (i, obj) {                 
+                    //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
+                    var btnAcciones = `
+                          <button type="button" class="btn btn-success btn-sm" onclick="EditarProyecto(${obj.Id})" title="Editar"><i class="fas fa-edit"></i></button>
+                           <button type="button" class="btn btn-danger btn-sm" onclick="EliminarProyecto(${obj.Id}, '${obj.Num_Proyecto_Cuenta}')" title="Eliminar proyecto"><i class="far fa-trash-alt"></i></button>`;
+
+                    var Estado = "";
+                    //Seteamos el estado del proyecto
+                    if (obj.Estado == "Activo") {
+                        Estado = `<label style="color:#33c139"> <i class="fas fa-toggle-on"></i> Activo</label>`;
+                    }
+                    else if (obj.Estado == "Cerrado") {
+                        Estado = `<label style="color:#dc3545"> <i class="fas fa-toggle-off"></i> Cerrado</label>`;
+                    }
+                    else if (obj.Estado == "Reabierto") {
+                        Estado = `<label style="color:#f19206"> <i class="fas fa-toggle-on"></i> Reabierto</label>`;
+                    }    
+
+                    //Saul Gonzalez 08/04/2021: Validamos si se esta aplicando algun filtro
+                        if (obj.Estado == "Activo" && CheckAbierto == true) {
+                            //Agregamos el registro
+                            table.row.add([obj.Num_Proyecto_Cuenta, obj.FechaInicio, obj.Descripcion, Estado, btnAcciones])
+                                .draw()
+                                .node();
+                        }
+                        if (obj.Estado == "Cerrado" && CheckCerrado == true) {
+                            //Agregamos el registro
+                            table.row.add([obj.Num_Proyecto_Cuenta, obj.FechaInicio, obj.Descripcion, Estado, btnAcciones])
+                                .draw()
+                                .node();
+                        }
+                        if (obj.Estado == "Reabierto" && CheckReabierto == true) {
+                            //Agregamos el registro
+                            table.row.add([obj.Num_Proyecto_Cuenta, obj.FechaInicio, obj.Descripcion, Estado, btnAcciones])
+                                .draw()
+                                .node();
+                        }           
+                 
+                    if (CheckAbierto == false && CheckCerrado == false && CheckReabierto == false) {
+                        //Saul Gonzalez 08/04/2021: Agregamos los datos del del poryecto a la tabla
+                        table.row.add([obj.Num_Proyecto_Cuenta, obj.FechaInicio, obj.Descripcion, Estado, btnAcciones])
+                            .draw()
+                            .node();
+                    }                
+                  
+               });                     
+            }
+        });
+
+    }
+
+    //Saul Gonzalez 08/04/2021: funcion para filtrar desmarcar los checks de filtrado
+    function LimpiarFiltros() {
+        $("#Abierto").prop('checked', false);
+        $("#Cerrado").prop('checked', false);
+        $("#Reabierto").prop('checked', false);
+    }
+
+    function Filtrar() {
+        var CheckAbierto = $('#Abierto').prop('checked');
+        var CheckCerrado = $('#Cerrado').prop('checked');
+        var CheckReabierto = $('#Reabierto').prop('checked');      
+        //Saul Gonzalez 08/04/2021: mandamos los filtros a la funcion de Listar Poryectos
+        $("#cuerpo > tr").remove();
+        ListarProyectos(CheckAbierto, CheckCerrado, CheckReabierto);
+        $('#ModalFiltros').modal('hide');
+     
     }
 
 
