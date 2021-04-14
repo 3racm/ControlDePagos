@@ -28,5 +28,6 @@ namespace ControlPagosModel
         public virtual DbSet<Tb_Proyectos> Tb_Proyectos { get; set; }
         public virtual DbSet<Tb_Pagos> Tb_Pagos { get; set; }
         public virtual DbSet<Tb_Usuario> Tb_Usuario { get; set; }
+        public virtual DbSet<Tb_Requisiciones> Tb_Requisiciones { get; set; }
     }
 }

@@ -129,10 +129,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Clases\cPagos.cs" />
+    <Compile Include="Clases\cRequisicion.cs" />
     <Compile Include="Clases\cProyectos.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
     <Compile Include="Controllers\ProyectosController.cs" />
+    <Compile Include="Controllers\RequisicionesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -285,6 +287,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Requisiciones\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 03/25/2021 12:50:06
+-- Date Created: 04/13/2021 10:41:17
 -- Generated from EDMX file: C:\Users\3R Server\source\repos\ControlDePagos\ControlPagosModel\ControlGastosModel.edmx
 -- --------------------------------------------------
 
@@ -25,14 +25,17 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[Tb_Pagos]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Tb_Pagos];
-GO
 IF OBJECT_ID(N'[dbo].[Tb_Proyectos]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tb_Proyectos];
 GO
+IF OBJECT_ID(N'[dbo].[Tb_Pagos]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tb_Pagos];
+GO
 IF OBJECT_ID(N'[dbo].[Tb_Usuario]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tb_Usuario];
+GO
+IF OBJECT_ID(N'[dbo].[Tb_Requisiciones]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tb_Requisiciones];
 GO
 
 -- --------------------------------------------------
@@ -82,6 +85,19 @@ CREATE TABLE [dbo].[Tb_Usuario] (
 );
 GO
 
+-- Creating table 'Tb_Requisiciones'
+CREATE TABLE [dbo].[Tb_Requisiciones] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Cuenta_Cargo] nvarchar(max)  NOT NULL,
+    [Total] decimal(18,2)  NOT NULL,
+    [Moneda] nvarchar(max)  NOT NULL,
+    [Descripcion] nvarchar(max)  NOT NULL,
+    [Solicitud] nvarchar(max)  NULL,
+    [TipoReq] nvarchar(max)  NOT NULL,
+    [FechaRegistro] datetime  NOT NULL
+);
+GO
+
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
@@ -102,6 +118,12 @@ GO
 ALTER TABLE [dbo].[Tb_Usuario]
 ADD CONSTRAINT [PK_Tb_Usuario]
     PRIMARY KEY CLUSTERED ([Id_usuario] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Tb_Requisiciones'
+ALTER TABLE [dbo].[Tb_Requisiciones]
+ADD CONSTRAINT [PK_Tb_Requisiciones]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
 -- --------------------------------------------------

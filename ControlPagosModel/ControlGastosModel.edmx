@@ -9,6 +9,7 @@
     <EntitySet Name="Tb_Proyectos" EntityType="ControlDeGastosModel.Store.Tb_Proyectos" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Tb_Pagos" EntityType="ControlDeGastosModel.Store.Tb_Pagos" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Tb_Usuario" EntityType="ControlDeGastosModel.Store.Tb_Usuario" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tb_Requisiciones" EntityType="ControlDeGastosModel.Store.Tb_Requisiciones" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="Tb_ProyectosTb_Pagos" Association="ControlDeGastosModel.Store.Tb_ProyectosTb_Pagos">
       <End Role="Tb_Proyectos" EntitySet="Tb_Proyectos" />
       <End Role="Tb_Pagos" EntitySet="Tb_Pagos" />
@@ -57,6 +58,19 @@
     <Property Name="Permiso" Type="nvarchar" Nullable="false" MaxLength="50" />
     <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
   </EntityType>
+  <EntityType Name="Tb_Requisiciones">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Cuenta_Cargo" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Total" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Moneda" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Descripcion" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Solicitud" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="TipoReq" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
+  </EntityType>
   <Association Name="Tb_ProyectosTb_Pagos">
     <End Role="Tb_Proyectos" Type="ControlDeGastosModel.Store.Tb_Proyectos" Multiplicity="1" />
     <End Role="Tb_Pagos" Type="ControlDeGastosModel.Store.Tb_Pagos" Multiplicity="*" />
@@ -81,6 +95,7 @@
             <End Role="Tb_Pagos" EntitySet="Tb_Pagos" />
           </AssociationSet>
           <EntitySet Name="Tb_Usuario" EntityType="ControlDeGastosModel.Tb_Usuario" />
+          <EntitySet Name="Tb_Requisiciones" EntityType="ControlDeGastosModel.Tb_Requisiciones" />
         </EntityContainer>
         <EntityType Name="Tb_Proyectos">
           <Key>
@@ -130,6 +145,19 @@
           <Property Name="Permiso" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="FechaRegistro" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <EntityType Name="Tb_Requisiciones">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Cuenta_Cargo" Type="String" Nullable="false" />
+          <Property Name="Total" Type="Decimal" Nullable="false" Scale="2" Precision="18" />
+          <Property Name="Moneda" Type="String" Nullable="false" />
+          <Property Name="Descripcion" Type="String" Nullable="false" />
+          <Property Name="Solicitud" Type="String" Nullable="true" />
+          <Property Name="TipoReq" Type="String" Nullable="false" />
+          <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -177,6 +205,20 @@
           <ScalarProperty Name="CorreoElectronico" ColumnName="CorreoElectronico" />
           <ScalarProperty Name="Contraseña" ColumnName="Contraseña" />
           <ScalarProperty Name="Permiso" ColumnName="Permiso" />
+          <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Tb_Requisiciones">
+      <EntityTypeMapping TypeName="IsTypeOf(ControlDeGastosModel.Tb_Requisiciones)">
+        <MappingFragment StoreEntitySet="Tb_Requisiciones">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Cuenta_Cargo" ColumnName="Cuenta_Cargo" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="Moneda" ColumnName="Moneda" />
+          <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+          <ScalarProperty Name="Solicitud" ColumnName="Solicitud" />
+          <ScalarProperty Name="TipoReq" ColumnName="TipoReq" />
           <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
         </MappingFragment>
       </EntityTypeMapping>

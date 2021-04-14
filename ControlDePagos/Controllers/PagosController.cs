@@ -74,7 +74,7 @@ namespace ControlDePagos.Controllers
                 //Datos del proyecto
                 DatosProyecto.Id = Proyecto.Id;
                 DatosProyecto.Num_Proyecto_Cuenta = Proyecto.Num_Proyecto_Cuenta;
-                DatosProyecto.FechaInicio = Proyecto.FechaInicio.ToShortDateString();
+                DatosProyecto.FechaInicio = Proyecto.FechaInicio.ToString("yyyy-MM-dd");
                 DatosProyecto.MontoInicial = Proyecto.MontoInicial;
                 DatosProyecto.MontoFinal = Proyecto.MontoFinal;
                 DatosProyecto.Retorno = Proyecto.Retorno;
@@ -227,6 +227,7 @@ namespace ControlDePagos.Controllers
                 Pago.Referencia = o.Referencia;
                 Pago.Retorno = o.Retorno;                            
                 Pago.Notas = o.Notas;
+                Pago.FechaPago = o.FechaPago.ToString("yyyy-MM-dd");
                 //Datos de pagos combinados
                 Pago.Monto2 = o.Monto2;
                 Pago.TipoPago2 = o.TipoPago2;
@@ -239,7 +240,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Pago registrado correctamente.", Datos = Pago });
         }
 
-        public JsonResult ActualizarPago(string IdPago, string Monto, string REF, string TipoPago, string Retorno = "", string NotasPago ="", string Monto2 ="", string tipoPago2 = "")
+        public JsonResult ActualizarPago(string IdPago, string Monto, string REF, string TipoPago, string FechaPago, string Retorno = "", string NotasPago ="", string Monto2 ="", string tipoPago2 = "")
         {         
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
             try
@@ -262,6 +263,10 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(TipoPago))
                 {
                     return Json(new { status = false, mensaje = "Debe seleccionar un tipo de pago." });
+                }
+                if (String.IsNullOrEmpty(FechaPago))
+                {
+                    return Json(new { status = false, mensaje = "La fecha de pago no puede estar vacia." });
                 }
                 if (!String.IsNullOrEmpty(Retorno))
                 {
@@ -294,6 +299,8 @@ namespace ControlDePagos.Controllers
                 }
                 Pago.Monto = Convert.ToDecimal(Monto, Culture);
                 Pago.Referencia = REF;
+                var HoraPago = DateTime.Now.TimeOfDay;
+                Pago.FechaPago = Convert.ToDateTime(FechaPago).Add(HoraPago);
                 Pago.TipoPago = TipoPago;                
                 Pago.Notas = NotasPago;
                 //Saul Gonzalez 24/03/2021: Validamos si se agrego una segunda combinacion de pago

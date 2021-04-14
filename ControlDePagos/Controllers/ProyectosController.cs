@@ -161,6 +161,79 @@ namespace ControlDePagos.Controllers
             }
             return Json(new { status = true, mensaje = "Datos guardados"});
         }
+        public JsonResult ActualizarFechaInicial(string IdProyectoP, string FechaInicio)
+        {
+            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            try
+            {
+
+                //Saul González 13/04/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(IdProyectoP))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id del proyecto, no fue posible actualizar la fecha." });
+                }
+                if (String.IsNullOrEmpty(FechaInicio))
+                {
+                    return Json(new { status = false, mensaje = "La fecha inicial no puede estar vacía." });
+                }
+                int Id_Proyecto = Int32.Parse(IdProyectoP);
+                //Saul Gonzalez 13/04/2021: Consultamos los datos del proyecto
+                Tb_Proyectos Proyecto = db.Tb_Proyectos.Where(y => y.Id == Id_Proyecto).FirstOrDefault();
+                if (Proyecto == null)
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al buscar el proyecto con el ID: " + IdProyectoP });
+                }
+                //Saul gonzalez 13/04/2021: Actualizamos el monto inicial del proyecto
+                Proyecto.FechaInicio = Convert.ToDateTime(FechaInicio);
+
+                //Saul gonzalez 13/04/2021: Guardamos los datos
+                db.Tb_Proyectos.Attach(Proyecto);
+                db.Entry(Proyecto).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Datos guardados" });
+        }
+        public JsonResult ActualizarDescripcion(string IdProyectoP, string Descripcion)
+        {
+            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            try
+            {
+
+                //Saul González 14/04/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(IdProyectoP))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id del proyecto, no fue posible actualizar la Descripcion." });
+                }
+                if (String.IsNullOrEmpty(Descripcion))
+                {
+                    return Json(new { status = false, mensaje = "El campo descripcion no puede estar vacio." });
+                }
+                int Id_Proyecto = Int32.Parse(IdProyectoP);
+                //Saul Gonzalez 13/04/2021: Consultamos los datos del proyecto
+                Tb_Proyectos Proyecto = db.Tb_Proyectos.Where(y => y.Id == Id_Proyecto).FirstOrDefault();
+                if (Proyecto == null)
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al buscar el proyecto con el ID: " + IdProyectoP });
+                }
+                //Saul gonzalez 14/04/2021: Actualizamos el monto inicial del proyecto
+                Proyecto.Descripcion = Descripcion;
+                //Saul gonzalez 14/04/2021: Guardamos los datos
+                db.Tb_Proyectos.Attach(Proyecto);
+                db.Entry(Proyecto).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Descripcion actualizada" });
+        }
+        
+
 
         public JsonResult EliminarPago(int Id)
         {

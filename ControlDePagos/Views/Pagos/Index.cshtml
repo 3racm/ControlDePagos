@@ -27,10 +27,20 @@
 </div>
 <form id="formulario">
     <div class="form-row">
-        <div class="form-group col-md-3">
+        @*<div class="form-group col-md-3">
             <label for="FechaInicio"><i class="fas fa-calendar-alt"></i> Fecha de inicio</label>
             <input type="text" class="form-control" id="FechaInicio" placeholder="Buscar por ID" autocomplete="off">
+        </div>*@
+        <div class="form-group col-md-3">
+            <label for="FechaInicio"><i class="fas fa-calendar-alt"></i> Fecha de inicio </label>
+            <div class="input-group mb-2">            
+                <input type="date" class="form-control" id="FechaInicio" >
+                <div class="input-group-append">
+                    <span class="input-group-text"><a id="TextoFechaInicio" onclick="ModificarFechaI()" href="#">Editar</a></span>
+                </div>
+            </div>
         </div>
+
         <div class="form-group col-md-3">
             <label for="MontoI"><i class="fas fa-coins"></i> Monto inicial <a id="MonedaProyecto" class="font-weight-bold" style="color:#4caf50"></a></label>
             <div class="input-group mb-2">
@@ -39,7 +49,7 @@
                 </div>
                 <input type="text" class="form-control font-weight-bold" id="MontoI" placeholder="$0.00">
                 <div class="input-group-append">
-                    <span class="input-group-text"><a id="TextoMontoI" onclick="ModificarMontoI()" href="#">Modificar</a></span>
+                    <span class="input-group-text"><a id="TextoMontoI" onclick="ModificarMontoI()" href="#">Editar</a></span>
                 </div>
             </div>
         </div>
@@ -60,6 +70,7 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="Descripcion"><i class="far fa-comment-alt"></i> Descripción</label>
+            <label for="Descripcion" style="float:right"><i class="fas fa-edit" onclick="HabilitarDesc()"></i> <a href="#" onclick="HabilitarDesc()" id="TextoDescripcion"> Editar descripción</a></label>
             <textarea class="form-control col-sm-12" id="Descripcion" rows="2" placeholder="Descripción del proyecto." autocomplete="off"></textarea>
         </div>
 
@@ -122,21 +133,23 @@
                             </select>
                         </div>
                         <div class="col-sm-2 FechaESP">
-                            <div class="form-check ">
+                            <div class="form-check" id="CajaFecha">
                                 <input class="form-check-input" type="checkbox" value="" id="CheckFechaEspecifica">
-                                <label class="form-check-label" for="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault" id="LabelFechaPago">
                                     Asignar fecha
                                 </label>
 
                             </div>
 
                         </div>
-                        <div class="col-sm-5 FechaESP" >
+                        <div class="col-sm-5 FechaESP">
                             <input type="date" class="form-control" id="FechaESP" autocomplete="off">
                         </div>
-
-                        <label for="Retorno" id="LabelRetorno" class="col-sm-2 col-form-label">Retorno</label>
-                        <div class="col-sm-5" id="CajaRetorno">
+                      
+                    </div>
+                    <div class="form-group row">
+                        <label for="Retorno" id="LabelRetorno" class="col-sm-1 col-form-label">Retorno</label>
+                        <div class="col-sm-4" id="CajaRetorno">
                             <input type="text" class="form-control" id="Retorno" placeholder="0.00" autocomplete="off" onkeyup="this.value=Numeros(this.value)">
                         </div>
                     </div>
@@ -171,7 +184,7 @@
                                 </select>
                             </div>
                         </div>
-</form>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
@@ -519,6 +532,12 @@
             $("#TituloModal").text("Registrar pago");
             $(".CajaPago2").hide();
             $(".FechaESP").show();
+            //Se restablece el input de la fecha
+            $("#LabelFechaPago").text("Asignar fecha");
+            $("#FechaESP").val();
+            $("#CheckFechaEspecifica").show();          
+            $('#CajaFecha').removeClass('form-group').addClass('form-check');
+            $("#FechaESP").prop('disabled', true); 
             //Al cerrar la modal reinicimos el select de tipos de pago
             CargarTiposPago();
         });
@@ -630,12 +649,17 @@
             success: function (result) {
                 if (result.status) {
                     $('#ModalPagos').modal('show');
-                    $("#TituloModal").text("Editar pago");
+                    $("#TituloModal").text("Editar pago");                
                     $("#LabelRetorno").show();
                     $("#CajaRetorno").show();
-                    $(".FechaESP").hide();
-
-
+                    //Mostramos el campo de fecha y le asignamos su valor
+                    $("#LabelFechaPago").text("Fecha pago");
+                    $("#FechaESP").val(result.Datos.FechaPago); 
+                    $("#CheckFechaEspecifica").hide();
+                    $("#FechaESP").prop('disabled', false);  
+                    $('#CajaFecha').removeClass('form-check').addClass('form-group');
+                    //$(".FechaESP").hide();
+                                     
                     //Saul Gonzalez 22/03/2021: Seteamos los datos del pago en la modal
                     $("#IDPAGO").val(result.Datos.Id);
                     $("#MontoP").val(result.Datos.Monto.toFixed(2));
@@ -677,13 +701,14 @@
         var Monto = $("#MontoP").val();
         var REF = $("#REF").val();
         var TipoPago = $("#tipoPago").val();
-        var Retorno = $("#Retorno").val();
+        var FechaPago = $("#FechaESP").val();
+        var Retorno = $("#Retorno").val();     
         var NotasPago = $("#NotasPago").val();
         //parametros de las combinaciones de pago
         var Monto2 = $("#Monto2").val();
         var tipoPago2 = $("#tipoPago2").val();
         var Params = {
-            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "Retorno": Retorno, "NotasPago": NotasPago, "Monto2": Monto2, "tipoPago2": tipoPago2
+            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "FechaPago": FechaPago ,"Retorno": Retorno, "NotasPago": NotasPago, "Monto2": Monto2, "tipoPago2": tipoPago2
         };
         $.ajax({
             type: "POST",
@@ -736,7 +761,7 @@
                                 <option class="fas" style="font-size:14px;" value="TRANSFERENCIA"> &#xf362; TRANSFERENCIA </option>`);
     }
     function ModificarMontoI() {
-        if ($("#TextoMontoI").text() == "Modificar") {
+        if ($("#TextoMontoI").text() == "Editar") {
             $("#TextoMontoI").text('Actualizar');
             $("#MontoI").prop('disabled', false);
         }
@@ -772,12 +797,71 @@
                             allowOutsideClick: false
 
                         });
-                        $("#TextoMontoI").text('Modificar');                 
+                        $("#TextoMontoI").text('Editar');                 
                         $("#MontoI").prop('disabled', true);
                         setTimeout(function () {
                             location.reload();
                         }, 1000);
 
+                    }
+                    else {
+                        Swal.fire(
+                            'Error',
+                            result.mensaje,
+                            'error'
+                        )
+                    }
+
+                },
+                error: function (xhr) {
+                    // Debugger;
+                    console.log(xhr.responseText);
+                    alert("Error has occurred...");
+                }
+            });
+        }
+
+    }
+
+    function ModificarFechaI() {
+        if ($("#TextoFechaInicio").text() == "Editar") {
+            $("#TextoFechaInicio").html('<i class="fas fa-check-circle" title="Confirmar cambios" style="color:#4caf50"></i>');
+            $("#FechaInicio").prop('disabled', false);        
+        }
+        else if ($("#TextoFechaInicio").html() == '<i class="fas fa-check-circle" title="Confirmar cambios" style="color:#4caf50" aria-hidden="true"></i><span class="sr-only">Confirmar cambios</span>') {
+            //Primero obtenemos el Id del proyecto
+            const valores = window.location.search;
+            //Creamos la instancia de la URL
+            const urlParams = new URLSearchParams(valores);
+            //Accedemos a los valores de la URL y tomamos el ID
+            var IdProyectoP = urlParams.get('IdProyecto');
+            var FechaInicio = $("#FechaInicio").val();
+            //-----Se Realiza un metodo AJAX que actualiza el Monto inicial----//
+            var Params = {
+                "IdProyectoP": IdProyectoP, "FechaInicio": FechaInicio
+            };
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                async: false,
+                cache: false,
+                url: '/Proyectos/ActualizarFechaInicial',
+                context: document.body,
+                data: Params,
+                success: function (result) {
+                    if (result.status) {
+                        //Mostramos un mensaje de actualizando
+                        Swal.fire({
+                            title: 'Actualizando fecha',
+                            html: ' <img src="/img/Actualizando.gif" style="width:200px" alt="Actualizando">',
+                            timer: 700,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+
+                        });
+                        $("#TextoFechaInicio").html('Editar');
+                        $("#FechaInicio").prop('disabled', true);                     
                     }
                     else {
                         Swal.fire(
@@ -1084,7 +1168,65 @@
         $('#FormularioFiltros')[0].reset();
         FiltrarPagos();
         $('#FiltrosActivos').hide();
+    }
 
+    function HabilitarDesc() {
+       
+        if ($("#TextoDescripcion").text() == " Editar descripción") {
+            $("#TextoDescripcion").html('Guardar cambios');
+            $("#Descripcion").prop('disabled', false);   
+        }
+        else if ($("#TextoDescripcion").text() == 'Guardar cambios') {
+            //Primero obtenemos el Id del proyecto
+            const valores = window.location.search;
+            //Creamos la instancia de la URL
+            const urlParams = new URLSearchParams(valores);
+            //Accedemos a los valores de la URL y tomamos el ID
+            var IdProyectoP = urlParams.get('IdProyecto');
+            var Descripcion = $("#Descripcion").val();
+            //-----Se Realiza un metodo AJAX que actualiza el Monto inicial----//
+            var Params = {
+                "IdProyectoP": IdProyectoP, "Descripcion": Descripcion
+            };
+            $.ajax({
+                type: "POST",
+                traditional: true,
+                async: false,
+                cache: false,
+                url: '/Proyectos/ActualizarDescripcion',
+                context: document.body,
+                data: Params,
+                success: function (result) {
+                    if (result.status) {
+                        //Mostramos un mensaje de actualizando
+                        Swal.fire({
+                            title: 'Actualizando descripción',
+                            html: ' <img src="/img/Actualizando.gif" style="width:200px" alt="Actualizando">',
+                            timer: 700,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+
+                        });
+                        $("#TextoDescripcion").html(' Editar descripción');
+                        $("#Descripcion").prop('disabled', true);
+                    }
+                    else {
+                        Swal.fire(
+                            'Error',
+                            result.mensaje,
+                            'error'
+                        )
+                    }
+
+                },
+                error: function (xhr) {
+                    // Debugger;
+                    console.log(xhr.responseText);
+                    alert("Error has occurred...");
+                }
+            });
+        }
     }
 </script>
 
@@ -1147,5 +1289,6 @@
         text-align: center !important;
         font-weight: bold;
     }
+
 </style>
 
