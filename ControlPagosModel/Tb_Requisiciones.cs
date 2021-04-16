@@ -15,6 +15,7 @@ namespace ControlPagosModel
     public partial class Tb_Requisiciones
     {
         public int Id { get; set; }
+        public string Folio { get; set; }
         public string Cuenta_Cargo { get; set; }
         public decimal Total { get; set; }
         public string Moneda { get; set; }

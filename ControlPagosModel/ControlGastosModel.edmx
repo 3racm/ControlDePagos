@@ -63,6 +63,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Folio" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Cuenta_Cargo" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Total" Type="decimal" Nullable="false" Precision="18" Scale="2" />
     <Property Name="Moneda" Type="nvarchar(max)" Nullable="false" />
@@ -149,7 +150,8 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int32" />
+          <Property Name="Folio" Type="String" Nullable="false" />
           <Property Name="Cuenta_Cargo" Type="String" Nullable="false" />
           <Property Name="Total" Type="Decimal" Nullable="false" Scale="2" Precision="18" />
           <Property Name="Moneda" Type="String" Nullable="false" />
@@ -213,6 +215,7 @@
       <EntityTypeMapping TypeName="IsTypeOf(ControlDeGastosModel.Tb_Requisiciones)">
         <MappingFragment StoreEntitySet="Tb_Requisiciones">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Folio" ColumnName="Folio" />
           <ScalarProperty Name="Cuenta_Cargo" ColumnName="Cuenta_Cargo" />
           <ScalarProperty Name="Total" ColumnName="Total" />
           <ScalarProperty Name="Moneda" ColumnName="Moneda" />

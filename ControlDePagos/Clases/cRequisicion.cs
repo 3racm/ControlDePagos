@@ -8,6 +8,7 @@ namespace Catalogo_3R_ACM.Clases
     public class cRequisicion
     {
         public int Id { get; set; }
+        public string Folio { get; set; }
         public string Cuenta_Cargo { get; set; }
         public decimal Total { get; set; }
         public string Moneda { get; set; }

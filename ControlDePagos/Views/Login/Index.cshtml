@@ -44,7 +44,7 @@
                     <form>
                         <div class="input-group form-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <span class="input-group-text"><i class="fas fa-user"> </i></span>
                             </div>
                             <input id="Usuario" type="text" class="form-control" placeholder="Usuario">
 
@@ -83,6 +83,12 @@
     $(document).ready(function () {
         $("#Login").click(function () {
 
+        });
+        $("#Contraseña").keypress(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                IniciarSesion();
+            }
         });
     });
 
