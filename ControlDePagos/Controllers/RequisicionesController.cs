@@ -123,8 +123,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Requisición registrada correctamente." });
         }
 
-        //Metodo para actualizar la requisicion.
-        public JsonResult ActualizarRequisicion(string NoFolio, string Total, string Moneda, string CuentaCargo, string Solicitud, string TipoReq, string Descripcion)
+        public JsonResult Actualizar(string NoFolio, string Total, string Moneda, string CuentaCargo, string Solicitud, string TipoReq, string Descripcion)
         {
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
             try
@@ -156,7 +155,7 @@ namespace ControlDePagos.Controllers
                 {
                     return Json(new { status = false, mensaje = "Debe indicar a quien pertenece la requisición." });
                 }
-                //Saul Gonzalez 23/03/2021: Consultamos los datos del proyecto
+                //Saul Gonzalez 13/04/2021: Consultamos los datos del proyecto
                 Tb_Requisiciones Requisicion = db.Tb_Requisiciones.Where(y => y.Folio == NoFolio).FirstOrDefault();
                 if (Requisicion == null)
                 {
@@ -269,14 +268,13 @@ namespace ControlDePagos.Controllers
                 if (Lista.Count > 0)
                 {
                     var RegistroReq = Lista.LastOrDefault();
-
                     var cadena = RegistroReq.Folio.Split('-');
                     var secuencia = cadena[1];
                     var numeracion = Convert.ToInt32(secuencia);
                     numeracion = numeracion + 1;
 
 
-                    //Segun el numero de registro que exista creamos la numeracion para el folio
+                    //segun el valor de la numeracion creamos la numeracion para el folio
                     if (numeracion < 10)
                     {
                         Folio = "3R" + AñoActual + "-00" + numeracion.ToString();

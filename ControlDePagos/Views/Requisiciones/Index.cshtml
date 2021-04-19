@@ -347,9 +347,7 @@
                     $('#btnActualizar').show();   
                     $("#TipoReq").prop('disabled', true);
                     $("#TituloModal").text("Editar Requisición: " + result.Datos.Folio);
-                    $('#myModal').modal('show');
-                  
-                    
+                    $('#myModal').modal('show');                                      
                 }
                 else {
                     Swal.fire(
@@ -387,7 +385,7 @@
             traditional: true,
             async: false,
             cache: false,
-            url: '/Requisiciones/ActualizarRequisicion',
+            url: '/Requisiciones/Actualizar',
             context: document.body,
             data: Params,
             success: function (result) {
