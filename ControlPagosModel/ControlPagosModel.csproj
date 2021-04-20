@@ -66,6 +66,9 @@
       <DependentUpon>ControlGastosModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tb_Liberaciones.cs">
+      <DependentUpon>ControlGastosModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Tb_Pagos.cs">
       <DependentUpon>ControlGastosModel.tt</DependentUpon>
     </Compile>

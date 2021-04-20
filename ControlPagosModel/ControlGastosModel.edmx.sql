@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/16/2021 10:51:32
+-- Date Created: 04/19/2021 10:30:57
 -- Generated from EDMX file: C:\Users\3R Server\source\repos\ControlDePagos\ControlPagosModel\ControlGastosModel.edmx
 -- --------------------------------------------------
 
@@ -20,6 +20,9 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_Tb_ProyectosTb_Pagos]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tb_Pagos] DROP CONSTRAINT [FK_Tb_ProyectosTb_Pagos];
 GO
+IF OBJECT_ID(N'[dbo].[FK_Tb_RequisicionesTb_Liberaciones]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tb_Liberaciones] DROP CONSTRAINT [FK_Tb_RequisicionesTb_Liberaciones];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -36,6 +39,9 @@ IF OBJECT_ID(N'[dbo].[Tb_Usuario]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[Tb_Requisiciones]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tb_Requisiciones];
+GO
+IF OBJECT_ID(N'[dbo].[Tb_Liberaciones]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tb_Liberaciones];
 GO
 
 -- --------------------------------------------------
@@ -99,6 +105,16 @@ CREATE TABLE [dbo].[Tb_Requisiciones] (
 );
 GO
 
+-- Creating table 'Tb_Liberaciones'
+CREATE TABLE [dbo].[Tb_Liberaciones] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Monto] decimal(18,2)  NOT NULL,
+    [FechaRegistro] datetime  NOT NULL,
+    [Notas] nvarchar(max)  NULL,
+    [Tb_Requisiciones_Id] int  NOT NULL
+);
+GO
+
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
@@ -127,6 +143,12 @@ ADD CONSTRAINT [PK_Tb_Requisiciones]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
+-- Creating primary key on [Id] in table 'Tb_Liberaciones'
+ALTER TABLE [dbo].[Tb_Liberaciones]
+ADD CONSTRAINT [PK_Tb_Liberaciones]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
 -- --------------------------------------------------
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
@@ -144,6 +166,21 @@ GO
 CREATE INDEX [IX_FK_Tb_ProyectosTb_Pagos]
 ON [dbo].[Tb_Pagos]
     ([Tb_Proyectos_Id]);
+GO
+
+-- Creating foreign key on [Tb_Requisiciones_Id] in table 'Tb_Liberaciones'
+ALTER TABLE [dbo].[Tb_Liberaciones]
+ADD CONSTRAINT [FK_Tb_RequisicionesTb_Liberaciones]
+    FOREIGN KEY ([Tb_Requisiciones_Id])
+    REFERENCES [dbo].[Tb_Requisiciones]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_Tb_RequisicionesTb_Liberaciones'
+CREATE INDEX [IX_FK_Tb_RequisicionesTb_Liberaciones]
+ON [dbo].[Tb_Liberaciones]
+    ([Tb_Requisiciones_Id]);
 GO
 
 -- --------------------------------------------------

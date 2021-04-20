@@ -52,6 +52,7 @@ namespace ControlDePagos.Controllers
                 foreach (Tb_Requisiciones REQ in tablaRequisiciones)
                 {
                     cRequisicion o = new cRequisicion();
+                    o.Id = REQ.Id;
                     o.Folio = REQ.Folio;
                     o.Cuenta_Cargo = REQ.Cuenta_Cargo;
                     o.Total = REQ.Total;
@@ -81,6 +82,10 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(NoFolio))
                 {
                     return Json(new { status = false, mensaje = "Debe indicar un número de folio para ello seleccione el tipo de requisición." });
+                }
+                if (Total == string.Empty)
+                {
+                    Total = "0";
                 }
                 if (Convert.ToDecimal(Total, Culture) < 1)
                 {
@@ -218,6 +223,54 @@ namespace ControlDePagos.Controllers
             }
             return Json(new { status = true, mensaje = "Requisición cargada.", Datos = REQ });
         }
+
+        public JsonResult CargarLiberaciones(int IdRequisicion)
+        {
+            List<cLiberaciones> Lista = new List<cLiberaciones>();
+            cRequisicion REQ = new cRequisicion();
+            try
+            {
+                //Saul González 19/04/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(IdRequisicion.ToString()))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el ID de la requisición." });
+                }
+                //Saul Gonzalez 19/04/2021: Cargamos los datos de la requisicion
+                Tb_Requisiciones oRequisicion = db.Tb_Requisiciones.Where(x => x.Id == IdRequisicion).FirstOrDefault();
+                if (REQ == null)
+                {
+                    return Json(new { status = false, mensaje = "ERROR L-241: Ocurrió un error al encontrar los datos de la requisición" });
+                }
+                else
+                {
+                    REQ.Folio = oRequisicion.Folio;
+                    REQ.Cuenta_Cargo = oRequisicion.Cuenta_Cargo;
+                    REQ.Total = oRequisicion.Total;
+                    REQ.Moneda = oRequisicion.Moneda;
+                }
+                 
+                //Saul Gonzalez 19/04/2021: Cargamos todas las liberaciones que pertenezcan a la requisicion
+                List<Tb_Liberaciones> ListaLiberaciones = db.Tb_Liberaciones.Where(y => y.Tb_Requisiciones.Id == IdRequisicion).ToList();
+                if (ListaLiberaciones != null)
+                {
+                    foreach (Tb_Liberaciones o in ListaLiberaciones)
+                    {
+                        cLiberaciones Liberacion = new cLiberaciones();
+                        Liberacion.Id = o.Id;            
+                        Liberacion.Monto = o.Monto;
+                        Liberacion.FechaRegistro = o.FechaRegistro.ToShortDateString();
+                        Liberacion.Notas = o.Notas;
+                        Lista.Add(Liberacion);
+                    }
+                }
+                               
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Liberaciones cargadas.", Lista = Lista, REQ = REQ});
+        }
         public JsonResult EliminarRequisicion(string IdReq)
         {
             try
@@ -252,7 +305,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Requisición cancelada correctamente" });
         }
 
-        public JsonResult GenerarNumeroDeFolio(string TipoReq)
+        public JsonResult GenerarNumeroDe(string TipoReq)
         {
             var Folio = "";
             string AñoActual = DateTime.Now.Year.ToString();
@@ -300,6 +353,91 @@ namespace ControlDePagos.Controllers
                 return Json(new { status = false, mensaje = error.Message });
             }
             return Json(new { status = true, mensaje = "Folio generado correctamente.", Folio = Folio });
+        }
+
+        public JsonResult GuardarLiberacion(string Respuestas, string Folio)
+        {
+            Tb_Requisiciones REQ = new Tb_Requisiciones();
+            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            try
+            {
+                //Saul González 20/04/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(Folio))
+                {
+                    return Json(new { status = false, mensaje = "Debe indicar un número de folio para ello seleccione el tipo de requisición." });
+                }
+                if (String.IsNullOrEmpty(Respuestas))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al leer los datos." });
+                }
+                //Realizamos un split para separar los valores
+                var Cadena = Respuestas.Split(',');           
+                //--Primero quitamos los caracteres sobrantes--
+                string Monto = Cadena[0].Replace("\"","");
+                Monto = Monto.Replace("[","");
+                if (Monto == string.Empty)
+                {
+                    Monto = "0";
+                }
+                //Fecha
+                string Fecha = Cadena[1].Replace("\"", "");              
+                //Notas
+                string Notas = Cadena[2].Replace("\"", "");
+                Notas = Notas.Replace("]", "");
+
+                //Validamos que el formato del monto sea correcto
+                decimal PruebaMonto = 0;
+                try
+                {
+                    PruebaMonto = Convert.ToDecimal(Monto,Culture);
+
+                }
+                catch (Exception error)
+                {
+                    return Json(new { status = false, mensaje = "El monto no debe contener letras ni caracteres especiales." });
+                }
+                //Validamos que el formato de la fecha sea correcto
+                if (Fecha == string.Empty)
+                {
+                    return Json(new { status = false, mensaje = "El campo de fecha no puede estar vacío." });
+                }
+                DateTime? PruebaFecha = null;
+                try
+                {
+                    PruebaFecha = Convert.ToDateTime(Fecha);
+
+                }
+                catch (Exception error)
+                {
+                    return Json(new { status = false, mensaje = "El formato de la fecha no es válido." });
+                }
+
+                //Validamos que el monto sea mayor a 0
+                if (Convert.ToDecimal(Monto,Culture) < 1)
+                {
+                    return Json(new { status = false, mensaje = "El monto debe ser mayor a 0." });
+                }
+                //Guardar los datos en la base de datos
+                Tb_Liberaciones LIB = new Tb_Liberaciones();
+                LIB.Monto = Convert.ToDecimal(Monto,Culture);
+                LIB.FechaRegistro = Convert.ToDateTime(Fecha).AddHours(DateTime.Now.Hour);
+                LIB.Notas = Notas;
+                //Consultamos el id de la requisicion para asignarla a la liberacion
+                LIB.Tb_Requisiciones = db.Tb_Requisiciones.Where(x=> x.Folio == Folio).FirstOrDefault();
+                if (LIB.Tb_Requisiciones == null)
+                {
+                    return Json(new { status = false, mensaje = "Error L-428:Ocurrió un problema al asignar la liberación" });
+                }
+                //Saul gonzalez 20/04/2021: Guardamos los datos
+                db.Tb_Liberaciones.Add(LIB);
+                db.SaveChanges();
+
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Liberación registrada correctamente." });
         }
     }
 }

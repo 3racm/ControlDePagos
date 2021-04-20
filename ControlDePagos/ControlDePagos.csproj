@@ -129,6 +129,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Clases\cPagos.cs" />
+    <Compile Include="Clases\cLiberaciones.cs" />
     <Compile Include="Clases\cRequisicion.cs" />
     <Compile Include="Clases\cProyectos.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -153,6 +154,7 @@
     <Content Include="img\Actualizando.gif" />
     <Content Include="img\FondoLogin.gif" />
     <Content Include="img\FondoLogin2.gif" />
+    <Content Include="img\Liberacion.gif" />
     <Content Include="img\logo3R.ico" />
     <Content Include="img\ReqCancelada.gif" />
     <Content Include="Scripts\bootstrap.bundle.js" />

@@ -14,6 +14,12 @@ namespace ControlPagosModel
     
     public partial class Tb_Requisiciones
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Tb_Requisiciones()
+        {
+            this.Tb_Liberaciones = new HashSet<Tb_Liberaciones>();
+        }
+    
         public int Id { get; set; }
         public string Folio { get; set; }
         public string Cuenta_Cargo { get; set; }
@@ -23,5 +29,8 @@ namespace ControlPagosModel
         public string Solicitud { get; set; }
         public string TipoReq { get; set; }
         public System.DateTime FechaRegistro { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tb_Liberaciones> Tb_Liberaciones { get; set; }
     }
 }

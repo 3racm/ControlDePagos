@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
 <head>
@@ -11,6 +10,7 @@
     <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
     <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
 </head>
+<input id="ID" type="number" hidden />
 <form class="form-inline">
 
     <div class="form-group mx-sm-3 mt-3">
@@ -37,7 +37,7 @@
                         <th scope="col">Descripción</th>
                         <th scope="col">Solicitud</th>
                         <th scope="col">Tipo req.</th>
-                        <th scope="col">Acciones</th>
+                        <th scope="col">Acciones &nbsp;</th>
                     </tr>
                 </thead>
                 <tbody id="cuerpo">
@@ -66,12 +66,12 @@
                 <div class="modal-body">
                     <form id="formulario">
                         <div class="form-group row">
-                            <label for="NoFolio" class="col-sm-2 col-form-label">Folio</label>
+                            <label for="NoFolio" class="col-sm-2 col-form-label"><a style="color:red"> * </a>Folio</label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="NoFolio" placeholder="#Folio (ID)" required autocomplete="off">
                             </div>
 
-                            <label for="Total" class="col-sm-0 col-form-label">Total</label>
+                            <label for="Total" class="col-sm-0 col-form-label"><a style="color:red"> * </a>Total</label>
                             <div class="col-sm-6">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -89,7 +89,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="CuentaCargo" class="col-sm-2 col-form-label">Cuenta cargo</label>
+                            <label for="CuentaCargo" class="col-sm-2 col-form-label"><a style="color:red">*</a>Cuenta cargo</label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="CuentaCargo" placeholder="# Cuenta" required autocomplete="off">
                             </div>
@@ -99,7 +99,7 @@
                                 <input type="text" class="form-control" id="Solicitud" placeholder="Solicitud" required autocomplete="off">
                             </div>
 
-                            <label for="TipoReq" class="col-sm-0 col-form-label">Tipo</label>
+                            <label for="TipoReq" class="col-sm-0 col-form-label"><a style="color:red"> * </a>Tipo</label>
                             <div class="col-sm-2">
                                 <select class="input-group-text" id="TipoReq" style="background-color:white;" onchange="GenerarFolio()">
                                     <option value="0">Seleccione...</option>
@@ -111,7 +111,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="Notas" class="col-sm-2 col-form-label">Descripción</label>
+                            <label for="Notas" class="col-sm-2 col-form-label"><a style="color:red"> * </a>Descripción</label>
                             <div class="col-sm-10">
                                 <textarea class="form-control col-sm-12" id="Descripcion" rows="3" placeholder="Agregue una descripción para la requisición" autocomplete="off"></textarea>
                             </div>
@@ -123,6 +123,72 @@
                 <div class="modal-footer" id="footerEditar">
                     <button type="button" id="btnRegistrar" class="btn btn-success" onclick="RegistrarRequisicion()"><i class="fas fa-save"></i> Registrar</button>
                     <button type="button" id="btnActualizar" class="btn btn-success" onclick="ActualizarReq()"><i class="fas fa-save"></i> Actualizar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@*MODAL DE  HISTORIAL DE LIBERACIONES*@
+<div class="container">
+    <!-- The Modal -->
+    <div class="modal fade" id="ModalHistorial">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fas fa-scroll"></i> <label id="TituloModalHistorial"> Registro de liberaciónes </label></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form id="formularioHistorial">
+                        <h5 class="mb-4" style="text-align:center !important; color:#dc0c0c;"> <i class="fas fa-info-circle"></i> Datos de la requisición</h5>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="FolioLiberacion">Folio</label>
+                                <input type="text" class="form-control" id="FolioLiberacion" disabled>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="CuentaLiberacion"> Cuenta cargo</label>
+                                <input type="text" class="form-control" id="CuentaLiberacion" disabled autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="TotalLiberacion"> Total</label>
+                                <input type="text" class="form-control" id="TotalLiberacion" disabled autocomplete="off">
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- TABLA DE REGISTROS DE LIBERACIONES-->
+                        <h5 class="mb-4" style=" text-align: center !important; color: #dc0c0c;"> <i class="fas fa-book"></i> Historial de liberaciones</h5>
+                        <div class="form-row">
+                            <div class="form-group">
+                                @*<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#ModalRegistrarLib"> <i class="fas fa-hand-holding-usd"></i> Registrar liberación</button>*@
+                                <button type="button" class="btn btn-success btn-sm" onclick="RegistrarLiberacion(false)"> <i class="fas fa-hand-holding-usd"></i> Registrar liberación</button>
+                            </div>
+                        </div>
+                        <table id="TablaHistorial" class="table" cellspacing="0">
+                            <thead style="text-align:center !important">
+                                <tr>
+                                    <th scope="col">Monto</th>
+                                    <th scope="col">Fecha registro</th>
+                                    <th scope="col">Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpoHistorial" style="text-align:center !important">
+                            </tbody>
+                        </table>
+
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer" id="footerEditar">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                 </div>
 
             </div>
@@ -171,12 +237,42 @@
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
     var table = $('#myTable').DataTable({
         //Saul Gonzalez 22/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
         "dom": '<"toolbar">frtip',
-        "order": [[7, "asc"]],
+        "ordering": false, //Sirve para quitar el ordenamiento
         //Saul Gonzalez 22/10/2020: Se define el lenguaje para la tabla
+        language: {
+            "decimal": "",
+            "emptyTable": "No hay información",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ Entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "Sin resultados encontrados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        },
+    });
+
+    var TablaHistorial = $('#TablaHistorial').DataTable({
+        //Saul Gonzalez 26/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
+        "dom": '<"toolbarHistorial">frtip',
+        "bInfo": true,
+        "bFilter": false,       
+        "order": [[1, "asc"]],
+        //Saul Gonzalez 26/10/2020: Se define el lenguaje para la tabla
         language: {
             "decimal": "",
             "emptyTable": "No hay información",
@@ -207,12 +303,12 @@
 
         //Saul Gonzalez 16/04/2021: Resetear modal cuando se cierra
         $("#myModal").on("hidden.bs.modal", function () {
-            $('#formulario')[0].reset();           
+            $('#formulario')[0].reset();
             $("#NoFolio").prop('disabled', true);
             $("#NoFolio").prop('disabled', true);
             $("option").removeAttr("selected");
-            $('#btnActualizar').hide();   
-            $('#btnRegistrar').show();    
+            $('#btnActualizar').hide();
+            $('#btnRegistrar').show();
             $("#TipoReq").prop('disabled', false);
             $("#TituloModal").text("Registrar Requisición");
 
@@ -230,8 +326,18 @@
                 $.each(data, function (i, obj) {
                     //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
                     var btnAcciones = `
-                          <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar"><i class="fas fa-edit"></i></button>
-                           <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Eliminar proyecto"><i class="far fa-trash-alt"></i></button>`;
+                          <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
+                           <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
+                    //Si la requisicion es abierta agregamos un boton para ver las liberaciones de dinero correspodientes a la REQ.
+                    if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA") {
+                        obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
+                        btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
+                        <button id="btnLiberacion" type="button" class="btn btn-primary btn-sm" onclick="CargarLiberaciones('${obj.Id}')" title="Historial de liberaciones"><i class="fas fa-hand-holding-usd"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>
+                          `;
+
+                        //btnAcciones += ` <button type="button" class="btn btn-success btn-sm" onclick="VerLiberaciones('${obj.Folio}','${obj.Descripcion}')" title="Historial de liberaciones"><i class="far fa-trash-alt"></i></button> `;
+                    }
                     var Folio = `<p>${obj.Folio}</p>`;
                     //Realizamos un split para separar la secuencia y verificar si la requisicion esta cancelada
                     var CadenaFolio = obj.Folio.split('-');
@@ -241,13 +347,11 @@
                         btnAcciones = `
                           <button id="btnCargar" readonly type="button" class="btn btn-secondary btn-sm" title="Acción no disponible"><i class="fas fa-edit"></i></button>
                            <button type="button" readonly class="btn btn-secondary btn-sm" title="Acción no disponible"><i class="far fa-trash-alt"></i></button>`;
-                      
-
                     }
                     //Saul Gonzalez 08/04/2021: Agregamos los datos del del poryecto a la tabla
                     table.row.add([Folio, obj.Cuenta_Cargo, obj.Total.toFixed(2), obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
                         .draw()
-                        .node();                   
+                        .node();
                 });
             }
         });
@@ -266,6 +370,106 @@
         //Retornar valor filtrado
         return out;
     }
+    function RegistrarLiberacion(romper = false) {   
+        if(!romper) {
+            Swal.mixin({
+                input: 'text',
+                confirmButtonText: 'Siguiente &rarr;',
+                showCancelButton: true,
+                progressSteps: ['1', '2', '3']
+            }).queue([
+                //Pregunta 1
+                {
+                    title: '$ Monto',
+                    text: 'Ingrese el monto que va a liberar',
+                    input: 'number',
+                    inputAttributes: {
+                        min: 0,
+                        max: 10000000,
+                        step: 0.0001,
+                        placeholder: "$0.00",
+                    },
+
+                },
+                //Pregunta 2
+                {
+                    title: 'Ingrese una fecha',
+                    text: 'La fecha debe tener el formato DD-MM-YYYY',
+                    input: 'text',
+                    inputAttributes: {
+                        placeholder: "DD-MM-YYYY",
+                    },
+
+                },
+                //Pregunta 3
+                {
+                    title: 'Notas',
+                    text: 'Si lo desea puede agregar una nota',
+                    input: 'text',
+                    inputAttributes: {
+                        placeholder: "Ingrese su nota aquí.",
+                    },
+                },
+            ]).then((result) => {
+                if (result.value) {
+                    const Respuestas = JSON.stringify(result.value);
+                    var Folio = $("#FolioLiberacion").val();
+                    var Params = {
+                        "Respuestas": Respuestas, "Folio": Folio,
+                    };
+                    //Una vez capturado las respuesta mandamos los datos al metodo
+                    $.ajax({
+                        type: "POST",
+                        traditional: true,
+                        async: false,
+                        cache: false,
+                        url: '/Requisiciones/GuardarLiberacion',
+                        context: document.body,
+                        data: Params,
+                        success: function (result) {
+                            if (result.status) {                                                             
+                                Swal.fire({                              
+                                    title: 'Liberacion registrada!',
+                                    html: ' <img src="/img/Liberacion.gif" style="width:200px; border-radius:10px;" alt="Actualizando">',
+                                    showConfirmButton: true,
+                                    allowOutsideClick: false
+                                }).then((result) => {
+                                    //Volvemos a cargar los datos en la tabla para mostrar la liberacionn recien creada
+                                    if (result.isConfirmed) {
+                                        CargarLiberaciones($("#ID").val());                                     
+                                    }
+                                })
+
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: result.mensaje,
+                                    showConfirmButton: true,
+                                    allowOutsideClick: false
+                                }).then((result) => {
+                                    //Si ocurre un error por tipos datos o campos vacios volvemos pedir los datos
+                                    if (result.isConfirmed) {
+                                        RegistrarLiberacion(false);
+                                    }
+                                })
+                              
+                            }
+
+                        },
+                        error: function (xhr) {
+                            // Debugger;
+                            console.log(xhr.responseText);
+                            alert("Error has occurred...");
+                        }
+                    });
+                }
+            })
+        }
+      
+    }
+
     function RegistrarRequisicion() {
         //Saul Gonzalez 22/10/2020: Declaramos los parametros que se van a guardar
         var NoFolio = $("#NoFolio").val();
@@ -296,7 +500,7 @@
                         showConfirmButton: true,
                         allowOutsideClick: false
                     }).then((resultConfirmed) => {
-                      //Recargamos la pàgina al dar clic en confirmar
+                        //Recargamos la pàgina al dar clic en confirmar
                         if (resultConfirmed.isConfirmed) {
                             location.reload();
                         }
@@ -320,7 +524,7 @@
     }
 
 
-    function CargarRequisicion(IdRequisicion, TipoReq) {      
+    function CargarRequisicion(IdRequisicion, TipoReq) {
         var Params = {
             "IdRequisicion": IdRequisicion, "TipoReq": TipoReq
         };
@@ -333,21 +537,71 @@
             context: document.body,
             data: Params,
             success: function (result) {
-                if (result.status) {              
+                if (result.status) {
                     // Saul Gonzalez: 15/04/2020: Seteamos los datos en la modal
                     $("#NoFolio").val(result.Datos.Folio);
                     $("#Total").val(result.Datos.Total);
                     $("#Moneda").val(result.Datos.Moneda);
                     $("#CuentaCargo").val(result.Datos.Cuenta_Cargo);
                     $("#Solicitud").val(result.Datos.Solicitud);
-                    $("#TipoReq option[value=" + result.Datos.TipoReq).attr("selected", true);           
+                    $("#TipoReq option[value=" + result.Datos.TipoReq).attr("selected", true);
                     $("#Descripcion").val(result.Datos.Descripcion);
                     //Abrimos la modal
-                    $('#btnRegistrar').hide();                 
-                    $('#btnActualizar').show();   
+                    $('#btnRegistrar').hide();
+                    $('#btnActualizar').show();
                     $("#TipoReq").prop('disabled', true);
                     $("#TituloModal").text("Editar Requisición: " + result.Datos.Folio);
-                    $('#myModal').modal('show');                                      
+                    $('#myModal').modal('show');
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+
+
+    }
+
+    function CargarLiberaciones(IdRequisicion) { 
+        TablaHistorial.clear().draw();
+        $("#ID").val(IdRequisicion);
+        var Params = {
+            "IdRequisicion": IdRequisicion
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Requisiciones/CargarLiberaciones',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    //Datos de la requisicion
+                    $("#FolioLiberacion").val(result.REQ.Folio);
+                    $("#CuentaLiberacion").val(result.REQ.Cuenta_Cargo);
+                    $("#TotalLiberacion").val("$"+ result.REQ.Total + " " + result.REQ.Moneda);
+
+                    // Saul Gonzalez: 19/04/2020: Seteamos la lista de liberaciones en la tabla de la modal
+                    $.each(result.Lista, function (i, obj) {
+                        //Saul Gonzalez 26/10/2020: Agregamos los datos de las entradas a la tabla del tab 1
+                        TablaHistorial.row.add([obj.Monto, obj.FechaRegistro, obj.Notas])
+                            .draw()
+                            .node();
+                    });
+                    //Una vez cargado los datos mostramos la modal
+                    $('#ModalHistorial').modal('show');
                 }
                 else {
                     Swal.fire(

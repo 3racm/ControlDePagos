@@ -10,9 +10,14 @@
     <EntitySet Name="Tb_Pagos" EntityType="ControlDeGastosModel.Store.Tb_Pagos" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Tb_Usuario" EntityType="ControlDeGastosModel.Store.Tb_Usuario" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Tb_Requisiciones" EntityType="ControlDeGastosModel.Store.Tb_Requisiciones" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Tb_Liberaciones" EntityType="ControlDeGastosModel.Store.Tb_Liberaciones" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="Tb_ProyectosTb_Pagos" Association="ControlDeGastosModel.Store.Tb_ProyectosTb_Pagos">
       <End Role="Tb_Proyectos" EntitySet="Tb_Proyectos" />
       <End Role="Tb_Pagos" EntitySet="Tb_Pagos" />
+    </AssociationSet>
+    <AssociationSet Name="Tb_RequisicionesTb_Liberaciones" Association="ControlDeGastosModel.Store.Tb_RequisicionesTb_Liberaciones">
+      <End Role="Tb_Requisiciones" EntitySet="Tb_Requisiciones" />
+      <End Role="Tb_Liberaciones" EntitySet="Tb_Liberaciones" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="Tb_Proyectos">
@@ -72,6 +77,16 @@
     <Property Name="TipoReq" Type="nvarchar(max)" Nullable="false" />
     <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
   </EntityType>
+  <EntityType Name="Tb_Liberaciones">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Monto" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
+    <Property Name="Notas" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Tb_Requisiciones_Id" Type="int" Nullable="false" />
+  </EntityType>
   <Association Name="Tb_ProyectosTb_Pagos">
     <End Role="Tb_Proyectos" Type="ControlDeGastosModel.Store.Tb_Proyectos" Multiplicity="1" />
     <End Role="Tb_Pagos" Type="ControlDeGastosModel.Store.Tb_Pagos" Multiplicity="*" />
@@ -81,6 +96,18 @@
       </Principal>
       <Dependent Role="Tb_Pagos">
         <PropertyRef Name="Tb_Proyectos_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="Tb_RequisicionesTb_Liberaciones">
+    <End Role="Tb_Requisiciones" Type="ControlDeGastosModel.Store.Tb_Requisiciones" Multiplicity="1" />
+    <End Role="Tb_Liberaciones" Type="ControlDeGastosModel.Store.Tb_Liberaciones" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tb_Requisiciones">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Tb_Liberaciones">
+        <PropertyRef Name="Tb_Requisiciones_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -97,6 +124,11 @@
           </AssociationSet>
           <EntitySet Name="Tb_Usuario" EntityType="ControlDeGastosModel.Tb_Usuario" />
           <EntitySet Name="Tb_Requisiciones" EntityType="ControlDeGastosModel.Tb_Requisiciones" />
+          <EntitySet Name="Tb_Liberaciones" EntityType="ControlDeGastosModel.Tb_Liberaciones" />
+          <AssociationSet Name="Tb_RequisicionesTb_Liberaciones" Association="ControlDeGastosModel.Tb_RequisicionesTb_Liberaciones">
+            <End Role="Tb_Requisiciones" EntitySet="Tb_Requisiciones" />
+            <End Role="Tb_Liberaciones" EntitySet="Tb_Liberaciones" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Tb_Proyectos">
           <Key>
@@ -159,7 +191,22 @@
           <Property Name="Solicitud" Type="String" Nullable="true" />
           <Property Name="TipoReq" Type="String" Nullable="false" />
           <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Tb_Liberaciones" Relationship="ControlDeGastosModel.Tb_RequisicionesTb_Liberaciones" FromRole="Tb_Requisiciones" ToRole="Tb_Liberaciones" />
         </EntityType>
+        <EntityType Name="Tb_Liberaciones">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Monto" Type="Decimal" Nullable="false" Scale="2" Precision="18" />
+          <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
+          <Property Name="Notas" Type="String" Nullable="true" />
+          <NavigationProperty Name="Tb_Requisiciones" Relationship="ControlDeGastosModel.Tb_RequisicionesTb_Liberaciones" FromRole="Tb_Liberaciones" ToRole="Tb_Requisiciones" />
+        </EntityType>
+        <Association Name="Tb_RequisicionesTb_Liberaciones">
+          <End Type="ControlDeGastosModel.Tb_Requisiciones" Role="Tb_Requisiciones" Multiplicity="1" />
+          <End Type="ControlDeGastosModel.Tb_Liberaciones" Role="Tb_Liberaciones" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -226,11 +273,29 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Tb_Liberaciones">
+      <EntityTypeMapping TypeName="IsTypeOf(ControlDeGastosModel.Tb_Liberaciones)">
+        <MappingFragment StoreEntitySet="Tb_Liberaciones">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Monto" ColumnName="Monto" />
+          <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
+          <ScalarProperty Name="Notas" ColumnName="Notas" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <AssociationSetMapping Name="Tb_ProyectosTb_Pagos" TypeName="ControlDeGastosModel.Tb_ProyectosTb_Pagos" StoreEntitySet="Tb_Pagos">
       <EndProperty Name="Tb_Proyectos">
         <ScalarProperty Name="Id" ColumnName="Tb_Proyectos_Id" />
       </EndProperty>
       <EndProperty Name="Tb_Pagos">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="Tb_RequisicionesTb_Liberaciones" TypeName="ControlDeGastosModel.Tb_RequisicionesTb_Liberaciones" StoreEntitySet="Tb_Liberaciones">
+      <EndProperty Name="Tb_Requisiciones">
+        <ScalarProperty Name="Id" ColumnName="Tb_Requisiciones_Id" />
+      </EndProperty>
+      <EndProperty Name="Tb_Liberaciones">
         <ScalarProperty Name="Id" ColumnName="Id" />
       </EndProperty>
     </AssociationSetMapping>
