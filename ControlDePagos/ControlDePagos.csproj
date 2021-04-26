@@ -130,12 +130,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Clases\cPagos.cs" />
     <Compile Include="Clases\cLiberaciones.cs" />
+    <Compile Include="Clases\cUsuario.cs" />
     <Compile Include="Clases\cRequisicion.cs" />
     <Compile Include="Clases\cProyectos.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
     <Compile Include="Controllers\ProyectosController.cs" />
     <Compile Include="Controllers\RequisicionesController.cs" />
+    <Compile Include="Controllers\UsuariosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -152,6 +154,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="img\Actualizando.gif" />
+    <Content Include="img\Eliminando.gif" />
     <Content Include="img\FondoLogin.gif" />
     <Content Include="img\FondoLogin2.gif" />
     <Content Include="img\Liberacion.gif" />
@@ -287,6 +290,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Pagos\Index.cshtml" />
     <Content Include="Views\Requisiciones\Index.cshtml" />
+    <Content Include="Views\Usuarios\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -63,6 +63,7 @@ namespace ControlDePagos.Controllers
                     o.Estado = Proyecto.Estado;
                     Lista.Add(o);
                 }
+                Lista = Lista.OrderByDescending(o=> o.FechaInicio).ToList();
             }
             catch (Exception error)
             {
@@ -127,7 +128,8 @@ namespace ControlDePagos.Controllers
 
         public JsonResult ActualizarMontoInicial(string IdProyectoP,string MontoInicial)
         {
-            CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            CultureInfo CultureEN = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
+            CultureInfo CultureES = new CultureInfo("es-ES");
             try
             {
 
@@ -148,7 +150,15 @@ namespace ControlDePagos.Controllers
                     return Json(new { status = false, mensaje = "Ocurrió un error al buscar el proyecto con el ID: " + IdProyectoP });
                 }
                 //Saul gonzalez 23/03/2021: Actualizamos el monto inicial del proyecto
-                Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial,Culture);
+                if (MontoInicial.Contains("."))
+                {
+                    Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial, CultureEN);
+                }
+                else if (MontoInicial.Contains(","))
+                {
+                    Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial, CultureES);
+                }
+               // Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial);              
 
                 //Saul gonzalez 23/03/2021: Guardamos los datos
                 db.Tb_Proyectos.Attach(Proyecto);

@@ -284,7 +284,7 @@
                     $("#NumCuenta").prop('disabled', true);
                     $("#FechaInicio").val(result.DatosProyecto.FechaInicio);
                     $("#FechaInicio").prop('disabled', true);
-                    $("#MontoI").val(result.DatosProyecto.MontoInicial.toFixed(2));
+                    $("#MontoI").val(result.DatosProyecto.MontoInicial.toFixed(2).toString().replace('.', ','));
                     $("#MontoI").prop('disabled', true);
                     $("#MonedaProyecto").text("(" + result.DatosProyecto.Moneda + ")");
                     $("#MonedaProyectoSub").text("(" + result.DatosProyecto.Moneda + ")");
@@ -301,9 +301,9 @@
                     $("#FechaESP").prop('disabled', true);                  
 
                     //19/03/2021:Seteamos los valores del Subtotal, Retorno y Monto Final
-                    $("#Subtotal").val("$" + result.Subtotal.toFixed(2));
-                    $("#RetornoTotal").val("$" + result.TotalRetorno.toFixed(2));
-                    $("#MontoF").val("$" + result.MontoFinal.toFixed(2));
+                    $("#Subtotal").val("$" + result.Subtotal.toFixed(2).toString().replace('.', ','));
+                    $("#RetornoTotal").val("$" + result.TotalRetorno.toFixed(2).toString().replace('.', ','));
+                    $("#MontoF").val("$" + result.MontoFinal.toFixed(2).toString().replace('.', ','));
                     //Se oculta el boton de reabir el proyecto
                     $("#btnReabrir").hide();
                     $("#btnCerrar").show();              
@@ -356,10 +356,10 @@
                             Fila = `
                              <tr>
                                 <th>${obj.FechaPago}</th>
-                                <td>${Monto.toFixed(2)}</td>
+                                <td>${Monto.toFixed(2).toString().replace('.', ',')}</td>
                                 <td>${obj.Referencia}</td>
                                 <td>${TipoPago}</td>
-                                <td>${obj.Retorno.toFixed(2)}</td>
+                                <td>${obj.Retorno.toFixed(2).toString().replace('.', ',')}</td>
                                 <td class="TDNota">${obj.Notas}</td>
                                 <td>
                                 <button type="button" class="btn btn-info btn-sm" title="Editar" onclick="EditarPago(${obj.Id})"><i class="fas fa-edit"></i></button>

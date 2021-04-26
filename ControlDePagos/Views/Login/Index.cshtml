@@ -49,7 +49,7 @@
                             <input id="Usuario" type="text" class="form-control" placeholder="Usuario">
 
                         </div>
-                        <div class="input-group form-group">
+                        <div class="input-group form-group" id="CajaContraseña">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                             </div>
@@ -61,12 +61,14 @@
 
                         <div class="form-group">
                             <input id="Login" class="btn float-right login_btn" type="button" value="Iniciar Sesion" onclick="IniciarSesion()">
-                        </div>
+                            <input id="btnRecuperar" class="btn float-right" type="button" value="Enviar contraseña temporal" onclick="EnviarCorreoDeRecuperacion()">                           
+                        </div>                       
                     </form>
                 </div>
                 <div class="card-footer">
                     <div class="d-flex justify-content-center text-center">
-                        <a id="BtnRecuperacion" href="#" class="text-white text-center"> ¿Olvidaste tu contraseña?</a>
+                        <a id="BtnRecuperacion" href="#" class="text-white text-center" onclick="RecuperarContraseña()"> ¿Olvidaste tu contraseña?</a>
+                        <a id="ETQIniciarSesion" href="#" class="text-white text-center" onclick="MostrarIniciarSesion()"> Iniciar Sesion</a>
                     </div>
                 </div>
 
@@ -84,6 +86,8 @@
         $("#Login").click(function () {
 
         });
+        $("#btnRecuperar").hide();
+        $("#ETQIniciarSesion").hide();
         $("#Contraseña").keypress(function (e) {
             var code = (e.keyCode ? e.keyCode : e.which);
             if (code == 13) {
@@ -133,8 +137,89 @@
                 alert("Error has occurred...");
             }
         });
-	}
+    }
 
+    function RecuperarContraseña() {
+        $("#Login").hide();
+        $("#CajaContraseña").hide();
+        $("#BtnRecuperacion").hide();
+        $("#ETQIniciarSesion").show();
+        $("#btnRecuperar").show();
+    }
+
+    function EnviarCorreoDeRecuperacion() {
+        //Saul Gonzalez 21/10/2020: Asiganamos los parametros
+        var CorreoElectronico = $("#Usuario").val();
+        $("#btnRecuperar").prop('disabled', true);
+
+        var Params = {
+            "CorreoElectronico": CorreoElectronico
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Login/EnviarCorreoDeRecuperacion',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+				if (result.status) {
+                    Swal.fire({
+                        title: 'Enviando correo de recuperación',
+                        html: ' <img src="https://media1.giphy.com/media/lOUQG3TLUtD0xlCias/source.gif" style="width:200px" alt="Enviando Correo">',
+                        timer: 6500,
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+                        // Saul Gonzalez: 23/04/2021: Se recarga la pagina despues de cerra el swalFire
+                        setTimeout(function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Correo enviado!',                       
+                                showConfirmButton: true,
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                //Volvemos a cargar los datos en la tabla para mostrar la liberacionn recien creada
+                              window.location.href='@Url.Action("Index", "Login")';
+                            })
+                        }, 6600);           
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error",
+						text: result.mensaje,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+					}).then((result) => {
+						//Se oculta animacion de enviando y se muestra el boton de enviar correo de recuperación
+                        $("#btnRecuperar").prop('disabled', false);                      
+                        // Saul Gonzalez: 19/10/2020: Se recarga la pagina despues de cerra el swalFire
+                        if (result.isConfirmed) {
+
+                        }
+                    })
+                }
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+
+    }
+
+    function MostrarIniciarSesion() {
+        $("#btnRecuperar").hide();
+        $("#ETQIniciarSesion").hide();
+        $("#BtnRecuperacion").show();
+        $("#CajaContraseña").show();
+        $("#Login").show();
+
+    }
 </script>
 
 
@@ -278,6 +363,10 @@
         .links a {
             margin-left: 4px;
         }
+    #btnRecuperar {
+        background-color: #dc3545;
+        color:white;
+    }
 </style>
 
 

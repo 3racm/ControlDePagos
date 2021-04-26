@@ -11,6 +11,7 @@ namespace Catalogo_3R_ACM.Clases
         public decimal Monto { get; set; }
         public string FechaRegistro { get; set; }
         public string Notas { get; set; }
+        public string Num_Liberacion { get; set; }
         public string FolioRequisicion { get; set; }
     }
 }

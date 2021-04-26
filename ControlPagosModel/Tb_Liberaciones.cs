@@ -18,6 +18,7 @@ namespace ControlPagosModel
         public decimal Monto { get; set; }
         public System.DateTime FechaRegistro { get; set; }
         public string Notas { get; set; }
+        public string Num_Liberacion { get; set; }
     
         public virtual Tb_Requisiciones Tb_Requisiciones { get; set; }
     }

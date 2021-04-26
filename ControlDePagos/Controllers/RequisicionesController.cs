@@ -62,6 +62,19 @@ namespace ControlDePagos.Controllers
                     o.TipoReq = REQ.TipoReq;
                     o.FechaRegistro = REQ.FechaRegistro;
                     Lista.Add(o);
+                    //Si la requisicion es abierta validamos si las liberaciones ya superaron el monto total, esto servira para marcar en rojo el registro
+                    if (REQ.Solicitud == "Abierta" || REQ.Solicitud == "ABIERTA" || REQ.Solicitud == "abierta")
+                    {
+                        List<Tb_Liberaciones> Liberaciones = db.Tb_Liberaciones.Where(y => y.Tb_Requisiciones.Id == REQ.Id).ToList();
+                        if (Liberaciones != null)
+                        {
+                            var SumaLiberaciones = Liberaciones.Sum(w => w.Monto);
+                            if (SumaLiberaciones >= REQ.Total)
+                            {
+                                o.LimiteAlcanzado = true;
+                            }
+                        }
+                    }                  
                 }
             }
             catch (Exception error)
@@ -228,6 +241,8 @@ namespace ControlDePagos.Controllers
         {
             List<cLiberaciones> Lista = new List<cLiberaciones>();
             cRequisicion REQ = new cRequisicion();
+            CultureInfo Culture = new CultureInfo("es-ES");
+            Culture.NumberFormat.NumberDecimalSeparator = ",";
             try
             {
                 //Saul González 19/04/2021: Validaciones de campos nulos
@@ -244,7 +259,7 @@ namespace ControlDePagos.Controllers
                 else
                 {
                     REQ.Folio = oRequisicion.Folio;
-                    REQ.Cuenta_Cargo = oRequisicion.Cuenta_Cargo;
+                    REQ.Cuenta_Cargo = oRequisicion.Cuenta_Cargo;               
                     REQ.Total = oRequisicion.Total;
                     REQ.Moneda = oRequisicion.Moneda;
                 }
@@ -259,9 +274,13 @@ namespace ControlDePagos.Controllers
                         Liberacion.Id = o.Id;            
                         Liberacion.Monto = o.Monto;
                         Liberacion.FechaRegistro = o.FechaRegistro.ToShortDateString();
+                        Liberacion.Num_Liberacion = o.Num_Liberacion;
                         Liberacion.Notas = o.Notas;
                         Lista.Add(Liberacion);
                     }
+                    
+                    decimal TotalLiberacion = Lista.Sum(x=> x.Monto);
+                    REQ.Restante = Convert.ToDecimal(REQ.Total) - TotalLiberacion;
                 }
                                
             }
@@ -305,7 +324,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Requisición cancelada correctamente" });
         }
 
-        public JsonResult GenerarNumeroDe(string TipoReq)
+        public JsonResult GenerarNumeroDeFolio(string TipoReq)
         {
             var Folio = "";
             string AñoActual = DateTime.Now.Year.ToString();
@@ -380,9 +399,12 @@ namespace ControlDePagos.Controllers
                     Monto = "0";
                 }
                 //Fecha
-                string Fecha = Cadena[1].Replace("\"", "");              
+                string Fecha = Cadena[1].Replace("\"", "");
+                //# Liberacion
+                string NumLiberacion = Cadena[2].Replace("\"", "");
+                NumLiberacion = NumLiberacion.Replace("]", "");
                 //Notas
-                string Notas = Cadena[2].Replace("\"", "");
+                string Notas = Cadena[3].Replace("\"", "");
                 Notas = Notas.Replace("]", "");
 
                 //Validamos que el formato del monto sea correcto
@@ -421,6 +443,7 @@ namespace ControlDePagos.Controllers
                 Tb_Liberaciones LIB = new Tb_Liberaciones();
                 LIB.Monto = Convert.ToDecimal(Monto,Culture);
                 LIB.FechaRegistro = Convert.ToDateTime(Fecha).AddHours(DateTime.Now.Hour);
+                LIB.Num_Liberacion = NumLiberacion;
                 LIB.Notas = Notas;
                 //Consultamos el id de la requisicion para asignarla a la liberacion
                 LIB.Tb_Requisiciones = db.Tb_Requisiciones.Where(x=> x.Folio == Folio).FirstOrDefault();
@@ -438,6 +461,33 @@ namespace ControlDePagos.Controllers
                 return Json(new { status = false, mensaje = error.Message });
             }
             return Json(new { status = true, mensaje = "Liberación registrada correctamente." });
+        }
+
+        public JsonResult EliminarLiberacion(int Id)
+        {
+            try
+            {
+                //Saul González 16/04/2021: Validaciones de campos nulos
+                if (String.IsNullOrEmpty(Id.ToString()))
+                {
+                    return Json(new { status = false, mensaje = "Ocurrió un error al obtener el Id de la liberación." });
+                }
+                //Saul Gonzalez 16/04/2021: Cargamos los datos del pago
+                Tb_Liberaciones Liberacion = db.Tb_Liberaciones.Where(y => y.Id == Id).FirstOrDefault();
+                if (Liberacion == null)
+                {
+                    return Json(new { status = false, mensaje = "ERROR L-458: Ocurrió un error al encontrar y eliminar los datos de la liberación: " + Id.ToString() });
+                }
+
+                //Saul gonzalez 16/04/2021: Guardamos los cambios en la BD
+                db.Tb_Liberaciones.Remove(Liberacion);        
+                db.SaveChanges();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            return Json(new { status = true, mensaje = "Liberación eliminada correctamente" });
         }
     }
 }

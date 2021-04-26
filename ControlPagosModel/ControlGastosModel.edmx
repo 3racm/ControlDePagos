@@ -85,6 +85,7 @@
     <Property Name="Monto" Type="decimal" Nullable="false" Precision="18" Scale="2" />
     <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
     <Property Name="Notas" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Num_Liberacion" Type="nvarchar(max)" Nullable="true" />
     <Property Name="Tb_Requisiciones_Id" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="Tb_ProyectosTb_Pagos">
@@ -202,6 +203,7 @@
           <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
           <Property Name="Notas" Type="String" Nullable="true" />
           <NavigationProperty Name="Tb_Requisiciones" Relationship="ControlDeGastosModel.Tb_RequisicionesTb_Liberaciones" FromRole="Tb_Liberaciones" ToRole="Tb_Requisiciones" />
+          <Property Name="Num_Liberacion" Type="String" Nullable="true" />
         </EntityType>
         <Association Name="Tb_RequisicionesTb_Liberaciones">
           <End Type="ControlDeGastosModel.Tb_Requisiciones" Role="Tb_Requisiciones" Multiplicity="1" />
@@ -280,6 +282,7 @@
           <ScalarProperty Name="Monto" ColumnName="Monto" />
           <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
           <ScalarProperty Name="Notas" ColumnName="Notas" />
+          <ScalarProperty Name="Num_Liberacion" ColumnName="Num_Liberacion" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

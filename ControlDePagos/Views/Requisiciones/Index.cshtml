@@ -17,7 +17,7 @@
         <button type="submit" class="btn btn-info"><i class="fas fa-sync-alt"></i> Actualizar</button>
     </div>
     <div class="form-group mt-3 mr-3">
-        <button type="button" disabled class="btn btn-dark" data-toggle="modal" data-target="#ModalFiltros"> <i class="fas fa-filter"></i> Filtrar</button>
+        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#ModalFiltros"> <i class="fas fa-filter"></i> Filtrar</button>
     </div>
     <div class="form-group mt-3">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal"> <i class="fas fa-plus-square"></i> Nueva requisicion</button>
@@ -139,7 +139,7 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title"><i class="fas fa-scroll"></i> <label id="TituloModalHistorial"> Registro de liberaciónes </label></h4>
+                    <h4 class="modal-title"><i class="fas fa-scroll"></i> <label id="TituloModalHistorial"> Historial de liberaciónes </label></h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
@@ -148,35 +148,50 @@
                     <form id="formularioHistorial">
                         <h5 class="mb-4" style="text-align:center !important; color:#dc0c0c;"> <i class="fas fa-info-circle"></i> Datos de la requisición</h5>
                         <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <label for="FolioLiberacion">Folio</label>
+                            <div class="form-group col-md-3">
+                                <label for="FolioLiberacion"><i class="fas fa-hashtag"></i> Folio</label>
                                 <input type="text" class="form-control" id="FolioLiberacion" disabled>
                             </div>
 
-                            <div class="form-group col-md-4">
-                                <label for="CuentaLiberacion"> Cuenta cargo</label>
+                            <div class="form-group col-md-3">
+                                <label for="CuentaLiberacion"><i class="fas fa-money-check-alt"></i> Cuenta cargo</label>
                                 <input type="text" class="form-control" id="CuentaLiberacion" disabled autocomplete="off">
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="TotalLiberacion"> Total</label>
-                                <input type="text" class="form-control" id="TotalLiberacion" disabled autocomplete="off">
+                            <div class="form-group col-md-3">
+                                <label for="TotalLiberacion"><i class="fas fa-dollar-sign"></i> Total</label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input id="TotalLiberacion" type="text" class="form-control" disabled>                                  
+                                </div>                                
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="RestanteLiberacion" class="font-weight-bold"><i class="fas fa-coins"></i> Restante</label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input id="RestanteLiberacion" type="text" class="form-control" disabled autocomplete="off" placeholder="0.00">
+                                </div>                             
                             </div>
                         </div>
                         <hr />
                         <!-- TABLA DE REGISTROS DE LIBERACIONES-->
                         <h5 class="mb-4" style=" text-align: center !important; color: #dc0c0c;"> <i class="fas fa-book"></i> Historial de liberaciones</h5>
                         <div class="form-row">
-                            <div class="form-group">
-                                @*<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#ModalRegistrarLib"> <i class="fas fa-hand-holding-usd"></i> Registrar liberación</button>*@
-                                <button type="button" class="btn btn-success btn-sm" onclick="RegistrarLiberacion(false)"> <i class="fas fa-hand-holding-usd"></i> Registrar liberación</button>
+                            <div class="form-group">                  
+                                <button id="btnRegistrarLib" type="button" class="btn btn-success btn-sm" onclick="RegistrarLiberacion(false)"> <i class="fas fa-hand-holding-usd"></i> Registrar liberación</button>
                             </div>
                         </div>
                         <table id="TablaHistorial" class="table" cellspacing="0">
                             <thead style="text-align:center !important">
                                 <tr>
+                                    <th scope="col"># Liberación</th>
                                     <th scope="col">Monto</th>
                                     <th scope="col">Fecha registro</th>
                                     <th scope="col">Notas</th>
+                                    <th scope="col">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="cuerpoHistorial" style="text-align:center !important">
@@ -196,36 +211,29 @@
     </div>
 </div>
 
-@*@<!-- MODAL PARA FILTRAR-->*@
+@*@<!-- MODAL PARA FILTRAR REQUISICIONES-->*@
 <div class="modal fade" id="ModalFiltros" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"> <i class="fas fa-filter"></i> Filtrar por</h5>
+                <h5 class="modal-title"> <i class="fas fa-filter"></i> Filtrar requisiciones</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div id="DefinicionEtiquetas" class="alert alert-primary mb-4" style="text-align:start; font-size:12px" role="alert">
-
-                    <span class="badge badge-success btn mb-1" data-toggle="tooltip"><i class="fas fa-toggle-on"></i> Activo</span> Todo proyecto que aun sigue activo o en proceso.<br>
-                    <span class="badge badge-danger btn mb-1" data-toggle="tooltip"><i class="fas fa-toggle-off"></i> Cerrado</span> Proyectos que ya fueron concluidos o cerrados.<br>
-                    <span class="badge badge-warning btn" data-toggle="tooltip"><i class="fas fa-toggle-on"></i> Reabierto</span> Proyectos que fueron cerrados pero se volvieron a activar.
-
-                </div>
-                <div class="form-row" style="margin-left:82px;">
+            <div class="modal-body">             
+                <div class="form-row" style="margin-left:71px;">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="Abierto" value="">
-                        <label class="form-check-label" for="Abierto">Abierto</label>
+                        <input class="form-check-input" type="checkbox" id="CheckInterna" value="">
+                        <label class="form-check-label" for="CheckInterna">INTERNA</label>
                     </div>
                     <div class="form-check form-check-inline ml-3">
-                        <input class="form-check-input" type="checkbox" id="Cerrado" value="">
-                        <label class="form-check-label" for="Cerrado">Cerrado</label>
+                        <input class="form-check-input" type="checkbox" id="CheckBepco" value="">
+                        <label class="form-check-label" for="CheckBepco">BEPCO</label>
                     </div>
                     <div class="form-check form-check-inline ml-3">
-                        <input class="form-check-input" type="checkbox" id="Reabierto" value="">
-                        <label class="form-check-label" for="Reabierto">Reabierto</label>
+                        <input class="form-check-input" type="checkbox" id="CheckProyecto" value="">
+                        <label class="form-check-label" for="CheckProyecto">PROYECTO 3R</label>
                     </div>
 
                 </div>
@@ -296,7 +304,7 @@
     });
     $(document).ready(function () {
         //Saul Gonzalez 15/04/2021: Esta funcion realiza una consulta en la BD para mostrar el listado de las requisiciones
-        ListarProyectos();
+        ListarRequisiciones();
         $("#NoFolio").prop('disabled', true);
         $("#btnActualizar").hide();
 
@@ -312,10 +320,10 @@
             $("#TipoReq").prop('disabled', false);
             $("#TituloModal").text("Registrar Requisición");
 
-        });
+        });        
     });
 
-    function ListarProyectos(CheckAbierto = false, CheckCerrado = false, CheckReabierto = false) {
+    function ListarRequisiciones(CheckInterna = false, CheckBepco = false, CheckProyecto = false) {
         $.ajax({
             url: "/Requisiciones/ListarRequisiciones",
             type: "GET",
@@ -329,14 +337,12 @@
                           <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
                            <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
                     //Si la requisicion es abierta agregamos un boton para ver las liberaciones de dinero correspodientes a la REQ.
-                    if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA") {
+                    if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA" || obj.Solicitud == "abierta" ) {
                         obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
                         btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
                         <button id="btnLiberacion" type="button" class="btn btn-primary btn-sm" onclick="CargarLiberaciones('${obj.Id}')" title="Historial de liberaciones"><i class="fas fa-hand-holding-usd"></i></button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>
-                          `;
-
-                        //btnAcciones += ` <button type="button" class="btn btn-success btn-sm" onclick="VerLiberaciones('${obj.Folio}','${obj.Descripcion}')" title="Historial de liberaciones"><i class="far fa-trash-alt"></i></button> `;
+                        <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
+                       
                     }
                     var Folio = `<p>${obj.Folio}</p>`;
                     //Realizamos un split para separar la secuencia y verificar si la requisicion esta cancelada
@@ -345,13 +351,41 @@
                     if (CadenaFolio[0] == "CANCELADA") {
                         Folio = `<p style="color:#dc2a3b">${obj.Folio}</p>`;
                         btnAcciones = `
-                          <button id="btnCargar" readonly type="button" class="btn btn-secondary btn-sm" title="Acción no disponible"><i class="fas fa-edit"></i></button>
-                           <button type="button" readonly class="btn btn-secondary btn-sm" title="Acción no disponible"><i class="far fa-trash-alt"></i></button>`;
+                          <button id="btnCargar" disabled type="button" class="btn btn-success btn-sm" title="Acción no disponible"><i class="fas fa-edit"></i></button>
+                           <button type="button" disabled class="btn btn-danger btn-sm" title="Acción no disponible"><i class="far fa-trash-alt"></i></button>`;
                     }
-                    //Saul Gonzalez 08/04/2021: Agregamos los datos del del poryecto a la tabla
-                    table.row.add([Folio, obj.Cuenta_Cargo, obj.Total.toFixed(2), obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
-                        .draw()
-                        .node();
+
+                    //Asignamos el folio como clase al campo del total, para que el momento de registrar una liberacion sea mas facil actualizar ese campo
+                    obj.Total = obj.Total.toFixed(2).toString().replace('.', ',');
+                    var Total = `<p class="${obj.Folio}">${obj.Total}</p>`;
+                    if (obj.LimiteAlcanzado) {
+                        Total = `<p class="${obj.Folio} font-weight-bold" style="color:#dc2a3b">${obj.Total}</p>`;
+                    }
+
+                    //Saul Gonzalez 21/04/2021: Si se aplico un filtro validamos que tipo requisicion se esta filtrando
+                    if (obj.TipoReq == "INTERNA" && CheckInterna == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
+                            .draw()
+                            .node();
+                    }               
+                    if (obj.TipoReq == "BEPCO" && CheckBepco == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
+                            .draw()
+                            .node();
+                    }              
+                    if (obj.TipoReq == "PROYECTO" && CheckProyecto == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
+                            .draw()
+                            .node();
+                    }                    
+
+                    if (CheckInterna == false && CheckBepco == false && CheckProyecto == false) {
+                        //Saul Gonzalez 21/04/2021: Agregamos los datos de la requisicion a la tabla
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+                   
                 });
             }
         });
@@ -376,12 +410,12 @@
                 input: 'text',
                 confirmButtonText: 'Siguiente &rarr;',
                 showCancelButton: true,
-                progressSteps: ['1', '2', '3']
+                progressSteps: ['1', '2', '3','4']
             }).queue([
                 //Pregunta 1
                 {
                     title: '$ Monto',
-                    text: 'Ingrese el monto que va a liberar',
+                    text: 'Ingrese el monto a liberar',
                     input: 'number',
                     inputAttributes: {
                         min: 0,
@@ -403,6 +437,15 @@
                 },
                 //Pregunta 3
                 {
+                    title: '# Liberación',
+                    text: 'Ingrese el numero de liberación',
+                    input: 'text',
+                    inputAttributes: {
+                        placeholder: "# Liberación",
+                    },
+                },
+                //Pregunta 4
+                {
                     title: 'Notas',
                     text: 'Si lo desea puede agregar una nota',
                     input: 'text',
@@ -417,7 +460,7 @@
                     var Params = {
                         "Respuestas": Respuestas, "Folio": Folio,
                     };
-                    //Una vez capturado las respuesta mandamos los datos al metodo
+                    //Una vez capturado las respuesta mandamos los parametros al metodo
                     $.ajax({
                         type: "POST",
                         traditional: true,
@@ -430,7 +473,7 @@
                             if (result.status) {                                                             
                                 Swal.fire({                              
                                     title: 'Liberacion registrada!',
-                                    html: ' <img src="/img/Liberacion.gif" style="width:200px; border-radius:10px;" alt="Actualizando">',
+                                    html: ' <img src="/img/Liberacion.gif" style="width:200px; border-radius:10px;" alt="Registrando">',
                                     showConfirmButton: true,
                                     allowOutsideClick: false
                                 }).then((result) => {
@@ -590,16 +633,36 @@
                 if (result.status) {
                     //Datos de la requisicion
                     $("#FolioLiberacion").val(result.REQ.Folio);
-                    $("#CuentaLiberacion").val(result.REQ.Cuenta_Cargo);
-                    $("#TotalLiberacion").val("$"+ result.REQ.Total + " " + result.REQ.Moneda);
+                    $("#CuentaLiberacion").val(result.REQ.Cuenta_Cargo);              
+                    $("#TotalLiberacion").val(result.REQ.Total.toFixed(2).toString().replace('.', ','));
+                    $("#RestanteLiberacion").val(result.REQ.Restante.toFixed(2).toString().replace('.', ','));
 
                     // Saul Gonzalez: 19/04/2020: Seteamos la lista de liberaciones en la tabla de la modal
                     $.each(result.Lista, function (i, obj) {
+                        var btnEliminar = `<button type="button" class="btn btn-danger btn-sm" onclick="EliminarLiberacion(${obj.Id})" title="Eliminar registro"><i class="far fa-trash-alt"></i> Eliminar</button>`;
+                        obj.Monto = obj.Monto.toFixed(2).toString().replace('.', ',');
                         //Saul Gonzalez 26/10/2020: Agregamos los datos de las entradas a la tabla del tab 1
-                        TablaHistorial.row.add([obj.Monto, obj.FechaRegistro, obj.Notas])
+                        TablaHistorial.row.add([obj.Num_Liberacion, "$" + obj.Monto, obj.FechaRegistro, obj.Notas, btnEliminar])
                             .draw()
                             .node();
                     });
+                    if (result.REQ.Restante <= 0) {
+                        $("#RestanteLiberacion").css("background-color", "#ffc107e0");
+                        $("#btnRegistrarLib").prop('disabled', true);
+                        var Folio = $("#FolioLiberacion").val();
+                        $("." + Folio).css("color", "#dc2a3b");
+                        $("." + Folio).addClass("font-weight-bold");
+
+
+                        
+                    }
+                    else {
+                        $("#RestanteLiberacion").css("background-color", "#e9ecef");
+                        $("#btnRegistrarLib").prop('disabled', false);
+                        var Folio = $("#FolioLiberacion").val();
+                        $("." + Folio).css("color", "black");
+                        $("." + Folio).removeClass("font-weight-bold");
+                    }
                     //Una vez cargado los datos mostramos la modal
                     $('#ModalHistorial').modal('show');
                 }
@@ -729,20 +792,74 @@
 
     }
 
+    function EliminarLiberacion(Id) {
+         Swal.fire({
+             title: '¿Estas seguro de eliminar la liberación?' ,
+             html: "Esta acción no se puede revertir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //Saul Gonzalez 21/04/2021: Asignamos los valores para el parametro
+                var Params = {
+                    "Id": Id
+                };
+                $.ajax({
+                    type: "POST",
+                    traditional: true,
+                    async: false,
+                    cache: false,
+                    url: '/Requisiciones/EliminarLiberacion',
+                    context: document.body,
+                    data: Params,
+                    success: function (result) {
+                        if (result.status) {
+                            // Saul Gonzalez: 21/04/2021: Se muestra un sweetAlert confirmando que los datos se guardaron
+                            Swal.fire({
+                                html: ' <img src="/img/Eliminando.gif" style="width:200px" alt="Eliminanda"> <br> <b>Liberación eliminada</b>',
+                                timerProgressBar: true,
+                                showConfirmButton: true,
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                // Saul Gonzalez: 16/04/2021: Se recarga la tabla de liberaciones despues de eliminar un registro
+                                if (result.isConfirmed) {
+                                    CargarLiberaciones($("#ID").val());  
+                                }
+                            })
+                        }
+                        else {
+                            Swal.fire('Error', result.mensaje, 'error')
+                        }
+                    },
+                    error: function (xhr) {
+                        // Debugger;
+                        console.log(xhr.responseText);
+                        alert("Error has occurred...");
+                    }
+                });
+            }
+        })
+
+    }
+
     //Saul Gonzalez 08/04/2021: funcion para filtrar desmarcar los checks de filtrado
     function LimpiarFiltros() {
-        $("#Abierto").prop('checked', false);
-        $("#Cerrado").prop('checked', false);
-        $("#Reabierto").prop('checked', false);
+        $("#CheckInterna").prop('checked', false);
+        $("#CheckBepco").prop('checked', false);
+        $("#CheckProyecto").prop('checked', false);
     }
 
     function Filtrar() {
-        var CheckAbierto = $('#Abierto').prop('checked');
-        var CheckCerrado = $('#Cerrado').prop('checked');
-        var CheckReabierto = $('#Reabierto').prop('checked');
+        var CheckInterna = $('#CheckInterna').prop('checked');
+        var CheckBepco = $('#CheckBepco').prop('checked');
+        var CheckProyecto = $('#CheckProyecto').prop('checked');
         //Saul Gonzalez 08/04/2021: mandamos los filtros a la funcion de Listar Poryectos
         $("#cuerpo > tr").remove();
-        ListarProyectos(CheckAbierto, CheckCerrado, CheckReabierto);
+        ListarRequisiciones(CheckInterna, CheckBepco, CheckProyecto);
         $('#ModalFiltros').modal('hide');
 
     }
@@ -765,7 +882,7 @@
                 success: function (result) {
                     if (result.status) {
                         // Saul Gonzalez: 15/04/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
-                        $("#NoFolio").prop('disabled', false);
+                        //$("#NoFolio").prop('disabled', false);
                         $("#NoFolio").val(result.Folio);
                     }
                     else {

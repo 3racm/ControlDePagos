@@ -1,0 +1,479 @@
+﻿
+@{
+    ViewBag.Title = "Usuarios";
+}
+<head>
+    <title>Usuarios</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+</head>
+<div class="container" style="margin-top:28px;">
+    <div class="row">
+        <div class="col-12">
+            <table id="myTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Correo Electrónico</th>
+                        <th scope="col">Perfil</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo">
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fas fa-user"></i> <label id="TituloModal"> Nuevo Usuario</label></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form id="formulario">
+                        <div class="form-group row">
+                            <label for="Nombre" class="col-sm-2 col-form-label">Nombre</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="Nombre" placeholder="Nombre Completo" required autocomplete="off">
+                            </div>
+                            <label for="Perfil" class="col-sm-1 col-form-label">Perfil</label>
+                            <div class="col-sm-5">
+                                <select class="form-control perfil" id="Perfil">
+                                    <option value="Administrador"> Administrador </option>
+                                    <option value="Invitado"> Invitado </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="CorreoElectronico" class="col-sm-2 col-form-label">Correo Elect.</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="CorreoElectronico" placeholder="Ingrese la dirección de correo electrónico" autocomplete="new-text">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Contraseña" class="col-sm-2 col-form-label">Contraseña</label>
+                            <div class="col-sm-4">
+                                <input type="password" class="form-control" id="Contraseña" placeholder="Mínimo 8 caracteres" autocomplete="new-password" maxlength="16">
+                            </div>
+                            <div class="input-group-append">
+                                <span id="Cerrado" class="input-group-text btn-primary"><i id="Icono" class="fas fa-eye-slash"></i></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer" id="footerEditar">
+                    <button type="button" id="btnGuardar" class="btn btn-success" onclick="Guardar()"><i class="fas fa-save"></i> Guardar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@*MODAL PARA CONTRASEÑAS*@
+<div id="ModalContraseña" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Contraseña</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="VerContraseña" disabled autocomplete="new-password" maxlength="16">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script lang="en" type="text/javascript">
+    var table = $('#myTable').DataTable({
+        //Saul Gonzalez 22/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
+        "dom": '<"toolbar">frtip',
+        "order": [[0, "asc"]],
+        //Saul Gonzalez 22/10/2020: Se define el lenguaje para la tabla
+        language: {
+            "decimal": "",
+            "emptyTable": "No hay información",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ Entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "Sin resultados encontrados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        },
+    });
+    $(document).ready(function () {
+
+        //Saul Gonzalez 13/10/2020: Esta funcion realiza una consulta en la BD de la lista de proveedores
+        $.ajax({
+            url: "/Usuarios/ListarUsuarios",
+            type: "GET",
+            //data: { leagueId: 5 },
+            success: function (data) {
+                //Saul Gonzalez 14/10/2020: Hacemos un foreach para llenar la informacion de la tabla
+                $.each(data, function (i, obj) {
+                    //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
+                    var btnAcciones = `<button type="button" class="btn btn-primary btn-sm" onclick="VerContraseña(${obj.Id_usuario})"><i class="fas fa-key" title="Ver contraseña"></i></button>
+                           <button type="button" class="btn btn-success btn-sm" onclick="CargarUsuario(${obj.Id_usuario})"><i class="fas fa-edit" title="Editar"></i></button>
+                           <button type="button" class="btn btn-danger btn-sm" onclick="Eliminar(${obj.Id_usuario},'${obj.Nombre}')"><i class="far fa-trash-alt" title="Eliminar"></i></button>`;
+
+                    //Saul Gonzalez 22/10/2020: Al usuario maestro le deshabilitamos las opcion de ver, editar y eliminar
+                    if (obj.Nombre == "Silvia Rios" & obj.CorreoElectronico == "******************") {
+                        btnAcciones = "";
+                    }
+                    //Saul Gonzalez 14/10/2020: Agregamos los datos del proveedor a la tabla
+                    table.row.add([obj.Id_usuario, obj.Nombre, obj.CorreoElectronico, obj.Permiso, btnAcciones])
+                        .draw()
+                        .node();
+
+                    //$("div.toolbar").html('<i class="fas fa-search"> </i> <input id="Buscador" type="search" placeholder="Buscar por nombre" onkeyup="Buscar()" title="Presione Esc para supender la búsqueda">');
+                });
+                //Saul Gonzalez 22/10/2020: Se agregan los botones de actualizar y agregar en el toolbar
+                $("div.toolbar").html('<button id="Actualizar" onclick="Recargar()" type="button" style="float:left" class="btn btn-info mr-2" > <i class="fas fa-sync-alt"></i> Actualizar</button>' +
+                    '<button id="Nuevo" type="button" style="float:left" class="btn btn-success" data-toggle="modal" data-target="#myModal"><i class="fas fa-user-plus"></i> Nuevo Usuario</button>');
+
+            }
+        });
+        //Saul Gonzalez 19/10/2020: Resetear modal cuando se cierra
+        $(".modal").on("hidden.bs.modal", function () {
+            $('#formulario')[0].reset();
+            $("#TituloModal").text("Nuevo Usuario");
+            $("#btnActualizar").remove();
+            $("#btnGuardar").remove();
+            $("#footerEditar").append("<button type='button' id='btnGuardar' class='btn btn-success' onclick='Guardar()'><i class='fas fa-save'></i> Guardar</button>");
+            HabilitarCampos();
+        });
+
+        //Saul gonzalez 23/10/2020: Evento que muestra la contraseña al pasar el puntero sobre el icono del ojo
+        $('#Cerrado').hover(function show() {
+            //Cambiar el atributo a texto
+            $('#Contraseña').attr('type', 'text');
+            $('#Icono').removeClass('fas fa-eye-slash').addClass('fa fa-eye');
+        },
+            function () {
+                //Cambiar el atributo a contraseña
+                $('#Contraseña').attr('type', 'password');
+                $('#Icono').removeClass('fa fa-eye').addClass('fa fa-eye-slash');
+            });
+    });
+
+    //FUNCIONES
+    //Saul Gonzalez 22/10/2020: Funcion que manda a recargar los datos de la tabla
+    function Recargar() {
+        location.reload();
+    }
+
+    function Guardar() {
+        //Saul Gonzalez 22/10/2020: Declaramos los parametros que se van a guardar
+        var Nombre = $("#Nombre").val();
+        var CorreoElectronico = $("#CorreoElectronico").val();
+        var Contraseña = $("#Contraseña").val();
+        var Perfil = $("#Perfil").val();
+        var Params = {
+            "Nombre": Nombre, "CorreoElectronico": CorreoElectronico, "Contraseña": Contraseña, "Perfil": Perfil
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Usuarios/Guardar',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#myModal').modal('hide');
+                    // Saul Gonzalez: 22/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Datos guardados',
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+
+    function VerContraseña(IdUsuario) {
+        //Saul Gonzalez 22/10/2020: Asiganamos los parametros
+        var Params = {
+            "IdUsuario": IdUsuario
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Usuarios/ConsultarContraseña',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    //Saul González 19/10/2020: Llenamos el modal con los datos del proveedor
+                    $("#VerContraseña").val(result.Contraseña);
+                    $("#VerContraseña").prop('disabled', true);
+                    $('#ModalContraseña').modal('show');
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+    function CargarUsuario(Id_usuario) {
+        //Saul Gonzalez 22/10/2020: Asiganamos los parametros
+        var Params = {
+            "Id_usuario": Id_usuario
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Usuarios/ConsultarUsuario',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    //Saul González 19/10/2020: Llenamos el modal con los datos del usuario
+                    $("#Nombre").val(result.Nombre);
+                    $("#Perfil").val(result.Permiso);
+                    $("#CorreoElectronico").val(result.CorreoElectronico);
+                    $("#Contraseña").val(result.Contraseña);
+                    $("#TituloModal").text("Editar Usuario");
+                    //Saul Gonzalez 19/10/2020: Se remeve el boton de guardar y se agrega el boton de Actualizar
+                    $("#btnGuardar").remove();
+                    $("#footerEditar").append(`<button type='button' id='btnActualizar' class='btn btn-success' onclick='Actualizar(${result.Id_usuario})'><i class='fas fa-save'></i> Actualizar</button>`);
+                    $('#myModal').modal('show');
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+
+    function Actualizar(IdUsuario) {
+        //Saul Gonzalez 19/10/2020: Asignamos los valores para cada parametro
+        var Nombre = $("#Nombre").val();
+        var Perfil = $("#Perfil").val();
+        var CorreoElectronico = $("#CorreoElectronico").val();
+        var Contraseña = $("#Contraseña").val();
+        var Params = {
+            "IdUsuario": IdUsuario, "Nombre": Nombre , "Perfil": Perfil, "CorreoElectronico": CorreoElectronico, "Contraseña": Contraseña
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/Usuarios/Actualizar',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#myModal').modal('hide');
+                    // Saul Gonzalez: 19/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                    Swal.fire({
+                        icon: 'success',
+                        title: result.mensaje,
+                        text: "Los cambios se aplicarán la próxima vez que inicie sesión.",
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        // Saul Gonzalez: 19/10/2020: Se recarga la pagina despues de cerra el swalFire
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    }
+    function Eliminar(IdUsuario, Nombre) {
+        Swal.fire({
+            title: 'Estas seguro de eliminar al usuario: ' + Nombre,
+            text: "Esta acción no se puede revertir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy seguro!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //Saul Gonzalez 19/10/2020: Asignamos los valores para el parametro
+                var Params = {
+                    "IdUsuario": IdUsuario
+                };
+                $.ajax({
+                    type: "POST",
+                    traditional: true,
+                    async: false,
+                    cache: false,
+                    url: '/Usuarios/Eliminar',
+                    context: document.body,
+                    data: Params,
+                    success: function (result) {
+                        if (result.status) {
+                            // Saul Gonzalez: 19/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                            Swal.fire({
+                                icon: 'success',
+                                title: result.mensaje,
+                                showConfirmButton: true,
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                // Saul Gonzalez: 19/10/2020: Se recarga la pagina despues de cerra el swalFire
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            })
+                        }
+                        else {
+                            Swal.fire('Error', result.mensaje, 'error')
+                        }
+                    },
+                    error: function (xhr) {
+                        // Debugger;
+                        console.log(xhr.responseText);
+                        alert("Error has occurred...");
+                    }
+                });
+            }
+        })
+    }
+
+    function DeshabilitarCampos() {
+        $("#IdUsuario").prop('disabled', true);
+        $("#Nombre").prop('disabled', true);
+        $("#Direccion").prop('disabled', true);
+        $("#Paises").prop('disabled', true);
+        $("#Ciudad").prop('disabled', true);
+        $("#Estado").prop('disabled', true);
+        $("#Notas").prop('disabled', true);
+    }
+
+    function HabilitarCampos() {
+        $("#oProveedor").prop('disabled', false);
+        $("#Nombre").prop('disabled', false);
+        $("#Direccion").prop('disabled', false);
+        $("#Paises").prop('disabled', false);
+        $("#Ciudad").prop('disabled', false);
+        $("#Estado").prop('disabled', false);
+        $("#Notas").prop('disabled', false);
+    }
+
+
+
+</script>
+<style>
+    /*.cont {
+        height: 100%;
+        padding-top: 0px;
+        float: left;
+    }*/
+
+    .cont label {
+        color: #797d7f;
+        font-size: 12.9px;
+    }
+
+    input[type="search"] {
+        width: 170px;
+        margin: 10px;
+        /*  padding: 10px 16px;*/
+        border-radius: 32px;
+        outline: none;
+        border: 2px solid #ccd1d1;
+        background: #E7ECF2;
+        transition: all 0.5s;
+    }
+
+        input[type="search"]:focus {
+            background: #fff;
+            width: 300px;
+        }
+</style>
+
