@@ -33,6 +33,10 @@ namespace ControlDePagos.Controllers
                 {
                     return RedirectToAction("Index", "Login");
                 }
+                if (Session["Permiso"].ToString() != "Administrador")
+                {
+                    return RedirectToAction("Index", "Login");
+                }
             }
             catch (Exception)
             {
