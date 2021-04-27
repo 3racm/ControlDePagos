@@ -15,5 +15,6 @@ namespace Catalogo_3R_ACM.Clases
         public System.DateTime FechaRegistro { get; set; }
         public bool status { get; set; }
         public string mensaje { get; set; }
+        public string FechaTexto { get; set; }
     }
 }

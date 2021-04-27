@@ -50,6 +50,7 @@
     <Property Name="TipoPago3" Type="nvarchar" Nullable="true" MaxLength="50" />
     <Property Name="Notas" Type="nvarchar(max)" Nullable="true" />
     <Property Name="RegistradoPor" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="REF_Retorno" Type="nvarchar(max)" Nullable="true" />
     <Property Name="Tb_Proyectos_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Tb_Usuario">
@@ -163,6 +164,7 @@
           <Property Name="Notas" Type="String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="RegistradoPor" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tb_Proyectos" Relationship="ControlDeGastosModel.Tb_ProyectosTb_Pagos" FromRole="Tb_Pagos" ToRole="Tb_Proyectos" />
+          <Property Name="REF_Retorno" Type="String" Nullable="true" />
           </EntityType>
         <Association Name="Tb_ProyectosTb_Pagos">
           <End Type="ControlDeGastosModel.Tb_Proyectos" Role="Tb_Proyectos" Multiplicity="1" />
@@ -245,6 +247,7 @@
           <ScalarProperty Name="TipoPago3" ColumnName="TipoPago3" />
           <ScalarProperty Name="Notas" ColumnName="Notas" />
           <ScalarProperty Name="RegistradoPor" ColumnName="RegistradoPor" />
+          <ScalarProperty Name="REF_Retorno" ColumnName="REF_Retorno" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

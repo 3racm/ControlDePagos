@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/22/2021 12:51:22
+-- Date Created: 04/26/2021 13:27:52
 -- Generated from EDMX file: C:\Users\3R Server\source\repos\ControlDePagos\ControlPagosModel\ControlGastosModel.edmx
 -- --------------------------------------------------
 
@@ -76,6 +76,7 @@ CREATE TABLE [dbo].[Tb_Pagos] (
     [TipoPago3] nvarchar(50)  NULL,
     [Notas] nvarchar(max)  NULL,
     [RegistradoPor] nvarchar(max)  NULL,
+    [REF_Retorno] nvarchar(max)  NULL,
     [Tb_Proyectos_Id] int  NOT NULL
 );
 GO

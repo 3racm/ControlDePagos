@@ -1,0 +1,212 @@
+﻿
+@{
+    ViewBag.Title = "Mi perfil";
+    Layout = "";
+}
+
+
+
+<head>
+    <title>Mi perfil</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/81709f7377.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="shortcut icon" href="~/img/logo3R.ico" />
+
+
+</head>
+
+
+<div class="container bootstrap snippet mt-5">
+    <div class="row">
+        <div class="col-sm-10"></div>
+        <div class="col-sm-2" style="margin-top:13px"><a class="pull-right"><img title="profile image" class="img-responsive" src="~/img/logo3R.png"></a></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="text-center">
+                <img src="~/img/UserProfile.gif" class="avatar img-circle img-thumbnail" alt="Avatar">
+
+            </div><br>
+
+            <div class="panel panel-default">
+                <div class="panel-heading" style="font-weight:bold">Perfil <i class="fa fa-link fa-1x"></i></div>
+                <div class="panel-body"><a><i class="far fa-user-circle"></i> <label id="lbPermiso"> </label></a></div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab"  href="#home"><strong> Datos de usuario</strong></a></li>
+            </ul>
+
+            <label id="IdUsuario" hidden></label>
+            <div class="tab-content">
+                <div class="tab-pane active" id="home">
+                    <form class="form" action="##" method="post" id="registrationForm">
+                        <div class="form-group">
+
+                            <div class="col-xs-6" >
+                                <label for="Nombre"><h4 style="font-weight:bold">Nombre Completo</h4></label>
+                                <input type="text" class="form-control" id="Nombre" placeholder="Nombre de usuario" title="Nombre de usuario" disabled autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="perfil"><h4 style="font-weight:bold">Perfil</h4></label>
+                                <input type="text" class="form-control" id="perfil" placeholder="Perfil / Rol" title="Perfil o rol de usuario" disabled autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="FechaRegistro"><h4 style="font-weight:bold">Fecha de registro</h4></label>
+                                <input type="text" class="form-control" id="FechaRegistro" placeholder="Fecha de registro" disabled title="Fecha de registro de usuario" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="CorreoElectronico"><h4 style="font-weight:bold">Correo electrónico</h4></label>
+                                <input type="email" class="form-control" id="CorreoElectronico" placeholder="Dirección de correo electrónico" disabled title="Correo electrónico del usuario" autocomplete="new-text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="Contraseña"><h4 style="font-weight:bold">Modificar contraseña</h4></label>
+                                <input type="password" class="form-control" id="Contraseña" placeholder="Contraseña de usuario" title="Idique la contraseña" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="Contraseña2"><h4 style="font-weight:bold">Confirmar</h4></label>
+                                <input type="password" class="form-control" id="Contraseña2" placeholder="Confirme la contraseña" title="Confirmar contraseña" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <br>
+                                <button class="btn btn-lg btn-success" type="button" onclick="Guardar()"><i class="glyphicon glyphicon-ok-sign"></i> Guardar y salir</button>
+                                <button class="btn btn-lg" type="button" onclick="Salir()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+
+                </div><!--/tab-pane-->
+
+            </div><!--/tab-content-->
+
+        </div><!--/col-9-->
+    </div><!--/row-->
+</div>
+
+
+<script lang="en" type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/PerfilUsuario/Cargar',
+            context: document.body,
+            //data: Params,
+            success: function (result) {
+                if (result.status) {
+                    $('#IdUsuario').val(result.Id_usuario);
+                    $('#Nombre').val(result.Nombre);
+                    $('#CorreoElectronico').val(result.CorreoElectronico);
+                    $('#perfil').val(result.Permiso);
+                    $('#lbPermiso').text(result.Permiso);
+                    $('#FechaRegistro').val(result.FechaTexto);
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+    });
+
+    function Salir() {
+           window.location.href='@Url.Action("Index", "Proyectos")';
+    }
+    function Guardar() {
+        var IdUsuario =  $('#IdUsuario').val();
+        var Contraseña = $('#Contraseña').val();
+        var ContraseñaConfirmada = $('#Contraseña2').val();
+        var Params = {
+            "IdUsuario": IdUsuario, "Contraseña": Contraseña, "ContraseñaConfirmada": ContraseñaConfirmada
+        };
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            async: false,
+            cache: false,
+            url: '/PerfilUsuario/ActualizarDatos',
+            context: document.body,
+            data: Params,
+            success: function (result) {
+                if (result.status) {
+                    // Saul Gonzalez: 19/10/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
+                    Swal.fire({
+                        icon: 'success',
+                        title: result.mensaje,
+                        text: "Los cambios se aplicarán la próxima vez que inicie sesión.",
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        // Saul Gonzalez: 19/10/2020: Se recarga la pagina despues de cerra el swalFire
+                        if (result.isConfirmed) {
+                             window.location.href='@Url.Action("Index", "Proyectos")';
+                        }
+                    })
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        result.mensaje,
+                        'error'
+                    )
+                    $('#Contraseña2').val("");
+                }
+
+            },
+            error: function (xhr) {
+                // Debugger;
+                console.log(xhr.responseText);
+                alert("Error has occurred...");
+            }
+        });
+
+    }
+</script>
+
+<style>
+
+    body {
+        background-image: url(/img/FondoPerfilDeUsuario.jpg);
+    }
+
+</style>

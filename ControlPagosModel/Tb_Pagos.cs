@@ -26,6 +26,7 @@ namespace ControlPagosModel
         public string TipoPago3 { get; set; }
         public string Notas { get; set; }
         public string RegistradoPor { get; set; }
+        public string REF_Retorno { get; set; }
     
         public virtual Tb_Proyectos Tb_Proyectos { get; set; }
     }

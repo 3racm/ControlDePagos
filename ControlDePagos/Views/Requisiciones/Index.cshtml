@@ -356,7 +356,7 @@
                     }
 
                     //Asignamos el folio como clase al campo del total, para que el momento de registrar una liberacion sea mas facil actualizar ese campo
-                    obj.Total = obj.Total.toFixed(2).toString().replace('.', ',');
+                    obj.Total = FormatoMiles(obj.Total.toFixed(2));
                     var Total = `<p class="${obj.Folio}">${obj.Total}</p>`;
                     if (obj.LimiteAlcanzado) {
                         Total = `<p class="${obj.Folio} font-weight-bold" style="color:#dc2a3b">${obj.Total}</p>`;
@@ -404,6 +404,18 @@
         //Retornar valor filtrado
         return out;
     }
+    function FormatoMiles(nStr) {
+        nStr += '';
+        var x = nStr.split('.');
+        var x1 = x[0];
+        var x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
+    }
+
     function RegistrarLiberacion(romper = false) {   
         if(!romper) {
             Swal.mixin({
@@ -634,13 +646,13 @@
                     //Datos de la requisicion
                     $("#FolioLiberacion").val(result.REQ.Folio);
                     $("#CuentaLiberacion").val(result.REQ.Cuenta_Cargo);              
-                    $("#TotalLiberacion").val(result.REQ.Total.toFixed(2).toString().replace('.', ','));
-                    $("#RestanteLiberacion").val(result.REQ.Restante.toFixed(2).toString().replace('.', ','));
+                    $("#TotalLiberacion").val(FormatoMiles(result.REQ.Total.toFixed(2)));
+                    $("#RestanteLiberacion").val(FormatoMiles(result.REQ.Restante.toFixed(2)));
 
                     // Saul Gonzalez: 19/04/2020: Seteamos la lista de liberaciones en la tabla de la modal
                     $.each(result.Lista, function (i, obj) {
                         var btnEliminar = `<button type="button" class="btn btn-danger btn-sm" onclick="EliminarLiberacion(${obj.Id})" title="Eliminar registro"><i class="far fa-trash-alt"></i> Eliminar</button>`;
-                        obj.Monto = obj.Monto.toFixed(2).toString().replace('.', ',');
+                        obj.Monto = FormatoMiles(obj.Monto.toFixed(2));
                         //Saul Gonzalez 26/10/2020: Agregamos los datos de las entradas a la tabla del tab 1
                         TablaHistorial.row.add([obj.Num_Liberacion, "$" + obj.Monto, obj.FechaRegistro, obj.Notas, btnEliminar])
                             .draw()

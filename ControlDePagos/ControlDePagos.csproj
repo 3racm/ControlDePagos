@@ -135,6 +135,7 @@
     <Compile Include="Clases\cProyectos.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PagosController.cs" />
+    <Compile Include="Controllers\PerfilUsuarioController.cs" />
     <Compile Include="Controllers\ProyectosController.cs" />
     <Compile Include="Controllers\RequisicionesController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
@@ -157,9 +158,12 @@
     <Content Include="img\Eliminando.gif" />
     <Content Include="img\FondoLogin.gif" />
     <Content Include="img\FondoLogin2.gif" />
+    <Content Include="img\FondoPerfilDeUsuario.jpg" />
     <Content Include="img\Liberacion.gif" />
     <Content Include="img\logo3R.ico" />
+    <Content Include="img\logo3R.png" />
     <Content Include="img\ReqCancelada.gif" />
+    <Content Include="img\UserProfile.gif" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -291,6 +295,7 @@
     <Content Include="Views\Pagos\Index.cshtml" />
     <Content Include="Views\Requisiciones\Index.cshtml" />
     <Content Include="Views\Usuarios\Index.cshtml" />
+    <Content Include="Views\PerfilUsuario\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

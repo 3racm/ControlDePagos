@@ -89,6 +89,7 @@
                 <th scope="col">Referencia</th>
                 <th scope="col">Modo de pago</th>
                 <th scope="col">Retorno</th>
+                <th scope="col">Ref. Retorno</th>
                 <th scope="col" class="THNota">Notas</th>
                 <th scope="col">Acciones</th>
             </tr>
@@ -152,9 +153,13 @@
                         <div class="col-sm-4" id="CajaRetorno">
                             <input type="text" class="form-control" id="Retorno" placeholder="0.00" autocomplete="off" onkeyup="this.value=Numeros(this.value)">
                         </div>
+                        <label for="REFRetorno" class="col-sm-2 col-form-label CajaRetorno">Ref. Retorno</label>
+                        <div class="col-sm-5 CajaRetorno" >
+                            <input type="text" class="form-control" id="REFRetorno" placeholder="# Referencia para el retorno" autocomplete="off">
+                        </div>
                     </div>
                         <div class="form-group row">
-                            <label for="Retorno" class="col-sm-1 col-form-label">Notas</label>
+                            <label for="NotasPago" class="col-sm-1 col-form-label">Notas</label>
                             <div class="col-sm-11">
                                 <textarea class="form-control col-sm-12" id="NotasPago" rows="2" placeholder="Notas de pago" autocomplete="off"></textarea>
                             </div>
@@ -273,6 +278,7 @@
                     $("#btnActualizarPago").hide();
                     $("#LabelRetorno").hide();
                     $("#CajaRetorno").hide();
+                    $(".CajaRetorno").hide();
                     //Ocultamos los campos de combinacion de pago #1
                     $(".CajaPago2").hide();
                     //Ocultamos la etiqueta que indica si hay filtros aplicados
@@ -284,7 +290,7 @@
                     $("#NumCuenta").prop('disabled', true);
                     $("#FechaInicio").val(result.DatosProyecto.FechaInicio);
                     $("#FechaInicio").prop('disabled', true);
-                    $("#MontoI").val(result.DatosProyecto.MontoInicial.toFixed(2).toString().replace('.', ','));
+                    $("#MontoI").val(FormatoMiles(result.DatosProyecto.MontoInicial.toFixed(2)));
                     $("#MontoI").prop('disabled', true);
                     $("#MonedaProyecto").text("(" + result.DatosProyecto.Moneda + ")");
                     $("#MonedaProyectoSub").text("(" + result.DatosProyecto.Moneda + ")");
@@ -292,7 +298,7 @@
                     $("#MonedaProyectoF").text("(" + result.DatosProyecto.Moneda + ")");
                     $("#MontoF").val("$" + result.DatosProyecto.MontoFinal);
                     $("#MontoF").prop('disabled', true);
-                    $("#RetornoTotal").val("$" + result.DatosProyecto.Retorno);
+                    $("#RetornoTotal").val("$" + FormatoMiles(result.DatosProyecto.Retorno.toFixed(2)));
                     $("#RetornoTotal").prop('disabled', true);
                     $("#Descripcion").val(result.DatosProyecto.Descripcion);
                     $("#Descripcion").prop('disabled', true);
@@ -301,9 +307,9 @@
                     $("#FechaESP").prop('disabled', true);                  
 
                     //19/03/2021:Seteamos los valores del Subtotal, Retorno y Monto Final
-                    $("#Subtotal").val("$" + result.Subtotal.toFixed(2).toString().replace('.', ','));
-                    $("#RetornoTotal").val("$" + result.TotalRetorno.toFixed(2).toString().replace('.', ','));
-                    $("#MontoF").val("$" + result.MontoFinal.toFixed(2).toString().replace('.', ','));
+                    $("#Subtotal").val("$" + FormatoMiles(result.Subtotal.toFixed(2)));
+                    $("#RetornoTotal").val("$" + FormatoMiles(result.TotalRetorno.toFixed(2)));
+                    $("#MontoF").val("$" + FormatoMiles(result.MontoFinal.toFixed(2)));
                     //Se oculta el boton de reabir el proyecto
                     $("#btnReabrir").hide();
                     $("#btnCerrar").show();              
@@ -352,14 +358,21 @@
                             if (obj.Notas == null) {
                                 obj.Notas = "";
                             }
+                            if (obj.REF_Retorno == null || obj.REF_Retorno == "") {
+                                obj.REF_Retorno = "N/A";
+                            }
+                            //Aplicamos el formato para separar los miles con comas
+                            Monto = FormatoMiles(Monto.toFixed(2));
+                            obj.Retorno = FormatoMiles(obj.Retorno.toFixed(2));
                             //Creamos la fila con sus respectivos datos
                             Fila = `
                              <tr>
                                 <th>${obj.FechaPago}</th>
-                                <td>${Monto.toFixed(2).toString().replace('.', ',')}</td>
+                                <td>${Monto}</td>
                                 <td>${obj.Referencia}</td>
                                 <td>${TipoPago}</td>
-                                <td>${obj.Retorno.toFixed(2).toString().replace('.', ',')}</td>
+                                <td>${obj.Retorno}</td>
+                                <td>${obj.REF_Retorno}</td>
                                 <td class="TDNota">${obj.Notas}</td>
                                 <td>
                                 <button type="button" class="btn btn-info btn-sm" title="Editar" onclick="EditarPago(${obj.Id})"><i class="fas fa-edit"></i></button>
@@ -529,6 +542,7 @@
             $("#btnRegistrarPago").show();
             $("#LabelRetorno").hide();
             $("#CajaRetorno").hide();
+            $(".CajaRetorno").hide();
             $("#TituloModal").text("Registrar pago");
             $(".CajaPago2").hide();
             $(".FechaESP").show();
@@ -576,6 +590,18 @@
 
         //Retornar valor filtrado
         return out;
+    }
+
+    function FormatoMiles(nStr) {
+        nStr += '';
+        var x = nStr.split('.');
+        var x1 = x[0];
+        var x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
     }
     function RegistrarPago() {
         //Saul Gonzalez 17/03/2021: Declaramos los parametros que se van a guardar
@@ -652,6 +678,7 @@
                     $("#TituloModal").text("Editar pago");                
                     $("#LabelRetorno").show();
                     $("#CajaRetorno").show();
+                    $(".CajaRetorno").show();
                     //Mostramos el campo de fecha y le asignamos su valor
                     $("#LabelFechaPago").text("Fecha pago");
                     $("#FechaESP").val(result.Datos.FechaPago); 
@@ -666,6 +693,7 @@
                     $("#REF").val(result.Datos.Referencia)
                     $("#tipoPago option[value=" + result.Datos.TipoPago).attr("selected", true);
                     $("#Retorno").val(result.Datos.Retorno.toFixed(2));
+                    $("#REFRetorno").val(result.Datos.REF_Retorno);
                     $("#NotasPago").val(result.Datos.Notas);
                     //Verificamos si el registro tiene pagos combinados
                     if (result.Datos.Monto2 != null || result.Datos.Monto2 > 0) {
@@ -703,12 +731,13 @@
         var TipoPago = $("#tipoPago").val();
         var FechaPago = $("#FechaESP").val();
         var Retorno = $("#Retorno").val();     
+        var REFRetorno = $("#REFRetorno").val();     
         var NotasPago = $("#NotasPago").val();
         //parametros de las combinaciones de pago
         var Monto2 = $("#Monto2").val();
         var tipoPago2 = $("#tipoPago2").val();
         var Params = {
-            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "FechaPago": FechaPago ,"Retorno": Retorno, "NotasPago": NotasPago, "Monto2": Monto2, "tipoPago2": tipoPago2
+            "IdPago": IdPago, "Monto": Monto, "REF": REF, "TipoPago": TipoPago, "FechaPago": FechaPago, "Retorno": Retorno, "REFRetorno": REFRetorno, "NotasPago": NotasPago, "Monto2": Monto2, "tipoPago2": tipoPago2
         };
         $.ajax({
             type: "POST",

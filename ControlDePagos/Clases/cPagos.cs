@@ -14,10 +14,12 @@ namespace Catalogo_3R_ACM.Clases
         public string Referencia { get; set; }
         public string TipoPago { get; set; }
         public Nullable<decimal> Retorno { get; set; }
+        public string REF_Retorno { get; set; }
         public string RegistradoPor { get; set; }
         public string Notas { get; set; }
         public decimal ? Monto2 { get; set; }
         public string TipoPago2 { get; set; }
+       
 
     }
 }

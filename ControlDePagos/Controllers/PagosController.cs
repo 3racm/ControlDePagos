@@ -99,6 +99,7 @@ namespace ControlDePagos.Controllers
                         o.Referencia = Pago.Referencia;
                         o.TipoPago = Pago.TipoPago;
                         o.Retorno = Pago.Retorno;
+                        o.REF_Retorno = Pago.REF_Retorno;
                         o.RegistradoPor = Pago.RegistradoPor;
                         o.Notas = Pago.Notas;
                         //Datos de combinaciones de pago
@@ -178,6 +179,7 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(Retorno))
                 {
                     Pago.Retorno = 0;
+                    Pago.REF_Retorno = string.Empty;
                 }
                 else
                 {
@@ -226,6 +228,7 @@ namespace ControlDePagos.Controllers
                 Pago.TipoPago = o.TipoPago;
                 Pago.Referencia = o.Referencia;
                 Pago.Retorno = o.Retorno;                            
+                Pago.REF_Retorno = o.REF_Retorno;                            
                 Pago.Notas = o.Notas;
                 Pago.FechaPago = o.FechaPago.ToString("yyyy-MM-dd");
                 //Datos de pagos combinados
@@ -240,12 +243,16 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Pago registrado correctamente.", Datos = Pago });
         }
 
-        public JsonResult ActualizarPago(string IdPago, string Monto, string REF, string TipoPago, string FechaPago, string Retorno = "", string NotasPago ="", string Monto2 ="", string tipoPago2 = "")
+        public JsonResult ActualizarPago(string IdPago, string Monto, string REF, string TipoPago, string FechaPago, string Retorno = "", string REFRetorno ="", string NotasPago ="", string Monto2 ="", string tipoPago2 = "")
         {         
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
             try
             {
                 int ID_PAGO = Convert.ToInt32(IdPago);
+                if (Retorno == string.Empty)
+                {
+                    Retorno = "0";
+                }
                 //Saul González 23/03/2021: Validaciones de campos nulos
                 if (String.IsNullOrEmpty(Monto.ToString()))
                 {
@@ -286,6 +293,14 @@ namespace ControlDePagos.Controllers
                         }
                     }
                    
+                }               
+                if (Convert.ToDecimal(Retorno,Culture) > 0 && String.IsNullOrEmpty(REFRetorno))
+                {
+                    return Json(new { status = false, mensaje = "Al ingresar una cantidad de retorno, debe también indicar la referencia." });
+                }               
+                if (!String.IsNullOrEmpty(REFRetorno) && Convert.ToDecimal(Retorno,Culture) < 1)
+                {
+                    return Json(new { status = false, mensaje = "Al ingresar una referencia de retorno, el monto de retorno debe ser mayor a 0." });
                 }
                 if (Monto2 != string.Empty && TipoPago == tipoPago2)
                 {
@@ -313,10 +328,12 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(Retorno))
                 {
                     Pago.Retorno = 0;
+                    Pago.REF_Retorno = string.Empty;
                 }
                 else
                 {
                     Pago.Retorno = Convert.ToDecimal(Retorno, Culture);
+                    Pago.REF_Retorno = REFRetorno;
 
                 }
                 //Saul gonzalez 23/03/2021: Guardamos los datos

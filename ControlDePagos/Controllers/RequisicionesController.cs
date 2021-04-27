@@ -227,7 +227,7 @@ namespace ControlDePagos.Controllers
                 REQ.Descripcion = o.Descripcion;
                 REQ.Solicitud = o.Solicitud;
                 REQ.TipoReq = o.TipoReq;
-                REQ.FechaRegistro = o.FechaRegistro;
+                REQ.FechaRegistro = o.FechaRegistro;                
 
             }
             catch (Exception error)
