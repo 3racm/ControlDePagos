@@ -37,17 +37,20 @@
                         <a class="nav-link text-white" href="@Url.Action("Index", "Usuarios")"><i class="fas fa-users"></i> <b>Usuarios</b></a>
                     </li>
                 }
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-user"></i><b> @ViewBag.Usuario</b>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="@Url.Action("Index", "PerfilUsuario")"><i class="fas fa-user-cog"></i> Mi perfil</a>
-                            <div class="dropdown-divider"></div>
-                            <a id="CerrarSesion" class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
-                        </div>
-                    </li>
-                </ul>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i><b> @ViewBag.Usuario</b>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="@Url.Action("Index", "PerfilUsuario")"><i class="fas fa-user-cog"></i> Mi perfil</a>
+                        <div class="dropdown-divider"></div>
+                        <a id="CerrarSesion" class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
+                    </div>
+                </li>
+                <li class="nav-item zoombtn">
+                    <a class="nav-link text-white" href="#" data-toggle="modal" data-target="#Modalayuda"><i class="fas fa-question-circle"></i> <b>Ayuda</b></a>
+                </li>
+            </ul>
         </div>
     </nav>
     <div class="container body-content">
@@ -58,11 +61,207 @@
         </footer>
     </div>
 
+    @*MODAL de Ayuda*@
+    <div class="container">
+        <!-- The Modal -->
+        <div class="modal fade" id="Modalayuda">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title"><i class="fas fa-question-circle"></i> Ayuda</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="slide">
+                            <h4 style="text-decoration:none; text-align:center" class="mb-3">Selecciona el modulo en el cual necesitas ayuda</h4>
+                        </div>                       
+                        <div id="accordion">
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            <i class="fas fa-drafting-compass"></i> Proyectos
+                                        </button>
+                                    </h5>
+                                </div>
+
+                                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                                    <div class="card-body">
+                                        @*Video de registrar proyectos*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-plus-square"></i> Registrar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de Editar proyectos*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-edit"></i> Editar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de eliminar proyectos*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-trash-alt"></i> Eliminar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de modificar fecha de inicio*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-calendar-alt"></i> Modificar fecha de inicio</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de modifica monto inicial*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-coins"></i> Modificar monto inicial</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de modifica descripcion*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-comment-alt"></i> Modificar descripción</p></li>
+                                            </ul>
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="headingThree">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            <i class="fas fa-file-invoice-dollar"></i> Pagos
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                                    <div class="card-body">
+                                        @*Video de registrar Pagos*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-plus-square"></i> Registrar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de editar Pagos*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-edit"></i> Editar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de eliminar Pagos*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-trash-alt"></i> Eliminar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de ver notas*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-comment-dots"></i> Ver notas</p></li>
+                                            </ul>
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="headingTwo">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            <i class="fas fa-file-invoice-dollar"></i> Requisiciones
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                                    <div class="card-body">
+                                        @*Video de registrar Requisiciones*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-plus-square"></i> Registrar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de editar Requisiciones*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-edit"></i> Editar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de cancelar Requisiciones*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-times-circle"></i> Cancelar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de registrar liberacion*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-hand-holding-usd"></i> Registrar liberación</p></li>
+                                            </ul>
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="headingFour">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                            <i class="fas fa-users"></i> Usuarios
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div id="collapseFour" class="collapse" aria-labelledby="collapseFour" data-parent="#accordion">
+                                    <div class="card-body">
+                                        @*Video de registrar Usuarios*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-user-plus"></i> Registrar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de editar Usuarios*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-edit"></i> Editar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de eliminar Usuarios*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-trash-alt"></i> Eliminar</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de ver contraseña*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-key"></i> Ver contraseña</p></li>
+                                            </ul>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer" id="footerEditar">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"> Cerrar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
-    <style>
+<style>
         body {
             padding-top: 0px;
             padding-bottom: 0px;
@@ -82,6 +281,7 @@
                 background: #fff !important;
                 width: 260px !important;
             }
+
         .navbar {
             background: -webkit-linear-gradient(-2deg, #bd2130, #3e3434);
             background: -o-linear-gradient(-2deg, #bd2130, #3e3434);
@@ -105,7 +305,24 @@
                 -webkit-transform: scale(1.09); /* Chrome - Safari */
                 -o-transform: scale(1.09); /* Opera */
             }
-    </style>
+.slide {
+  animation-duration: 0.6s;
+  animation-name: animTexto;
+  margin: 20px;
+}
+
+@@keyframes animTexto {
+  from {
+    margin-left: 100%;
+    width: 100%;
+  }
+    to {
+        margin-left: 0%;
+        width: 100%;
+    }
+}
+
+</style>
 
     <script type="text/javascript">
         $(document).ready(function () {
