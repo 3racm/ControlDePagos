@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <link rel="shortcut icon" href="/img/logo3R.ico"/>
+    <link rel="shortcut icon" href="/img/logo3R.ico" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -78,7 +78,7 @@
                     <div class="modal-body">
                         <div class="slide">
                             <h4 style="text-decoration:none; text-align:center" class="mb-3">Selecciona el modulo en el cual necesitas ayuda</h4>
-                        </div>                       
+                        </div>
                         <div id="accordion">
                             <div class="card">
                                 <div class="card-header" id="headingOne">
@@ -92,37 +92,49 @@
                                 <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                                     <div class="card-body">
                                         @*Video de registrar proyectos*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1BdE_TYeuJPd7rB-p2fZbRVuLiGmlOW88/view?usp=sharing', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-plus-square"></i> Registrar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de Editar proyectos*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/177rzlrQOXgQUUg3S4QPMZFPyUAEDfWax/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-edit"></i> Editar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de eliminar proyectos*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1uvX_VgaoIsRVyVfR0TEQkV_OToicsrW-/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-trash-alt"></i> Eliminar</p></li>
                                             </ul>
                                         </a>
+                                        @*Video de cerrar proyecto*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1mmB25hN8-Lv0PucZz6rRtH6MgXqte1KL/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-lock"></i> Cerrar proyecto</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de Reabrir proyecto*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1pN2y_xZ98k7olBBx1VE-4R14ANhlst2r/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-unlock-alt"></i> Reabrir proyecto</p></li>
+                                            </ul>
+                                        </a>
                                         @*Video de modificar fecha de inicio*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1bWWke8TwXBRdSHz8Z62GLprOC7HL0mJG/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-calendar-alt"></i> Modificar fecha de inicio</p></li>
                                             </ul>
                                         </a>
                                         @*Video de modifica monto inicial*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1cjOggaWsqTVgNYl8EWV_8kK6oYLw6uwb/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-coins"></i> Modificar monto inicial</p></li>
                                             </ul>
                                         </a>
                                         @*Video de modifica descripcion*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1H0T-d-amKjDw68NfmX1p5EQoEaZQJP5s/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-comment-alt"></i> Modificar descripción</p></li>
                                             </ul>
@@ -142,25 +154,37 @@
                                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                                     <div class="card-body">
                                         @*Video de registrar Pagos*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1upinZs2ac9XOcJt-nqoY2bHXdUsca6WV/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-plus-square"></i> Registrar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de editar Pagos*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/12DctcggzD1zJ0kXEXh5OTutd26FzaAOC/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-edit"></i> Editar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de eliminar Pagos*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1xaUDiAW-t318etQCsi7wNfiPTiVKeDDS/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-trash-alt"></i> Eliminar</p></li>
                                             </ul>
                                         </a>
+                                        @*Video de combinar pago*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1StCKfFDwGiUdcX5Fb417_ntgK55cIsRy/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-link"></i> Combinar pago</p></li>
+                                            </ul>
+                                        </a>
+                                        @*Video de retorno de efectivo*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/17OVA1KdrG00xmbxLK3zMvLsMvX94daVg/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="fas fa-undo"></i> Retorno de efectivo</p></li>
+                                            </ul>
+                                        </a>
                                         @*Video de ver notas*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/14q6R_2jv525xQ0TFr5NlSPU-8rXqogQ-/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-comment-dots"></i> Ver notas</p></li>
                                             </ul>
@@ -180,30 +204,35 @@
                                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                                     <div class="card-body">
                                         @*Video de registrar Requisiciones*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/12_io5e0dG0DjA_kjwcsH85EufpZuFhUx/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-plus-square"></i> Registrar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de editar Requisiciones*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1iZtG2IO5H5fQHJPaZK5EBGDOs9swnC3M/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-edit"></i> Editar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de cancelar Requisiciones*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/17KNXUBQIOjdya1kJf5QFuhu_4ynHG7xg/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-times-circle"></i> Cancelar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de registrar liberacion*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1FnTGpIr2NsgJ1erqU4jvBLFYxDKEVtwK/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-hand-holding-usd"></i> Registrar liberación</p></li>
                                             </ul>
                                         </a>
-
+                                        @*Video de Eliminar liberacion*@
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1x7QRoCfW7T1RJMIjjBGUxd9EBmJKEHB6/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
+                                            <ul>
+                                                <li><p><i class="far fa-trash-alt"></i> Eliminar liberación</p></li>
+                                            </ul>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -218,25 +247,25 @@
                                 <div id="collapseFour" class="collapse" aria-labelledby="collapseFour" data-parent="#accordion">
                                     <div class="card-body">
                                         @*Video de registrar Usuarios*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1AkL6SmzRvUeUa_zj-tcHjIslVsW2KOZp/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-user-plus"></i> Registrar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de editar Usuarios*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1OSzbAirkz4ntl5fWr7o0RePxFbdFQD5E/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-edit"></i> Editar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de eliminar Usuarios*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1Pd19FYlov865pwhy8AN-0FiShmAm3wc_/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-trash-alt"></i> Eliminar</p></li>
                                             </ul>
                                         </a>
                                         @*Video de ver contraseña*@
-                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('http://www.youtube.com/v/DnzuKKG6-AA&autoplay=1', 'popup', 'left=300, top=200, width=700, height=700, toolbar=0, resizable=1')">
+                                        <a title="Ver video" href="javascript:void(0);" onclick="window.open('https://drive.google.com/file/d/1qg9OZcwdz7WgNnSs2SOSTyC_ZpBQMt9p/view?usp=sharing', 'popup', 'popup', 'left=80, top=200, width=1100, height=1200, toolbar=0, resizable=1')">
                                             <ul>
                                                 <li><p><i class="fas fa-key"></i> Ver contraseña</p></li>
                                             </ul>
@@ -261,7 +290,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
-<style>
+    <style>
         body {
             padding-top: 0px;
             padding-bottom: 0px;
@@ -305,24 +334,129 @@
                 -webkit-transform: scale(1.09); /* Chrome - Safari */
                 -o-transform: scale(1.09); /* Opera */
             }
-.slide {
-  animation-duration: 0.6s;
-  animation-name: animTexto;
-  margin: 20px;
-}
 
-@@keyframes animTexto {
-  from {
-    margin-left: 100%;
-    width: 100%;
-  }
-    to {
-        margin-left: 0%;
-        width: 100%;
-    }
-}
+        .slide {
+            animation-duration: 0.6s;
+            animation-name: animTexto;
+            margin: 20px;
+        }
 
-</style>
+        @@keyframes animTexto {
+            from {
+                margin-left: 100%;
+                width: 100%;
+            }
+
+            to {
+                margin-left: 0%;
+                width: 100%;
+            }
+        }
+        /*EFECTO DE LLENADO PARA UN BOTON*/
+        .get_btn {
+            background: #ffffff;
+            color: #333333;
+            padding: 14px 20px;
+           /* border-radius: 100px;*/
+            overflow: hidden;
+         /*   font-family: "Montserrat", sans-serif;*/
+            font-weight: 500;
+            font-size: 1rem;          
+            display: inline-block;
+            padding: 7px 10px;
+            border-radius: 6px;
+            transition: 0.5s;
+           /* margin: 10px;*/
+        }
+
+            .get_btn:hover {
+                color: #ffffff;
+            }
+
+        .hvr-bounce-to-top {
+            display: inline-block;
+            vertical-align: middle;
+            -webkit-transform: perspective(1px) translateZ(0);
+            transform: perspective(1px) translateZ(0);
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+            position: relative;
+            -webkit-transition-property: color;
+            transition-property: color;
+            -webkit-transition-duration: 0.5s;
+            transition-duration: 0.5s;
+        }
+
+            .hvr-bounce-to-top::before {
+                content: "";
+                position: absolute;
+                z-index: -1;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #28a745;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0);
+                -webkit-transform-origin: 50% 100%;
+                transform-origin: 50% 100%;
+                -webkit-transition-property: transform;
+                transition-property: transform;
+                -webkit-transition-duration: 0.5s;
+                transition-duration: 0.5s;
+                -webkit-transition-timing-function: ease-out;
+                transition-timing-function: ease-out;
+            }
+
+            .hvr-bounce-to-top:hover::before, .hvr-bounce-to-top:focus::before, .hvr-bounce-to-top:active::before {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+                -webkit-transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+                transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+            }
+
+
+        .hvr-bounce-to-top-eliminar {
+            display: inline-block;
+            vertical-align: middle;
+            -webkit-transform: perspective(1px) translateZ(0);
+            transform: perspective(1px) translateZ(0);
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+            position: relative;
+            -webkit-transition-property: color;
+            transition-property: color;
+            -webkit-transition-duration: 0.5s;
+            transition-duration: 0.5s;
+        }
+
+            .hvr-bounce-to-top-eliminar::before {
+                content: "";
+                position: absolute;
+                z-index: -1;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #dc3545;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0);
+                -webkit-transform-origin: 50% 100%;
+                transform-origin: 50% 100%;
+                -webkit-transition-property: transform;
+                transition-property: transform;
+                -webkit-transition-duration: 0.5s;
+                transition-duration: 0.5s;
+                -webkit-transition-timing-function: ease-out;
+                transition-timing-function: ease-out;
+            }
+
+            .hvr-bounce-to-top-eliminar:hover::before, .hvr-bounce-to-top-eliminar:focus::before, .hvr-bounce-to-top-eliminar:active::before {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+                -webkit-transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+                transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+            }
+    
+    </style>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -372,4 +506,4 @@
     </script>
 
 </body>
-</html >
+</html>
