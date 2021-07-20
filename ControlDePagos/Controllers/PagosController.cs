@@ -35,8 +35,11 @@ namespace ControlDePagos.Controllers
                 }
                 if (String.IsNullOrEmpty(Session["Usuario"].ToString()))
                 {
-                    LoginController Login = new LoginController();
-                    return View();
+                    return RedirectToAction("Index", "Login");
+                }
+                if (Session["Permiso"].ToString() != "Administrador")
+                {
+                    return RedirectToAction("Index", "Login");
                 }
             }
             catch (Exception)

@@ -77,6 +77,9 @@
     <Property Name="Solicitud" Type="nvarchar(max)" Nullable="true" />
     <Property Name="TipoReq" Type="nvarchar(max)" Nullable="false" />
     <Property Name="FechaRegistro" Type="datetime" Nullable="false" />
+    <Property Name="NumeroDeFactura" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="TotalCargoCliente" Type="decimal" Nullable="true" Precision="18" Scale="2" />
+    <Property Name="FacturaRegistradaPor" Type="nvarchar(max)" Nullable="true" />
   </EntityType>
   <EntityType Name="Tb_Liberaciones">
     <Key>
@@ -195,6 +198,9 @@
           <Property Name="TipoReq" Type="String" Nullable="false" />
           <Property Name="FechaRegistro" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Tb_Liberaciones" Relationship="ControlDeGastosModel.Tb_RequisicionesTb_Liberaciones" FromRole="Tb_Requisiciones" ToRole="Tb_Liberaciones" />
+          <Property Name="NumeroDeFactura" Type="String" Nullable="true" />
+          <Property Name="TotalCargoCliente" Type="Decimal" Nullable="true" Scale="2" Precision="18" />
+          <Property Name="FacturaRegistradaPor" Type="String" Nullable="true" />
         </EntityType>
         <EntityType Name="Tb_Liberaciones">
           <Key>
@@ -275,6 +281,9 @@
           <ScalarProperty Name="Solicitud" ColumnName="Solicitud" />
           <ScalarProperty Name="TipoReq" ColumnName="TipoReq" />
           <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
+          <ScalarProperty Name="NumeroDeFactura" ColumnName="NumeroDeFactura" />
+          <ScalarProperty Name="TotalCargoCliente" ColumnName="TotalCargoCliente" />
+          <ScalarProperty Name="FacturaRegistradaPor" ColumnName="FacturaRegistradaPor" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

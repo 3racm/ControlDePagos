@@ -19,14 +19,16 @@
     <div class="form-group mt-3 mr-3">
         <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#ModalFiltros"> <i class="fas fa-filter"></i> Filtrar</button>
     </div>
-    <div class="form-group mt-3">
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal"> <i class="fas fa-plus-square"></i> Nueva requisicion</button>
-    </div>
-
-</form>
+    @if (Session["Permiso"].ToString() == "Administrador")
+    {
+        <div class="form-group mt-3">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal"> <i class="fas fa-plus-square"></i> Nueva requisicion</button>
+        </div>
+    }
+    </form>
 <div class="container" style="margin-top:28px;">
     <div class="row">
-        <div class="col-11" style="overflow-x:auto">
+        <div class="col-11" >
             <table id="myTable" class="table table-striped">
                 <thead>
                     <tr>
@@ -37,7 +39,9 @@
                         <th scope="col">Descripción</th>
                         <th scope="col">Solicitud</th>
                         <th scope="col">Tipo req.</th>
-                        <th scope="col">Acciones &nbsp;</th>
+                        <th scope="col"># Factura</th>
+                        <th scope="col">Total cliente</th>
+                        <th scope="col">Acciones &nbsp; &nbsp; </th>
                     </tr>
                 </thead>
                 <tbody id="cuerpo">
@@ -116,6 +120,26 @@
                                 <textarea class="form-control col-sm-12" id="Descripcion" rows="3" placeholder="Agregue una descripción para la requisición" autocomplete="off"></textarea>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label for="NumFactura" class="col-sm-2 col-form-label"># Factura</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="NumFactura" placeholder="Numero de factura" required autocomplete="off">
+                            </div>
+
+                            <label for="CargoCliente" class="col-sm-3 col-form-label">Total + Cargo a cliente</label>
+                            <div class="input-group col-sm-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input id="CargoCliente" type="text" onkeyup="this.value=Numeros(this.value)" class="form-control" autocomplete="off" placeholder="0.00" title="Considere que la cantidad deber ser mayor o igual al campo de total.">                               
+                            </div>
+
+                            @*<div class="col-sm-4">
+                                <input type="text" class="form-control" id="CargoCliente" placeholder="Ingrese una cantidad" required autocomplete="off">
+                            </div>*@
+
+                        </div>                       
                     </form>
                 </div>
 
@@ -233,7 +257,7 @@
                     </div>
                     <div class="form-check form-check-inline ml-3">
                         <input class="form-check-input" type="checkbox" id="CheckProyecto" value="">
-                        <label class="form-check-label" for="CheckProyecto">PROYECTO 3R</label>
+                        <label class="form-check-label" for="CheckProyecto">PROYECTO 3R</label>                       
                     </div>
 
                 </div>
@@ -278,7 +302,7 @@
         //Saul Gonzalez 26/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
         "dom": '<"toolbarHistorial">frtip',
         "bInfo": true,
-        "bFilter": false,       
+        "bFilter": false,
         "order": [[1, "asc"]],
         //Saul Gonzalez 26/10/2020: Se define el lenguaje para la tabla
         language: {
@@ -306,6 +330,8 @@
         //Saul Gonzalez 15/04/2021: Esta funcion realiza una consulta en la BD para mostrar el listado de las requisiciones
         ListarRequisiciones();
         $("#NoFolio").prop('disabled', true);
+        $("#NumFactura").prop('disabled', true);
+        $("#CargoCliente").prop('disabled', true);
         $("#btnActualizar").hide();
 
 
@@ -320,7 +346,11 @@
             $("#TipoReq").prop('disabled', false);
             $("#TituloModal").text("Registrar Requisición");
 
-        });        
+            //Deshabilitamos los campos de Factura y cargo cliente
+            $("#NumFactura").prop('disabled', true);
+            $("#CargoCliente").prop('disabled', true);
+
+        });
     });
 
     function ListarRequisiciones(CheckInterna = false, CheckBepco = false, CheckProyecto = false) {
@@ -333,17 +363,36 @@
                 //Saul Gonzalez 14/10/2020: Hacemos un foreach para llenar la informacion de la tabla
                 $.each(data, function (i, obj) {
                     //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
-                    var btnAcciones = `
+                    
+
+
+
+                    //Saul Gonzalez 20/07/2021: Si es administrador agregamos el boton para realizar liberaciones, en caso contrario se deshabilita ese boton
+                    if (obj.UsuarioPermiso == "Administrador") {
+                        var btnAcciones = `
                           <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
                            <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
-                    //Si la requisicion es abierta agregamos un boton para ver las liberaciones de dinero correspodientes a la REQ.
-                    if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA" || obj.Solicitud == "abierta" ) {
-                        obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
-                        btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
+
+
+                        //Si la requisicion es abierta agregamos un boton para ver las liberaciones de dinero correspodientes a la REQ.
+                        if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA" || obj.Solicitud == "abierta") {
+                            obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
+                            btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
                         <button id="btnLiberacion" type="button" class="btn btn-primary btn-sm" onclick="CargarLiberaciones('${obj.Id}')" title="Historial de liberaciones"><i class="fas fa-hand-holding-usd"></i></button>
                         <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
-                       
+                        }
+                    } //Si el usuario es de facturas o invitado quitamos el boton para registar liberaciones y el de cancelar
+                    else {      
+                        var btnAcciones = `
+                          <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i> Editar</button>`;
+
+                        if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA" || obj.Solicitud == "abierta") {
+                            obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
+                            btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i> Editar</button>`;
+                        }
                     }
+                   
+
                     var Folio = `<p>${obj.Folio}</p>`;
                     //Realizamos un split para separar la secuencia y verificar si la requisicion esta cancelada
                     var CadenaFolio = obj.Folio.split('-');
@@ -357,9 +406,16 @@
 
                     //Asignamos el folio como clase al campo del total, para que el momento de registrar una liberacion sea mas facil actualizar ese campo
                     obj.Total = FormatoMiles(obj.Total.toFixed(2));
-                    var Total = `<p class="${obj.Folio}">${obj.Total}</p>`;
+                    var Total = `<p class="${obj.Folio}">${ obj.Total}</p>`;
                     if (obj.LimiteAlcanzado) {
                         Total = `<p class="${obj.Folio} font-weight-bold" style="color:#dc2a3b">${obj.Total}</p>`;
+                    }
+
+                    if (obj.NumeroDeFactura == null || obj.NumeroDeFactura == "") {
+                        obj.NumeroDeFactura = "---";
+                    }
+                    if (obj.TotalCargoCliente == null || obj.TotalCargoCliente == "") {
+                        obj.TotalCargoCliente = "---";
                     }
 
                     //Saul Gonzalez 21/04/2021: Si se aplico un filtro validamos que tipo requisicion se esta filtrando
@@ -367,25 +423,34 @@
                         table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
                             .draw()
                             .node();
-                    }               
+                    }
                     if (obj.TipoReq == "BEPCO" && CheckBepco == true) {
                         table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
                             .draw()
                             .node();
-                    }              
+                    }
                     if (obj.TipoReq == "PROYECTO" && CheckProyecto == true) {
                         table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
                             .draw()
                             .node();
-                    }                    
+                    }
+
+                    //Creamos la etiqueta del porcentaje para la etiqueta de Total cliente
+                    var TotalCliente = "---";
+                    if (obj.PorcentajeCliente != null) {
+                        //Aplicamos el formato para que separe los miles
+                        obj.TotalCargoCliente = FormatoMiles(obj.TotalCargoCliente.toFixed(2));
+                        TotalCliente = `${obj.TotalCargoCliente} <a class="font-weight-bold" style="color:#009688"> (+${obj.PorcentajeCliente}%)</a>`;
+                       
+                    }
 
                     if (CheckInterna == false && CheckBepco == false && CheckProyecto == false) {
                         //Saul Gonzalez 21/04/2021: Agregamos los datos de la requisicion a la tabla
-                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
                             .draw()
                             .node();
                     }
-                   
+
                 });
             }
         });
@@ -416,7 +481,7 @@
         return x1 + x2;
     }
 
-    function RegistrarLiberacion(romper = false) {   
+    function RegistrarLiberacion(romper = false) {
         if(!romper) {
             Swal.mixin({
                 input: 'text',
@@ -482,8 +547,8 @@
                         context: document.body,
                         data: Params,
                         success: function (result) {
-                            if (result.status) {                                                             
-                                Swal.fire({                              
+                            if (result.status) {
+                                Swal.fire({
                                     title: 'Liberacion registrada!',
                                     html: ' <img src="/img/Liberacion.gif" style="width:200px; border-radius:10px;" alt="Registrando">',
                                     showConfirmButton: true,
@@ -491,7 +556,7 @@
                                 }).then((result) => {
                                     //Volvemos a cargar los datos en la tabla para mostrar la liberacionn recien creada
                                     if (result.isConfirmed) {
-                                        CargarLiberaciones($("#ID").val());                                     
+                                        CargarLiberaciones($("#ID").val());
                                     }
                                 })
 
@@ -509,7 +574,7 @@
                                         RegistrarLiberacion(false);
                                     }
                                 })
-                              
+
                             }
 
                         },
@@ -522,7 +587,7 @@
                 }
             })
         }
-      
+
     }
 
     function RegistrarRequisicion() {
@@ -595,18 +660,47 @@
                 if (result.status) {
                     // Saul Gonzalez: 15/04/2020: Seteamos los datos en la modal
                     $("#NoFolio").val(result.Datos.Folio);
-                    $("#Total").val(result.Datos.Total);
+                    $("#Total").val(result.Datos.Total.toFixed(2));
                     $("#Moneda").val(result.Datos.Moneda);
                     $("#CuentaCargo").val(result.Datos.Cuenta_Cargo);
                     $("#Solicitud").val(result.Datos.Solicitud);
                     $("#TipoReq option[value=" + result.Datos.TipoReq).attr("selected", true);
                     $("#Descripcion").val(result.Datos.Descripcion);
+                    $("#NumFactura").val(result.Datos.NumeroDeFactura);
+                    //Validamos si total cargo es diferente a null para setear el valor en el campo
+                    if (result.Datos.TotalCargoCliente != null || result.Datos.TotalCargoCliente == "") {
+                    $("#CargoCliente").val(result.Datos.TotalCargoCliente.toFixed(2));
+                    }
+        
                     //Abrimos la modal
                     $('#btnRegistrar').hide();
                     $('#btnActualizar').show();
                     $("#TipoReq").prop('disabled', true);
                     $("#TituloModal").text("Editar Requisición: " + result.Datos.Folio);
                     $('#myModal').modal('show');
+               
+                    //Saul Gonzalez 16/07/2021: Validamos si el usuario tiene permisos para ediar campos de la requisicion, de no ser asi solo se dejara editar el campo de factura y Cantidad total al Cliente
+                    if (result.Datos.UsuarioPermiso == "Administrador")
+                    { 
+                        $("#Total").prop('disabled', false);
+                        $("#Moneda").prop('disabled', false);
+                        $("#CuentaCargo").prop('disabled', false);
+                        $("#Solicitud").prop('disabled', false);
+                        $("#Descripcion").prop('disabled', false);
+                        $("#NumFactura").prop('disabled', false);
+                        $("#CargoCliente").prop('disabled', false);
+                    }
+                    else {                      
+                        //Tenemos que deshabilitar los campos de la req
+                        $("#Total").prop('disabled', true);
+                        $("#Moneda").prop('disabled', true);
+                        $("#CuentaCargo").prop('disabled', true);
+                        $("#Solicitud").prop('disabled', true);
+                        $("#Descripcion").prop('disabled', true);
+                        $("#NumFactura").prop('disabled', false);
+                        $("#CargoCliente").prop('disabled', false);
+
+                    }
                 }
                 else {
                     Swal.fire(
@@ -627,7 +721,7 @@
 
     }
 
-    function CargarLiberaciones(IdRequisicion) { 
+    function CargarLiberaciones(IdRequisicion) {
         TablaHistorial.clear().draw();
         $("#ID").val(IdRequisicion);
         var Params = {
@@ -645,7 +739,7 @@
                 if (result.status) {
                     //Datos de la requisicion
                     $("#FolioLiberacion").val(result.REQ.Folio);
-                    $("#CuentaLiberacion").val(result.REQ.Cuenta_Cargo);              
+                    $("#CuentaLiberacion").val(result.REQ.Cuenta_Cargo);
                     $("#TotalLiberacion").val(FormatoMiles(result.REQ.Total.toFixed(2)));
                     $("#RestanteLiberacion").val(FormatoMiles(result.REQ.Restante.toFixed(2)));
 
@@ -666,7 +760,7 @@
                         $("." + Folio).addClass("font-weight-bold");
 
 
-                        
+
                     }
                     else {
                         $("#RestanteLiberacion").css("background-color", "#e9ecef");
@@ -706,8 +800,10 @@
         var Solicitud = $("#Solicitud").val();
         var TipoReq = $("#TipoReq").val();
         var Descripcion = $("#Descripcion").val();
+        var NumFactura = $("#NumFactura").val();
+        var CargoCliente = $("#CargoCliente").val();
         var Params = {
-            "NoFolio": NoFolio, "Total": Total, Moneda, "CuentaCargo": CuentaCargo, "Solicitud": Solicitud, "TipoReq": TipoReq, "Descripcion": Descripcion
+            "NoFolio": NoFolio, "Total": Total, Moneda, "CuentaCargo": CuentaCargo, "Solicitud": Solicitud, "TipoReq": TipoReq, "Descripcion": Descripcion, "NumFactura": NumFactura, "CargoCliente": CargoCliente,
         };
         $.ajax({
             type: "POST",
@@ -839,7 +935,7 @@
                             }).then((result) => {
                                 // Saul Gonzalez: 16/04/2021: Se recarga la tabla de liberaciones despues de eliminar un registro
                                 if (result.isConfirmed) {
-                                    CargarLiberaciones($("#ID").val());  
+                                    CargarLiberaciones($("#ID").val());
                                 }
                             })
                         }
@@ -934,4 +1030,5 @@
     #myTable th:nth-child(1) {
         font-weight: bold;
     }
+   
 </style>

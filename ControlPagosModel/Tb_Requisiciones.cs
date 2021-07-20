@@ -29,6 +29,9 @@ namespace ControlPagosModel
         public string Solicitud { get; set; }
         public string TipoReq { get; set; }
         public System.DateTime FechaRegistro { get; set; }
+        public string NumeroDeFactura { get; set; }
+        public Nullable<decimal> TotalCargoCliente { get; set; }
+        public string FacturaRegistradaPor { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tb_Liberaciones> Tb_Liberaciones { get; set; }

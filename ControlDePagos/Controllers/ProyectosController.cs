@@ -32,7 +32,11 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(Session["Usuario"].ToString()))
                 {
                     return RedirectToAction("Index", "Login");
-                }              
+                }
+                if (Session["Permiso"].ToString() != "Administrador")
+                {
+                    return RedirectToAction("Index", "Requisiciones");
+                }
             }
             catch (Exception)
             {
@@ -63,7 +67,7 @@ namespace ControlDePagos.Controllers
                     o.Estado = Proyecto.Estado;
                     Lista.Add(o);
                 }
-                Lista = Lista.OrderByDescending(o=> o.FechaInicio).ToList();
+                Lista = Lista.OrderByDescending(o=> Convert.ToDateTime(o.FechaInicio)).ToList();
             }
             catch (Exception error)
             {

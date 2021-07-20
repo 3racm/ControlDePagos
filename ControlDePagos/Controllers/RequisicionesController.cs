@@ -61,6 +61,16 @@ namespace ControlDePagos.Controllers
                     o.Solicitud = REQ.Solicitud;
                     o.TipoReq = REQ.TipoReq;
                     o.FechaRegistro = REQ.FechaRegistro;
+                    o.NumeroDeFactura = REQ.NumeroDeFactura;
+                    o.TotalCargoCliente = REQ.TotalCargoCliente;
+                    //Obtenemos el permiso que tiene el usuario en sesion
+                    o.UsuarioPermiso = Session["Permiso"].ToString();
+                    //Saul Gonzalez 19/07/2021: Calculamos el porcentaje que se le aumenta al total + Cargo cliente
+                    if (o.TotalCargoCliente > 0 )
+                    {
+                        var ResiduoCargoCliente = o.TotalCargoCliente - o.Total;                     
+                        o.PorcentajeCliente = (int)Math.Round((decimal)(100 * ResiduoCargoCliente) / o.Total);
+                    }                   
                     Lista.Add(o);
                     //Si la requisicion es abierta validamos si las liberaciones ya superaron el monto total, esto servira para marcar en rojo el registro
                     if (REQ.Solicitud == "Abierta" || REQ.Solicitud == "ABIERTA" || REQ.Solicitud == "abierta")
@@ -141,7 +151,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Requisición registrada correctamente." });
         }
 
-        public JsonResult Actualizar(string NoFolio, string Total, string Moneda, string CuentaCargo, string Solicitud, string TipoReq, string Descripcion)
+        public JsonResult Actualizar(string NoFolio, string Total, string Moneda, string CuentaCargo, string Solicitud, string TipoReq, string Descripcion, string NumFactura, string CargoCliente)
         {
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
             try
@@ -172,7 +182,26 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(TipoReq))
                 {
                     return Json(new { status = false, mensaje = "Debe indicar a quien pertenece la requisición." });
+                }                
+                //Saul Gonzalez 16/07/2021: Si se ingresa un numero de factura validamos que tambien se agrega el cargo cliente
+                if (!String.IsNullOrEmpty(NumFactura) && String.IsNullOrEmpty(CargoCliente))
+                {
+                    return Json(new { status = false, mensaje = "Al indicar un numero de factura tambien debe indicar el cargo total que se le aplica al cliente." });
                 }
+                if (!String.IsNullOrEmpty(CargoCliente) && String.IsNullOrEmpty(NumFactura))
+                {
+                    return Json(new { status = false, mensaje = "Al indicar el cargo total que se le aplica al cliente debe ingresar también un numero de factura." });
+                }
+                if (CargoCliente != string.Empty)
+                {
+                    //Validamos que el total + el cargo al cliente sea mayor o igual al campo del total de la requisicon
+                    if (Convert.ToDecimal(CargoCliente, Culture) < Convert.ToDecimal(Total, Culture))
+                    {
+                        return Json(new { status = false, mensaje = "El <b>Total + Cargo a cliente</b> debe ser mayor o igual al total de la requisición." });
+                    }
+                }
+                
+
                 //Saul Gonzalez 13/04/2021: Consultamos los datos del proyecto
                 Tb_Requisiciones Requisicion = db.Tb_Requisiciones.Where(y => y.Folio == NoFolio).FirstOrDefault();
                 if (Requisicion == null)
@@ -187,6 +216,16 @@ namespace ControlDePagos.Controllers
                 Requisicion.Descripcion = Descripcion;
                 Requisicion.Solicitud = Solicitud;
                 Requisicion.TipoReq = TipoReq;
+                Requisicion.NumeroDeFactura = NumFactura;
+                if (CargoCliente == string.Empty)
+                {
+                    Requisicion.TotalCargoCliente = null;
+                }
+                else
+                {
+                    Requisicion.TotalCargoCliente = Convert.ToDecimal(CargoCliente, Culture);
+                }                
+                Requisicion.FacturaRegistradaPor = Session["Usuario"].ToString();
 
                 //Saul gonzalez 13/04/2021: Guardamos los datos
                 db.Tb_Requisiciones.Attach(Requisicion);
@@ -227,7 +266,11 @@ namespace ControlDePagos.Controllers
                 REQ.Descripcion = o.Descripcion;
                 REQ.Solicitud = o.Solicitud;
                 REQ.TipoReq = o.TipoReq;
-                REQ.FechaRegistro = o.FechaRegistro;                
+                REQ.FechaRegistro = o.FechaRegistro;
+                REQ.NumeroDeFactura = o.NumeroDeFactura;
+                REQ.TotalCargoCliente = o.TotalCargoCliente;
+                //Obtenemos el nivel de permisos que tiene el usuario.
+                REQ.UsuarioPermiso = Session["Permiso"].ToString();
 
             }
             catch (Exception error)

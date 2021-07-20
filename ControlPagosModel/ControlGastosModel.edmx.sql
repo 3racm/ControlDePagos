@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/26/2021 13:27:52
+-- Date Created: 07/16/2021 17:48:08
 -- Generated from EDMX file: C:\Users\3R Server\source\repos\ControlDePagos\ControlPagosModel\ControlGastosModel.edmx
 -- --------------------------------------------------
 
@@ -102,7 +102,10 @@ CREATE TABLE [dbo].[Tb_Requisiciones] (
     [Descripcion] nvarchar(max)  NOT NULL,
     [Solicitud] nvarchar(max)  NULL,
     [TipoReq] nvarchar(max)  NOT NULL,
-    [FechaRegistro] datetime  NOT NULL
+    [FechaRegistro] datetime  NOT NULL,
+    [NumeroDeFactura] nvarchar(max)  NULL,
+    [TotalCargoCliente] decimal(18,2)  NULL,
+    [FacturaRegistradaPor] nvarchar(max)  NULL
 );
 GO
 

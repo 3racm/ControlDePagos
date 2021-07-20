@@ -23,34 +23,37 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item ml-1 zoombtn">
-                    <a class="nav-link text-white" href="@Url.Action("Index", "Proyectos")">
-                        <i class="fas fa-drafting-compass"></i>  <span><b>Proyectos</b></span>
-                    </a>
-                </li>
-                <li class="nav-item ml-1 zoombtn">
-                    <a class="nav-link text-white" href="@Url.Action("Index", "Requisiciones")"><i class="fas fa-file-invoice-dollar"></i> <b>Requisiciones</b></a>
-                </li>
                 @if (Session["Permiso"].ToString() == "Administrador")
                 {
                     <li class="nav-item ml-1 zoombtn">
-                        <a class="nav-link text-white" href="@Url.Action("Index", "Usuarios")"><i class="fas fa-users"></i> <b>Usuarios</b></a>
+                        <a class="nav-link text-white" href="@Url.Action("Index", "Proyectos")">
+                            <i class="fas fa-drafting-compass"></i>  <span><b>Proyectos</b></span>
+                        </a>
                     </li>
                 }
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i><b> @ViewBag.Usuario</b>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("Index", "PerfilUsuario")"><i class="fas fa-user-cog"></i> Mi perfil</a>
-                        <div class="dropdown-divider"></div>
-                        <a id="CerrarSesion" class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
-                    </div>
-                </li>
-                <li class="nav-item zoombtn">
-                    <a class="nav-link text-white" href="#" data-toggle="modal" data-target="#Modalayuda"><i class="fas fa-question-circle"></i> <b>Ayuda</b></a>
-                </li>
-            </ul>
+                    <li class="nav-item ml-1 zoombtn">
+                        <a class="nav-link text-white" href="@Url.Action("Index", "Requisiciones")"><i class="fas fa-file-invoice-dollar"></i> <b>Requisiciones</b></a>
+                    </li>
+                    @if (Session["Permiso"].ToString() == "Administrador")
+                    {
+                        <li class="nav-item ml-1 zoombtn">
+                            <a class="nav-link text-white" href="@Url.Action("Index", "Usuarios")"><i class="fas fa-users"></i> <b>Usuarios</b></a>
+                        </li>
+                    }
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i><b> @ViewBag.Usuario</b>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("Index", "PerfilUsuario")"><i class="fas fa-user-cog"></i> Mi perfil</a>
+                            <div class="dropdown-divider"></div>
+                            <a id="CerrarSesion" class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Cerra sesion</a>
+                        </div>
+                    </li>
+                    <li class="nav-item zoombtn">
+                        <a class="nav-link text-white" href="#" data-toggle="modal" data-target="#Modalayuda"><i class="fas fa-question-circle"></i> <b>Ayuda</b></a>
+                    </li>
+                </ul>
         </div>
     </nav>
     <div class="container body-content">
