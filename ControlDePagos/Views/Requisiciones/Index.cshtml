@@ -416,24 +416,7 @@
                     }
                     if (obj.TotalCargoCliente == null || obj.TotalCargoCliente == "") {
                         obj.TotalCargoCliente = "---";
-                    }
-
-                    //Saul Gonzalez 21/04/2021: Si se aplico un filtro validamos que tipo requisicion se esta filtrando
-                    if (obj.TipoReq == "INTERNA" && CheckInterna == true) {
-                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
-                            .draw()
-                            .node();
-                    }
-                    if (obj.TipoReq == "BEPCO" && CheckBepco == true) {
-                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
-                            .draw()
-                            .node();
-                    }
-                    if (obj.TipoReq == "PROYECTO" && CheckProyecto == true) {
-                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, btnAcciones])
-                            .draw()
-                            .node();
-                    }
+                    }                  
 
                     //Creamos la etiqueta del porcentaje para la etiqueta de Total cliente
                     var TotalCliente = "---";
@@ -442,6 +425,23 @@
                         obj.TotalCargoCliente = FormatoMiles(obj.TotalCargoCliente.toFixed(2));
                         TotalCliente = `${obj.TotalCargoCliente} <a class="font-weight-bold" style="color:#009688"> (+${obj.PorcentajeCliente}%)</a>`;
                        
+                    }
+
+                    //Saul Gonzalez 21/04/2021: Si se aplico un filtro validamos que tipo requisicion se esta filtrando
+                    if (obj.TipoReq == "INTERNA" && CheckInterna == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+                    if (obj.TipoReq == "BEPCO" && CheckBepco == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+                    if (obj.TipoReq == "PROYECTO" && CheckProyecto == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
                     }
 
                     if (CheckInterna == false && CheckBepco == false && CheckProyecto == false) {
