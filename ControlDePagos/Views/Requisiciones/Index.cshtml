@@ -423,7 +423,7 @@
                     if (obj.PorcentajeCliente != null) {
                         //Aplicamos el formato para que separe los miles
                         obj.TotalCargoCliente = FormatoMiles(obj.TotalCargoCliente.toFixed(2));
-                        TotalCliente = `${obj.TotalCargoCliente} <a class="font-weight-bold" style="color:#009688"> (+${obj.PorcentajeCliente}%)</a>`;
+                        TotalCliente = `${obj.TotalCargoCliente} <a class="font-weight-bold" style="color:#009688" title="${obj.PorcentajeCliente}% más que la cantidad original (Total)."> (+${obj.PorcentajeCliente}%)</a>`;
                        
                     }
 
