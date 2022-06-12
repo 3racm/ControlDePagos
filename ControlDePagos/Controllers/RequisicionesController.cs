@@ -47,7 +47,7 @@ namespace ControlDePagos.Controllers
             List<cRequisicion> Lista = new List<cRequisicion>();
             try
             {
-                //Saul Gonzalez 14/10/2020: Obtenemos la lista de proveedores
+                //Saul Gonzalez 14/10/2020: Obtenemos la lista de Requisiciones
                 List<Tb_Requisiciones> tablaRequisiciones = db.Tb_Requisiciones.ToList();
                 foreach (Tb_Requisiciones REQ in tablaRequisiciones)
                 {
@@ -91,7 +91,7 @@ namespace ControlDePagos.Controllers
             {
                 return Json(new { status = false, mensaje = error.Message });
             }
-            //Lista = Lista.OrderByDescending(x => x.FechaInicio).Reverse().ToList();
+            Lista = Lista.OrderByDescending(x => x.FechaRegistro).Reverse().ToList();
             return Json(Lista, JsonRequestBehavior.AllowGet);
         }
 
@@ -105,6 +105,12 @@ namespace ControlDePagos.Controllers
                 if (String.IsNullOrEmpty(NoFolio))
                 {
                     return Json(new { status = false, mensaje = "Debe indicar un número de folio para ello seleccione el tipo de requisición." });
+                }
+                //Saul Gonzalez 01/05/2022: Como ya se es posible ingresar un numero de Folio de manera manual, hay que validar que ese folio no exista.
+                var ValidarFolio = db.Tb_Requisiciones.Where(y => y.Folio.Equals(NoFolio)).FirstOrDefault();
+                if (ValidarFolio != null)
+                {
+                    return Json(new { status = false, mensaje = "El numero de Folio que esta intentando registrar ya existe, intente con un número de folio diferente." });
                 }
                 if (Total == string.Empty)
                 {
@@ -133,13 +139,33 @@ namespace ControlDePagos.Controllers
 
                 //Saul gonzalez 15/04/2021: Asignamos valores al objeto de REQ             
                 REQ.Folio = NoFolio;
+                //Saul Gonzalez 01/05/2022: Realizamos un split para saber de que año es la requisicion                
+                string[] splitcodigo = REQ.Folio.Split(new Char[] { 'R', '-' });
+                int AñoRegistro = int.Parse(splitcodigo[1].ToString());
+
+                //Saul Gonzalez 01/05/2022: Ahora buscamos en la base de datos cual es el ultimo registro del año obtenid en el split
+                DateTime FechaDelUltimoRegistro = DateTime.Now;
+                if (AñoRegistro < 2022)
+                {
+                    var ListaPorAño = db.Tb_Requisiciones.Where(y => y.FechaRegistro.Year.Equals(2021)).ToList();
+                    var UltimoRegistro = ListaPorAño.LastOrDefault();
+                    FechaDelUltimoRegistro = UltimoRegistro.FechaRegistro;
+                    REQ.FechaRegistro = FechaDelUltimoRegistro.AddSeconds(1);
+                }
+                else
+                {
+                    REQ.FechaRegistro = DateTime.Now;
+                }
+                
                 REQ.Cuenta_Cargo = CuentaCargo;
                 REQ.Total = Convert.ToDecimal(Total, Culture);
                 REQ.Moneda = Moneda;
                 REQ.Descripcion = Descripcion;
                 REQ.Solicitud = Solicitud;
                 REQ.TipoReq = TipoReq;
-                REQ.FechaRegistro = DateTime.Now;
+
+
+               
                 //Saul gonzalez 15/04/2021: Guardamos los datos
                 db.Tb_Requisiciones.Add(REQ);
                 db.SaveChanges();
@@ -367,7 +393,7 @@ namespace ControlDePagos.Controllers
             return Json(new { status = true, mensaje = "Requisición cancelada correctamente" });
         }
 
-        public JsonResult GenerarNumeroDeFolio(string TipoReq)
+        public JsonResult GenerarNumeroDeFolio(string TipoReq, string SeActualiza)
         {
             var Folio = "";
             string AñoActual = DateTime.Now.Year.ToString();
@@ -379,16 +405,19 @@ namespace ControlDePagos.Controllers
                     return Json(new { status = false, mensaje = "Ocurrió un error al leer el valor de la requisición" });
                 }
                 //Saul Gonzalez 15/04/2021: Obtenemos el ultimo elemento registrado
-                List<Tb_Requisiciones> Lista = db.Tb_Requisiciones.ToList();
+                List<Tb_Requisiciones> Lista = db.Tb_Requisiciones.Where(x => x.FechaRegistro.Year.Equals(DateTime.Now.Year)).ToList();               
                 if (Lista.Count > 0)
                 {
                     var RegistroReq = Lista.LastOrDefault();
                     var cadena = RegistroReq.Folio.Split('-');
                     var secuencia = cadena[1];
                     var numeracion = Convert.ToInt32(secuencia);
-                    numeracion = numeracion + 1;
-
-
+                    if (SeActualiza == "NO")
+                    {
+                        numeracion = numeracion + 1;
+                    }
+                    
+                    
                     //segun el valor de la numeracion creamos la numeracion para el folio
                     if (numeracion < 10)
                     {

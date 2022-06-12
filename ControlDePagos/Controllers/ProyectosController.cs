@@ -76,7 +76,7 @@ namespace ControlDePagos.Controllers
             //Lista = Lista.OrderByDescending(x => x.FechaInicio).Reverse().ToList();
             return Json(Lista, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult RegistrarProyecto(string NoProyecto, string MontoInicial, string Moneda, string Descripcion)
+        public JsonResult RegistrarProyecto(string NoProyecto, string MontoInicial, string Moneda, string Descripcion, string FechaEspecifica = "")
         {
             Tb_Proyectos Proyecto = new Tb_Proyectos();
             CultureInfo Culture = new CultureInfo("en-US");  //Definimos la cultura para que el separador de decimal sea por un Punto (.)    
@@ -104,16 +104,36 @@ namespace ControlDePagos.Controllers
                 {
                     return Json(new { status = false, mensaje = "El campo descripción es obligatorio." });
                 }
-                //Saul Gonzalez 11/03/2021: Consultamos si el #Proyecto que se esta intentando registrar ya existe.
-                Tb_Proyectos ValidarProyecto = db.Tb_Proyectos.Where(y => y.Num_Proyecto_Cuenta.Equals(NoProyecto)).FirstOrDefault();
-                if (ValidarProyecto != null)
-                {
-                    return Json(new { status = false, mensaje = "El número de proyecto o cuenta que ingreso ya existe." });
-                }
+                //Saul Gonzalez 11/03/2021: Consultamos si el #Proyecto que se esta intentando registrar ya existe.               
+                Tb_Proyectos RegistroExistente = db.Tb_Proyectos.Where(y => y.Num_Proyecto_Cuenta.Equals(NoProyecto)).FirstOrDefault();
+                //Saul Gonzalez 01/05/2022: Se quita esta parte de la validacion ya que se requirio una modificacion para que se puedan registar codigos iguales pero fechas distintas ya que ellos manejan los proyectos por año
+                //if (ValidarProyecto != null)
+                //{
+                //    return Json(new { status = false, mensaje = "El número de proyecto o cuenta que ingreso ya existe." });
+                //}
                 //Saul gonzalez 11/03/2021: Asignamos valores al objeto              
                 Proyecto.Num_Proyecto_Cuenta = NoProyecto;
-                Proyecto.FechaInicio = DateTime.Now;
-                Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial, Culture);
+                if (FechaEspecifica == string.Empty)
+                {
+                    Proyecto.FechaInicio = DateTime.Now;
+                }
+                else
+                {
+                    Proyecto.FechaInicio = Convert.ToDateTime(FechaEspecifica);
+                }
+                //Saul Gonzalez 01/05/2022: Si existe un proyecto con el mismo codigo solo validamos que el año no sea el mismo que se esta registrando
+                int? FechaVieja = null;
+                if (RegistroExistente != null)
+                {
+                    FechaVieja = RegistroExistente.FechaInicio.Year;
+                }
+                
+                int FechaNueva = Proyecto.FechaInicio.Year;
+                if (FechaNueva == FechaVieja)
+                {
+                    return Json(new { status = false, mensaje = "El código del proyecto que estas intentando registrar ya existe para el año " + FechaVieja.ToString() +"." });
+                }                
+                Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial, Culture);               
                 Proyecto.Moneda = Moneda;
                 Proyecto.MontoFinal = 0;
                 Proyecto.Retorno = 0;

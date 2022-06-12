@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
 </head>
 <input id="ID" type="number" hidden />
+<input id="SeActualiza" type="text" hidden />
 <form class="form-inline">
 
     <div class="form-group mx-sm-3 mt-3">
@@ -108,8 +109,8 @@
                                 <select class="input-group-text" id="TipoReq" style="background-color:white;" onchange="GenerarFolio()">
                                     <option value="0">Seleccione...</option>
                                     <option value="INTERNA">INTERNA</option>
-                                    <option value="BEPCO">BEPCO</option>
-                                    <option value="PROYECTO">PROYECTO</option>
+                                    <option value="BEPCO">BEPCO</option>                                 
+                                    <option value="UB">UB</option>
                                 </select>
                             </div>
                         </div>
@@ -257,7 +258,7 @@
                     </div>
                     <div class="form-check form-check-inline ml-3">
                         <input class="form-check-input" type="checkbox" id="CheckProyecto" value="">
-                        <label class="form-check-label" for="CheckProyecto">PROYECTO 3R</label>                       
+                        <label class="form-check-label" for="CheckProyecto">Universal Balancing</label>                       
                     </div>
 
                 </div>
@@ -333,6 +334,7 @@
         $("#NumFactura").prop('disabled', true);
         $("#CargoCliente").prop('disabled', true);
         $("#btnActualizar").hide();
+        $("#SeActualiza").text("NO")
 
 
         //Saul Gonzalez 16/04/2021: Resetear modal cuando se cierra
@@ -345,6 +347,8 @@
             $('#btnRegistrar').show();
             $("#TipoReq").prop('disabled', false);
             $("#TituloModal").text("Registrar Requisición");
+            $("#SeActualiza").text("NO");
+            
 
             //Deshabilitamos los campos de Factura y cargo cliente
             $("#NumFactura").prop('disabled', true);
@@ -438,7 +442,7 @@
                             .draw()
                             .node();
                     }
-                    if (obj.TipoReq == "PROYECTO" && CheckProyecto == true) {
+                    if (obj.TipoReq == "UB" && CheckProyecto == true) {
                         table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
                             .draw()
                             .node();
@@ -675,8 +679,11 @@
                     //Abrimos la modal
                     $('#btnRegistrar').hide();
                     $('#btnActualizar').show();
-                    $("#TipoReq").prop('disabled', true);
+                    //Saul Gonzalez: 26/04/2022: Se deshabilita la accion de Onchange del campo Tipo de requisicion para que este no afecte al momento de actualizar el registro
+                    $("#SeActualiza").text("SI");
+                    //$("#TipoReq").prop('disabled', true); Saul Gonzalez 26/04/2022: Se realizo un cambio en donde el tipo de requisicion es editable 
                     $("#TituloModal").text("Editar Requisición: " + result.Datos.Folio);
+                    
                     $('#myModal').modal('show');
                
                     //Saul Gonzalez 16/07/2021: Validamos si el usuario tiene permisos para ediar campos de la requisicion, de no ser asi solo se dejara editar el campo de factura y Cantidad total al Cliente
@@ -973,10 +980,11 @@
     }
 
     function GenerarFolio() {
-        if ($("#TipoReq").val() != 0) {
+        if ($("#TipoReq").val() != 0 && $("#SeActualiza").text() == "NO"){
             var TipoReq = $("#TipoReq").val();
+            var SeActualiza = $("#SeActualiza").text();
             var Params = {
-                "TipoReq": TipoReq,
+                "TipoReq": TipoReq, "SeActualiza": SeActualiza,
             };
 
             $.ajax({
@@ -990,7 +998,7 @@
                 success: function (result) {
                     if (result.status) {
                         // Saul Gonzalez: 15/04/2020: Se muestra un sweetAlert confirmando que los datos se guardaron
-                        //$("#NoFolio").prop('disabled', false);
+                        $("#NoFolio").prop('disabled', false);
                         $("#NoFolio").val(result.Folio);
                     }
                     else {
@@ -1013,7 +1021,7 @@
         }
         else {
             $("#NoFolio").prop('disabled', true);
-            $("#NoFolio").val("");
+            
         }
         //if ($("#TipoReq").val() == 0) {
         //    $("#NoFolio").prop('disabled', true);
