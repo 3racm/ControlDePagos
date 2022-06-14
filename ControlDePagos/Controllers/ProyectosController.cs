@@ -104,8 +104,9 @@ namespace ControlDePagos.Controllers
                 {
                     return Json(new { status = false, mensaje = "El campo descripción es obligatorio." });
                 }
-                //Saul Gonzalez 11/03/2021: Consultamos si el #Proyecto que se esta intentando registrar ya existe.               
-                Tb_Proyectos RegistroExistente = db.Tb_Proyectos.Where(y => y.Num_Proyecto_Cuenta.Equals(NoProyecto)).FirstOrDefault();
+                //Saul Gonzalez 12/06/2022: Consultamos si el #Proyecto que se esta intentando registrar ya existe. Y se agrego la condicion de que el estado del proyecto tiene que estar activo, 
+                //esto porque se descartan todos los proyectos que tienen el mismo codigo pero ya ha sido cerrados.               
+                Tb_Proyectos RegistroExistente = db.Tb_Proyectos.Where(y => y.Num_Proyecto_Cuenta.Equals(NoProyecto) && y.Estado == "Activo").FirstOrDefault();
                 //Saul Gonzalez 01/05/2022: Se quita esta parte de la validacion ya que se requirio una modificacion para que se puedan registar codigos iguales pero fechas distintas ya que ellos manejan los proyectos por año
                 //if (ValidarProyecto != null)
                 //{
@@ -129,9 +130,10 @@ namespace ControlDePagos.Controllers
                 }
                 
                 int FechaNueva = Proyecto.FechaInicio.Year;
-                if (FechaNueva == FechaVieja)
+                //Saul Gonzalez 12/06/2022: Se agrega la condicion de que el estado tiene que ser diferente a cerrado esto porque se permite la duplicidad de codigos de proyecto pero se descarta si el proyecto ya fue cerrado anteriormente.  
+                if (FechaNueva == FechaVieja && RegistroExistente.Estado != "Cerrado")
                 {
-                    return Json(new { status = false, mensaje = "El código del proyecto que estas intentando registrar ya existe para el año " + FechaVieja.ToString() +"." });
+                    return Json(new { status = false, mensaje = "El código del proyecto que estas intentando registrar ya existe para el año " + FechaVieja.ToString() + ". Cierre el proyecto o intente con un código diferente." });
                 }                
                 Proyecto.MontoInicial = Convert.ToDecimal(MontoInicial, Culture);               
                 Proyecto.Moneda = Moneda;

@@ -91,7 +91,8 @@ namespace ControlDePagos.Controllers
             {
                 return Json(new { status = false, mensaje = error.Message });
             }
-            Lista = Lista.OrderByDescending(x => x.FechaRegistro).Reverse().ToList();
+            Lista = Lista.OrderByDescending(o => Convert.ToDateTime(o.FechaRegistro)).ToList();
+            //Lista = Lista.OrderByDescending(x => x.FechaRegistro).Reverse().ToList();
             return Json(Lista, JsonRequestBehavior.AllowGet);
         }
 

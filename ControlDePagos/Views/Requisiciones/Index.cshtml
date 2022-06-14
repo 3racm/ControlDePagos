@@ -275,7 +275,8 @@
     var table = $('#myTable').DataTable({
         //Saul Gonzalez 22/10/2020: Se asigna una barra de herramientas en la cabecera de la tabla
         "dom": '<"toolbar">frtip',
-        "ordering": false, //Sirve para quitar el ordenamiento
+        "order": [[0, "desc"]],
+        //"ordering": false, //Sirve para quitar el ordenamiento
         //Saul Gonzalez 22/10/2020: Se define el lenguaje para la tabla
         language: {
             "decimal": "",

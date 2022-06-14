@@ -7,9 +7,11 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+  
 </head>
 <a id="Documento" hidden>Descargar excel attr</a>
 <input id="IdProyecto" type="number" hidden />
+<input id="ContadorGlobal" type="number" value="0" hidden />
 @*<button type="button" class="btn btn-primary btn-sm mt-2" title="Retroceder una pagina"><a href="@Url.Action("Index", "Proyectos")" class="text-white" style="text-decoration:none"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a></button>*@
 @*Boton de cerrar el proyecto*@
 <label id="EstadoProyecto" style="font-size:20px"> </label>
@@ -84,19 +86,21 @@
     <table class="table" id="tablaEditada">
         <thead>
             <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Monto pagado</th>
-                <th scope="col">Referencia</th>
-                <th scope="col">Modo de pago</th>
-                <th scope="col">Retorno</th>
-                <th scope="col">Ref. Retorno</th>
-                <th scope="col" class="THNota">Notas</th>
+                <th class="asc ordenar" scope="col">Fecha</th>
+                <th asc="false" scope="col" class="ordenar">Monto pagado</th>
+                <th asc="false" scope="col" class="ordenar">Referencia</th>
+                <th asc="false" scope="col" class="ordenar">Modo de pago</th>
+                <th asc="false" scope="col" class="ordenar">Retorno</th>
+                <th asc="false" scope="col" class="ordenar">Ref. Retorno</th>
+                <th asc="false" scope="col" class="THNota ordenar">Notas</th>
                 <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody id="CuerpoPagos">
         </tbody>
     </table>
+
+
 </form>
 
 @*MODAL DE REGISTRO PAGOS*@
@@ -251,9 +255,47 @@
 
 
 <script lang="es" type="text/javascript">
-
     //--------Eventos o funciones que se ejecutan al cargar la pagina------------//
     $(document).ready(function () {
+
+        //Funcion que sirve para ordenar los datos de la tabla de pagos de forma asc y desc
+        (function ($) {
+            $.fn.extend({
+                makeSortable: function () {
+                    var MyTable = this;
+
+                    var getCellValue = function (row, index) {
+                        return $(row).children('td').eq(index).text();
+                    };
+
+                    MyTable.find('th').click(function () {
+                        var table = $(this).parents('table').eq(0);
+
+                        // Sort by the given filter
+                        var rows = table.find('tr:gt(0)').toArray().sort(function (a, b) {
+                            var index = $(this).index();
+                            var valA = getCellValue(a, index), valB = getCellValue(b, index);
+
+                            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+                        });
+
+                        this.asc = !this.asc;
+
+                        if (!this.asc) {
+                            rows = rows.reverse();
+                        }
+
+                        for (var i = 0; i < rows.length; i++) {
+                            table.append(rows[i]);
+                        }
+                    });
+                }
+            });
+        })(jQuery);
+        $(function () {
+            $("#tablaEditada").makeSortable();
+        });
+
         $('[data-toggle="popover"]').popover();
         const valores = window.location.search;
         //Creamos la instancia de la URL
@@ -413,6 +455,51 @@
                 alert("Error has occurred...");
             }
         });
+
+        $('.ordenar').dblclick(function () {
+            var Contador = $("#ContadorGlobal").val();
+            if (Contador == 0) {
+                this.asc = false;
+            }
+            else {
+             this.asc = !this.asc
+            }
+            setIcon($(this), this.asc);
+            Contador++;
+            $("#ContadorGlobal").val(Contador);
+
+          });
+
+        function setIcon(element, asc) {
+           
+            $("th").each(function (index) {
+                $(this).removeClass("sorting");
+                $(this).removeClass("asc");
+                $(this).removeClass("desc");
+            });
+         
+            element.addClass("sorting");
+            if (asc) element.addClass("asc");
+            else element.addClass("desc");
+        }
+        //// Para comparar los valores de la tabla entre sí
+        //function comparer(index) {
+        //    return function (a, b) {
+        //        var valA = getCellValue(a, index),
+        //            valB = getCellValue(b, index)
+        //        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB)
+        //    }
+        //}
+
+        //// Obtiene los valores de cada celda
+        //function getCellValue(row, index) {
+        //    return $(row).children('td').eq(index).html()
+        //}
+
+        //// Muestra gráficamente qué ordenamiento se está aplicando
+       
+        
+
         $("#GenerarExcel").click(function () {
             //Validar Rango de fechas
             var FechaInicial = $("#FechaI").val();
@@ -1260,6 +1347,26 @@
 </script>
 
 <style>
+    table tr th {
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .sorting {
+        background-color: #D4D4D4;
+    }
+
+    .asc:after {
+        content: ' ↑';
+    }
+
+    .desc:after {
+        content: " ↓";
+    }
+
     .center {
         position: relative;
         left: 25%;
