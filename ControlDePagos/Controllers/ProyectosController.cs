@@ -49,6 +49,7 @@ namespace ControlDePagos.Controllers
         public JsonResult ListarProyectos()
         {       
             List<cProyectos> Lista = new List<cProyectos>();
+            string AñoEnCurso = "01/01/2023";
             try
             {
                 //Saul Gonzalez 14/10/2020: Obtenemos la lista de proveedores
@@ -65,7 +66,11 @@ namespace ControlDePagos.Controllers
                     o.Retorno = Proyecto.Retorno;
                     o.Descripcion = Proyecto.Descripcion;
                     o.Estado = Proyecto.Estado;
-                    Lista.Add(o);
+                    if (Convert.ToDateTime(o.FechaInicio) >= Convert.ToDateTime(AñoEnCurso))
+                    {
+                        Lista.Add(o);
+                    }
+                    
                 }
                 Lista = Lista.OrderByDescending(o=> Convert.ToDateTime(o.FechaInicio)).ToList();
             }
@@ -74,6 +79,43 @@ namespace ControlDePagos.Controllers
                 return Json(new { status = false, mensaje = error.Message });
             }
             //Lista = Lista.OrderByDescending(x => x.FechaInicio).Reverse().ToList();
+            return Json(Lista, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ListarProyectosPorAño(string Año)
+        {
+            //Saul Gonzalez 22/02/2023: Se creo este metodo para que nos permita buscar proyectos de años pasados
+            List<cProyectos> Lista = new List<cProyectos>();
+            string AñoEspecifico = "01/01/"+Año;
+            string FechaLimite = "31/12/" + Año;
+            try
+            {
+                //Saul Gonzalez 14/10/2020: Obtenemos la lista de proveedores
+                List<Tb_Proyectos> tablaProyectos = db.Tb_Proyectos.ToList();
+                foreach (Tb_Proyectos Proyecto in tablaProyectos)
+                {
+                    cProyectos o = new cProyectos();
+                    o.Id = Proyecto.Id;
+                    o.Num_Proyecto_Cuenta = Proyecto.Num_Proyecto_Cuenta;
+                    o.FechaInicio = Proyecto.FechaInicio.ToShortDateString();
+                    o.MontoInicial = Proyecto.MontoInicial;
+                    o.Moneda = Proyecto.Moneda;
+                    o.MontoFinal = Proyecto.MontoFinal;
+                    o.Retorno = Proyecto.Retorno;
+                    o.Descripcion = Proyecto.Descripcion;
+                    o.Estado = Proyecto.Estado;
+                    if (Convert.ToDateTime(o.FechaInicio) >= Convert.ToDateTime(AñoEspecifico) && Convert.ToDateTime(o.FechaInicio) <= Convert.ToDateTime(FechaLimite))
+                    {
+                        Lista.Add(o);
+                    }
+
+                }
+                Lista = Lista.OrderByDescending(o => Convert.ToDateTime(o.FechaInicio)).ToList();
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }          
             return Json(Lista, JsonRequestBehavior.AllowGet);
         }
         public JsonResult RegistrarProyecto(string NoProyecto, string MontoInicial, string Moneda, string Descripcion, string FechaEspecifica = "")
