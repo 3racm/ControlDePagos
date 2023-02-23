@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
     <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
 </head>
+<input id="FiltroAño" type="text" hidden />
 <form class="form-inline">
 
     <div class="form-group mx-sm-3 mt-3">
@@ -202,6 +203,7 @@
         //Saul Gonzalez 13/10/2020: Esta funcion realiza una consulta en la BD de la lista de proveedores
         ListarProyectos();
         $("#FechaEspecifica").hide();
+        $("#FiltroAño").val("2023");
         //Evento que se ejecuta al dar clic al check de fecha especifica
         $("#CheckFechaEspecifica").click(function () {
             if ($('#CheckFechaEspecifica').prop('checked')) {
@@ -412,14 +414,15 @@
         var CheckAbierto = $('#Abierto').prop('checked');
         var CheckCerrado = $('#Cerrado').prop('checked');
         var CheckReabierto = $('#Reabierto').prop('checked');
+        var FiltroAño = $("#FiltroAño").val();
         //Saul Gonzalez 08/04/2021: mandamos los filtros a la funcion de Listar Poryectos
         $("#cuerpo > tr").remove();
-        ListarProyectos(CheckAbierto, CheckCerrado, CheckReabierto);
+        ListarProyectosPorAño(CheckAbierto, CheckCerrado, CheckReabierto, FiltroAño);
         $('#ModalFiltros').modal('hide');
 
     }
 
-    //Saul Gonzalez 22/02/2023: Las siguientes 2 funciones se implementaron para filtrar proyectos de años anteriores a 2023
+    //Saul Gonzalez 22/02/2023: Las siguientes 2 funciones (Listar y filtrar) se implementaron para filtrar proyectos de años anteriores a 2023
     function ListarProyectosPorAño(CheckAbierto = false, CheckCerrado = false, CheckReabierto = false, Año) {
         $.ajax({
             url: "/Proyectos/ListarProyectosPorAño",
@@ -480,10 +483,9 @@
     }
 
     function FiltrarAño(Año) {
-        
-        ListarProyectosPorAño(false,false,false,Año);       
-      
-
+        $("#FiltroAño").val(Año);
+        LimpiarFiltros();
+        ListarProyectosPorAño(false,false,false,Año);             
     }
 
 </script>

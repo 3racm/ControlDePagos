@@ -45,6 +45,7 @@ namespace ControlDePagos.Controllers
         public JsonResult ListarRequisiciones()
         {
             List<cRequisicion> Lista = new List<cRequisicion>();
+            string AñoEnCurso = "01/01/2023";
             try
             {
                 //Saul Gonzalez 14/10/2020: Obtenemos la lista de Requisiciones
@@ -66,12 +67,17 @@ namespace ControlDePagos.Controllers
                     //Obtenemos el permiso que tiene el usuario en sesion
                     o.UsuarioPermiso = Session["Permiso"].ToString();
                     //Saul Gonzalez 19/07/2021: Calculamos el porcentaje que se le aumenta al total + Cargo cliente
-                    if (o.TotalCargoCliente > 0 )
+                    if (o.TotalCargoCliente > 0)
                     {
-                        var ResiduoCargoCliente = o.TotalCargoCliente - o.Total;                     
-                        o.PorcentajeCliente = (int)Math.Round((decimal)(100 * ResiduoCargoCliente) / o.Total);
-                    }                   
-                    Lista.Add(o);
+                        var ResiduoCargoCliente = o.TotalCargoCliente - o.Total;
+                        o.PorcentajeCliente = (int)Math.Round((decimal)(100 * ResiduoCargoCliente) / o.Total);                       
+                    }
+
+                    //Saul Gonzalez 23/02/2023: Hacemos una validacion para que unicamente se agregen los registros del año 2023
+                    if (Convert.ToDateTime(o.FechaRegistro) >= Convert.ToDateTime(AñoEnCurso))
+                    {
+                        Lista.Add(o);
+                    }
                     //Si la requisicion es abierta validamos si las liberaciones ya superaron el monto total, esto servira para marcar en rojo el registro
                     if (REQ.Solicitud == "Abierta" || REQ.Solicitud == "ABIERTA" || REQ.Solicitud == "abierta")
                     {
@@ -85,6 +91,67 @@ namespace ControlDePagos.Controllers
                             }
                         }
                     }                  
+                }
+            }
+            catch (Exception error)
+            {
+                return Json(new { status = false, mensaje = error.Message });
+            }
+            Lista = Lista.OrderByDescending(o => Convert.ToDateTime(o.FechaRegistro)).ToList();
+            //Lista = Lista.OrderByDescending(x => x.FechaRegistro).Reverse().ToList();
+            return Json(Lista, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ListarRequisicionesPorAño(string Año)
+        {
+            List<cRequisicion> Lista = new List<cRequisicion>();
+            string AñoEspecifico = "01/01/" + Año;
+            string FechaLimite = "31/12/" + Año;
+            try
+            {
+                //Saul Gonzalez 14/10/2020: Obtenemos la lista de Requisiciones
+                List<Tb_Requisiciones> tablaRequisiciones = db.Tb_Requisiciones.ToList();
+                foreach (Tb_Requisiciones REQ in tablaRequisiciones)
+                {
+                    cRequisicion o = new cRequisicion();
+                    o.Id = REQ.Id;
+                    o.Folio = REQ.Folio;
+                    o.Cuenta_Cargo = REQ.Cuenta_Cargo;
+                    o.Total = REQ.Total;
+                    o.Moneda = REQ.Moneda;
+                    o.Descripcion = REQ.Descripcion;
+                    o.Solicitud = REQ.Solicitud;
+                    o.TipoReq = REQ.TipoReq;
+                    o.FechaRegistro = REQ.FechaRegistro;
+                    o.NumeroDeFactura = REQ.NumeroDeFactura;
+                    o.TotalCargoCliente = REQ.TotalCargoCliente;
+                    //Obtenemos el permiso que tiene el usuario en sesion
+                    o.UsuarioPermiso = Session["Permiso"].ToString();
+                    //Saul Gonzalez 19/07/2021: Calculamos el porcentaje que se le aumenta al total + Cargo cliente
+                    if (o.TotalCargoCliente > 0)
+                    {
+                        var ResiduoCargoCliente = o.TotalCargoCliente - o.Total;
+                        o.PorcentajeCliente = (int)Math.Round((decimal)(100 * ResiduoCargoCliente) / o.Total);
+                    }
+
+                    //Saul Gonzalez 22/02/2023: Se creo este metodo para que nos permita buscar proyectos de años pasados
+                    if (Convert.ToDateTime(o.FechaRegistro) >= Convert.ToDateTime(AñoEspecifico) && Convert.ToDateTime(o.FechaRegistro) <= Convert.ToDateTime(FechaLimite))
+                    {
+                        Lista.Add(o);
+                    }
+                    //Si la requisicion es abierta validamos si las liberaciones ya superaron el monto total, esto servira para marcar en rojo el registro
+                    if (REQ.Solicitud == "Abierta" || REQ.Solicitud == "ABIERTA" || REQ.Solicitud == "abierta")
+                    {
+                        List<Tb_Liberaciones> Liberaciones = db.Tb_Liberaciones.Where(y => y.Tb_Requisiciones.Id == REQ.Id).ToList();
+                        if (Liberaciones != null)
+                        {
+                            var SumaLiberaciones = Liberaciones.Sum(w => w.Monto);
+                            if (SumaLiberaciones >= REQ.Total)
+                            {
+                                o.LimiteAlcanzado = true;
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception error)

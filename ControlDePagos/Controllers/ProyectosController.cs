@@ -66,6 +66,7 @@ namespace ControlDePagos.Controllers
                     o.Retorno = Proyecto.Retorno;
                     o.Descripcion = Proyecto.Descripcion;
                     o.Estado = Proyecto.Estado;
+                    //Saul Gonzalez 23/02/2023: Hacemos una validacion para que unicamente se agregen los registros del año 2023
                     if (Convert.ToDateTime(o.FechaInicio) >= Convert.ToDateTime(AñoEnCurso))
                     {
                         Lista.Add(o);
@@ -104,6 +105,7 @@ namespace ControlDePagos.Controllers
                     o.Retorno = Proyecto.Retorno;
                     o.Descripcion = Proyecto.Descripcion;
                     o.Estado = Proyecto.Estado;
+                    //Saul Gonzalez 22/02/2023: Se creo este metodo para que nos permita buscar proyectos de años pasados
                     if (Convert.ToDateTime(o.FechaInicio) >= Convert.ToDateTime(AñoEspecifico) && Convert.ToDateTime(o.FechaInicio) <= Convert.ToDateTime(FechaLimite))
                     {
                         Lista.Add(o);

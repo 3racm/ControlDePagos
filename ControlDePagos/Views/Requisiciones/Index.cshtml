@@ -12,6 +12,7 @@
 </head>
 <input id="ID" type="number" hidden />
 <input id="SeActualiza" type="text" hidden />
+<input id="FiltroAño" type="text" hidden />
 <form class="form-inline">
 
     <div class="form-group mx-sm-3 mt-3">
@@ -29,7 +30,7 @@
     </form>
 <div class="container" style="margin-top:28px;">
     <div class="row">
-        <div class="col-11" >
+        <div class="col-11">
             <table id="myTable" class="table table-striped">
                 <thead>
                     <tr>
@@ -48,6 +49,15 @@
                 <tbody id="cuerpo">
                 </tbody>
             </table>
+
+        </div>
+        <div id="ConsultarAnteriores" class="card " style="left:1550px; margin-top:45px; position:absolute">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item alert-link">Consultar requisiciones por año</li>
+                <li class="list-group-item alert-link"><a href="#" onclick="FiltrarAño('2021')" class="alert-link"><i class="far fa-folder"></i> 2021</a></li>
+                <li class="list-group-item alert-link"><a href="#" onclick="FiltrarAño('2022')" class="alert-link"><i class="far fa-folder"></i> 2022</a></li>
+                <li class="list-group-item alert-link"><a href="#" onclick="FiltrarAño('2023')" class="alert-link"><i class="far fa-folder"></i> 2023</a></li>
+            </ul>
 
         </div>
     </div>
@@ -336,6 +346,7 @@
         $("#CargoCliente").prop('disabled', true);
         $("#btnActualizar").hide();
         $("#SeActualiza").text("NO")
+        $("#FiltroAño").val("2023");
 
 
         //Saul Gonzalez 16/04/2021: Resetear modal cuando se cierra
@@ -966,16 +977,17 @@
     function LimpiarFiltros() {
         $("#CheckInterna").prop('checked', false);
         $("#CheckBepco").prop('checked', false);
-        $("#CheckProyecto").prop('checked', false);
+        $("#CheckProyecto").prop('checked', false);      
     }
 
     function Filtrar() {
         var CheckInterna = $('#CheckInterna').prop('checked');
         var CheckBepco = $('#CheckBepco').prop('checked');
         var CheckProyecto = $('#CheckProyecto').prop('checked');
+        var FiltroAño = $("#FiltroAño").val();
         //Saul Gonzalez 08/04/2021: mandamos los filtros a la funcion de Listar Poryectos
         $("#cuerpo > tr").remove();
-        ListarRequisiciones(CheckInterna, CheckBepco, CheckProyecto);
+        ListarRequisicionesPorAño(CheckInterna, CheckBepco, CheckProyecto,FiltroAño);
         $('#ModalFiltros').modal('hide');
 
     }
@@ -1027,6 +1039,119 @@
         //if ($("#TipoReq").val() == 0) {
         //    $("#NoFolio").prop('disabled', true);
         //}
+    }
+
+    //Saul Gonzalez 22/02/2023: Las siguientes 2 funciones (Listar y filtrar) se implementaron para filtrar proyectos de años anteriores a 2023
+    function ListarRequisicionesPorAño(CheckInterna = false, CheckBepco = false, CheckProyecto = false, Año) {
+        $.ajax({
+            url: "/Requisiciones/ListarRequisicionesPorAño",
+            type: "GET",
+            data: { Año: Año },
+            success: function (data) {
+                table.clear().draw();
+                //Saul Gonzalez 14/10/2020: Hacemos un foreach para llenar la informacion de la tabla
+                $.each(data, function (i, obj) {
+                    //Saul Gonzalez 14/10/2020: Usamos backtic para agregar las botones de acciones
+
+
+
+
+                    //Saul Gonzalez 20/07/2021: Si es administrador agregamos el boton para realizar liberaciones, en caso contrario se deshabilita ese boton
+                    if (obj.UsuarioPermiso == "Administrador") {
+                        var btnAcciones = `
+                          <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
+                           <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
+
+
+                        //Si la requisicion es abierta agregamos un boton para ver las liberaciones de dinero correspodientes a la REQ.
+                        if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA" || obj.Solicitud == "abierta") {
+                            obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
+                            btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i></button>
+                        <button id="btnLiberacion" type="button" class="btn btn-primary btn-sm" onclick="CargarLiberaciones('${obj.Id}')" title="Historial de liberaciones"><i class="fas fa-hand-holding-usd"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="CancelarRequisicion('${obj.Folio}','${obj.Descripcion}')" title="Cancelar requisición"><i class="fas fa-times-circle"></i></button>`;
+                        }
+                    } //Si el usuario es de facturas o invitado quitamos el boton para registar liberaciones y el de cancelar
+                    else {
+                        var btnAcciones = `
+                          <button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i> Editar</button>`;
+
+                        if (obj.Solicitud == "Abierta" || obj.Solicitud == "ABIERTA" || obj.Solicitud == "abierta") {
+                            obj.Solicitud = `<p class="font-weight-bold" style="color:#28a745">${obj.Solicitud}</p>`;
+                            btnAcciones = `<button id="btnCargar" type="button" class="btn btn-success btn-sm" onclick="CargarRequisicion('${obj.Folio}', '${obj.TipoReq}')" title="Editar requisición"><i class="fas fa-edit"></i> Editar</button>`;
+                        }
+                    }
+
+
+                    var Folio = `<p>${obj.Folio}</p>`;
+                    //Realizamos un split para separar la secuencia y verificar si la requisicion esta cancelada
+                    var CadenaFolio = obj.Folio.split('-');
+                    //Si la requisicion esta cancelada ponemos el texto en rojo
+                    if (CadenaFolio[0] == "CANCELADA") {
+                        Folio = `<p style="color:#dc2a3b">${obj.Folio}</p>`;
+                        btnAcciones = `
+                          <button id="btnCargar" disabled type="button" class="btn btn-success btn-sm" title="Acción no disponible"><i class="fas fa-edit"></i></button>
+                           <button type="button" disabled class="btn btn-danger btn-sm" title="Acción no disponible"><i class="far fa-trash-alt"></i></button>`;
+                    }
+
+                    //Asignamos el folio como clase al campo del total, para que el momento de registrar una liberacion sea mas facil actualizar ese campo
+                    obj.Total = FormatoMiles(obj.Total.toFixed(2));
+                    var Total = `<p class="${obj.Folio}">${obj.Total}</p>`;
+                    if (obj.LimiteAlcanzado) {
+                        Total = `<p class="${obj.Folio} font-weight-bold" style="color:#dc2a3b">${obj.Total}</p>`;
+                    }
+
+                    if (obj.NumeroDeFactura == null || obj.NumeroDeFactura == "") {
+                        obj.NumeroDeFactura = "---";
+                    }
+                    if (obj.TotalCargoCliente == null || obj.TotalCargoCliente == "") {
+                        obj.TotalCargoCliente = "---";
+                    }
+
+                    //Creamos la etiqueta del porcentaje para la etiqueta de Total cliente
+                    var TotalCliente = "---";
+                    if (obj.PorcentajeCliente != null) {
+                        //Aplicamos el formato para que separe los miles
+                        obj.TotalCargoCliente = FormatoMiles(obj.TotalCargoCliente.toFixed(2));
+                        TotalCliente = `${obj.TotalCargoCliente} <a class="font-weight-bold" style="color:#009688" title="${obj.PorcentajeCliente}% más que la cantidad original (Total)."> (+${obj.PorcentajeCliente}%)</a>`;
+
+                    }
+
+                    //Saul Gonzalez 21/04/2021: Si se aplico un filtro validamos que tipo requisicion se esta filtrando
+                    if (obj.TipoReq == "INTERNA" && CheckInterna == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+                    if (obj.TipoReq == "BEPCO" && CheckBepco == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+                    if (obj.TipoReq == "UB" && CheckProyecto == true) {
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+
+                    if (CheckInterna == false && CheckBepco == false && CheckProyecto == false) {
+                        //Saul Gonzalez 21/04/2021: Agregamos los datos de la requisicion a la tabla
+                        table.row.add([Folio, obj.Cuenta_Cargo, Total, obj.Moneda, obj.Descripcion, obj.Solicitud, obj.TipoReq, obj.NumeroDeFactura, TotalCliente, btnAcciones])
+                            .draw()
+                            .node();
+                    }
+
+                });
+            }
+        });
+    }
+
+    function FiltrarAño(Año) {
+
+        $("#FiltroAño").val(Año);
+        LimpiarFiltros();
+        ListarRequisicionesPorAño(false, false, false, Año);
+
+
     }
 
 </script>
